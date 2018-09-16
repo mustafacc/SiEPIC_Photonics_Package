@@ -4,8 +4,9 @@ SiEPIC Photonics Package
 Author:     Mustafa Hammood
             Mustafa@ece.ubc.ca
 
-Module:     Intialize the dependent packages of SiEPIC PP
+Module:     Intialize and setup information for SiEPIC PP
 """
+
 #%% import dependent packages
 
 import importlib
@@ -19,5 +20,5 @@ for lib in packages:
         from pip._internal import main
         main(['install', '--user', lib])
         globals()[lib] = importlib.import_module(lib)
-        
-print("Imported packages: ", packages)
+
+print("Imported dependicies: ", packages)

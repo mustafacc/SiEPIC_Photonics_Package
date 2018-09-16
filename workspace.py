@@ -7,4 +7,8 @@ Author:     Mustafa Hammood
 Module:     Workspace
 """
 
-import SiEPIC_Photonics_Library
+#from SiEPIC_Photonics_Package.setup import install_pkgs
+
+import SiEPIC_Photonics_Package
+
+#import SiEPIC_Photonics_Package.setup
