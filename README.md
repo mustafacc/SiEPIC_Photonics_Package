@@ -6,6 +6,10 @@ A set of Python (v3.6.5) libraries to be used in the photonics group
 
 Calibrates an input spectrum response with respect to another input response
 
+* baseline_correction
+
+Calibrates an input response with respect to it's baseline
+
 * cutback
 
 Extrapolate the losses of different input data files losses using the cutback method 
