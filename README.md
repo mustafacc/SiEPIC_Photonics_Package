@@ -1,5 +1,5 @@
-# SiEPIC_Photonics_Library
-A set of Python (v3.6.5) libraries to be used in the photonics group
+# SiEPIC_Photonics_Package
+A Python (v3.6.5) package to be used in the photonics group
 
 # Functions
 * calibrate
