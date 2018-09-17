@@ -4,7 +4,7 @@ SiEPIC Photonics Package
 Author:     Mustafa Hammood
             Mustafa@ece.ubc.ca
 
-Module:     Workspace
+Example:    Download .mat data file from an online URL, parse and plot data to a .pdf figure
 """
 
 #%% import package and installed dependent packages
@@ -17,21 +17,25 @@ import SiEPIC_Photonics_Package as SiEPIC_PP
 from SiEPIC_Photonics_Package.setup import *
 
 #%% download .mat file from GitHub repo and parse it to a variable (data)
-filename = 'MZI_data.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+filename+'?raw=true'
+file_name = 'MZI_data'
+file_extension = '.mat'
+url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
 r = requests.get(url,allow_redirects=True)
-with open('MZI_data.mat', 'wb') as f:
+with open(file_name+file_extension, 'wb') as f:
     f.write(r.content)
     
-data = scipy.io.loadmat('MZI_data.mat')
+data = scipy.io.loadmat(file_name+file_extension)
 PORT = 0
 
 wavelength = data['scanResults'][0][PORT][0][:,0]
 power = data['scanResults'][0][PORT][0][:,1]
 
-#%% plot response in a fancy window
+#%% plot response and save pdf
 fig = matplotlib.pyplot.plot(wavelength,power)
-matplotlib.pyplot.ylabel('Power (dBm)', fontsize = 22, color = 'black')
-matplotlib.pyplot.xlabel('Wavelength (nm)', fontsize = 22, color = 'black')
+matplotlib.pyplot.ylabel('Power (dBm)', color = 'black')
+matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
 matplotlib.pyplot.setp(fig, 'color', 'r', 'linewidth', 2.0)
-matplotlib.pyplot.xlim(min(wavelength),max(wavelength))
+matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
+matplotlib.pyplot.title("Experimental data (raw)")
+matplotlib.pyplot.savefig(file_name+'.pdf')
+matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
