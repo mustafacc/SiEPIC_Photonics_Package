@@ -11,7 +11,7 @@ Module:     Intialize and setup information for SiEPIC PP
 
 import importlib
 
-packages = ["numpy", "scipy", "matplotlib.pyplot", "pyparsing"]
+packages = ["numpy", "scipy", "scipy.io", "matplotlib", "pyparsing", "requests"]
 
 
 for lib in packages:
