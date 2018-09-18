@@ -1,5 +1,5 @@
 # SiEPIC_Photonics_Package
-A Python (v3.6.5) package to be used in the photonics group
+A Python (v3.6.5) package that provides a set of basic functions commonly used by the UBC photonics group
 
 ## Functions
 * **calibrate**
@@ -17,6 +17,9 @@ Extrapolate the losses of different input data files losses using the cutback me
 * **to_s_params**
 
 Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format
+
+* **download_response**
+Downloads a .mat response (Caverley's pyoptomip format) from a url and parses data into a variable
 
 ## Simulators and solvers
 * **EM_solver**
