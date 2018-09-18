@@ -20,15 +20,9 @@ from SiEPIC_Photonics_Package.setup import *
 file_name = 'MZI_data'
 file_extension = '.mat'
 url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
-r = requests.get(url,allow_redirects=True)
-with open(file_name+file_extension, 'wb') as f:
-    f.write(r.content)
-    
-data = scipy.io.loadmat(file_name+file_extension)
 PORT = 0
 
-wavelength = data['scanResults'][0][PORT][0][:,0]
-power = data['scanResults'][0][PORT][0][:,1]
+[wavelength,power] = SiEPIC_PP.core.download_response(url,PORT)
 
 #%% plot response and save pdf
 fig = matplotlib.pyplot.plot(wavelength,power)
