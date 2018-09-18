@@ -19,6 +19,7 @@ Extrapolate the losses of different input data files losses using the cutback me
 Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format
 
 * **download_response**
+
 Downloads a .mat response (Caverley's pyoptomip format) from a url and parses data into a variable
 
 ## Simulators and solvers
