@@ -1,3 +1,10 @@
+<p align="center">
+<b>Provided by SiEPIC Kits Ltd.</b>
+</p>
+<p align="center">
+<img src="Documentation/img/siepic_kits_logo2.png" width="40%">.
+</p>
+
 # SiEPIC_Photonics_Package
 A Python (v3.6.5) package that provides a set of basic functions commonly used by the UBC photonics group.
 
