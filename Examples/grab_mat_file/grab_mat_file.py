@@ -11,7 +11,7 @@ Example:    Download .mat data file from an online URL, parse and plot data to a
 import sys, os
 # go up two directories
 dir_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath((os.path.dirname(dir_path))))))
+sys.path.append(os.path.dirname(os.path.dirname(dir_path)))
 
 import SiEPIC_Photonics_Package as SiEPIC_PP
 from SiEPIC_Photonics_Package.setup import *
