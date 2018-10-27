@@ -11,7 +11,7 @@ A Python (v3.6.5) package that provides a set of basic functions commonly used b
 ## Functions
 * **calibrate**
 
-Calibrates an input spectrum response with respect to another input response.
+Calibrates an input spectrum response with respect to another input response. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/calibrate)
 
 * **baseline_correction**
 
