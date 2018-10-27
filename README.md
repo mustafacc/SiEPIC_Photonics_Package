@@ -46,9 +46,13 @@ Simulate the spectrum of a Mach-Zehnder interferometer with different input para
 
 Model the response of a Bragg grating based on the transfer matrix method (TMM).
 
+* **Bragg_CMT**
+
+Model the response of a Bragg grating based on the coupled-mode theory (CMT).
+
 * **Contra_DC**
 
-Model the response of a contra-directional coupler based on coupled mode theory (CMT) and transfer matrix method.
+Model the response of a contra-directional coupler based on a coupled-mode theory (CMT) and transfer matrix method.
 
 
 ## Lab equipment and testing stage scripts
