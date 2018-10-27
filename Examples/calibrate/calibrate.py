@@ -18,16 +18,16 @@ from SiEPIC_Photonics_Package.setup import *
 
 #%% download .mat files from GitHub repo and parse it to a variable (data)
 # response to be calibrated
-file_name = 'MZI_data2'
+file_name_in = 'MZI_data2'
 file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
+url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_in+file_extension+'?raw=true'
 PORT = 1
 input_response= SiEPIC_PP.core.download_response(url,PORT)
 
 # reference calibration response
-file_name = 'MZI_data2_calib'
+file_name_ref = 'MZI_data2_calib'
 file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
+url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_ref+file_extension+'?raw=true'
 PORT = 0
 ref_response= SiEPIC_PP.core.download_response(url,PORT)
 
@@ -50,7 +50,7 @@ matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
 matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
 matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
 matplotlib.pyplot.title("Experimental data (raw)")
-matplotlib.pyplot.savefig(file_name+'.pdf')
+matplotlib.pyplot.savefig(file_name_in+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 # raw responses of reference calibration data and input data
@@ -62,5 +62,5 @@ matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
 matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
 matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
 matplotlib.pyplot.title("Experimental data (calibrated)")
-matplotlib.pyplot.savefig(file_name+'.pdf')
+matplotlib.pyplot.savefig(file_name_ref+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
