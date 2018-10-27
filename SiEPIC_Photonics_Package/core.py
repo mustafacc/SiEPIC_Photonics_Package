@@ -49,7 +49,7 @@ def to_s_params( input_data ):
 #%% download_response function
 # download input .mat url data
 # outputs parsed data array [wavelength (m), power (dBm)]
-# data is assumed to be from automated measurement scanResult format
+# data is assumed to be from automated measurement scanResults or scandata format
 def download_response ( url, port):
     r = requests.get(url,allow_redirects=True)
     file_name = 'downloaded_data'+str(port)
@@ -57,8 +57,14 @@ def download_response ( url, port):
         f.write(r.content)
         
     data = scipy.io.loadmat(file_name)
-
-    wavelength = data['scanResults'][0][port][0][:,0]
-    power = data['scanResults'][0][port][0][:,1]
-    data = [wavelength,power]
+    
+    if( 'scanResults' in data ):
+        wavelength = data['scanResults'][0][port][0][:,0]
+        power = data['scanResults'][0][port][0][:,1]
+        data = [wavelength,power]
+    elif( 'scandata' in data ):
+        wavelength = data['scandata'][0][0][0][:][0]
+        power = data['scandata'][0][0][1][:,port]
+        data = [wavelength,power]
+            
     return data
