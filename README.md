@@ -61,3 +61,6 @@ Model the response of a contra-directional coupler based on a coupled-mode theor
 * **Keithly 2602B**
 * **Agilent OSA**
 
+## To-do:
+* Integrate Jupyter Notebook
+* Add PCM analysis script
