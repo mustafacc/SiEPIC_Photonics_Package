@@ -50,15 +50,31 @@ def baseline_correction( input_response ):
     return [power_corrected, power_baseline]
 
 #%% cutback function
-# input list format:
-# output list format: [insertion loss at wavelength (dB/unit), insertion loss vs wavelength (dB)]
+# input list format: input_data_response (list) [wavelength (nm), power (dBm)]
+#                   input_data_count (array) [array of unit count]
+#                   wavelength of insertion loss measurement
+# output list format: [insertion loss at wavelength (dB/unit), insertion loss (dB) vs wavelength (nm)]
 def cutback( input_data_response, input_data_count, wavelength):
     # fit the responses to a polynomial
     fitOrder = 8
-    wavelength = input_data_response[0]
-    power = input_data_response[1]
+    wavelength_data = input_data_response[0][0]
     
-    return [1,1]
+    power = []
+    pfit = []
+    power_fit = []
+    for i in range(len(input_data_count)):
+        power.append( input_data_response[i][1] )
+        pfit.append( numpy.polyfit(wavelength_data-numpy.mean(wavelength_data), power[i], fitOrder) )
+        power_fit.append( numpy.polyval(pfit[i], wavelength_data-numpy.mean(wavelength_data)) )
+    
+    # find index of wavelength of interest
+    index = numpy.where( wavelength_data==wavelength )[0][0]
+    
+    # find insertion loss vs wavelength
+#    for i in range(len(wavelength_data)):
+#        insertion_loss = numpy.polyfit(input_data_count, power_fit[:][i], 1) 
+        
+    return power_fit[:][:][0]
 
 #%% to_s_params function
 def to_s_params( input_data ):

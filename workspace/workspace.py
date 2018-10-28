@@ -17,24 +17,23 @@ import SiEPIC_Photonics_Package as SiEPIC_PP
 from SiEPIC_Photonics_Package.setup import *
 
 #%% download .mat files from GitHub repo and parse it to a variable (data)
-# response to be calibrated
-file_name = 'MZI_data2'
-file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
-PORT = 1
-input_response= SiEPIC_PP.core.download_response(url,PORT)
+# responses to extract losses from
+# in this example, unit is um (microns)
+unit = [0, 5000, 10000, 30000]
+input_data_response = []
 
-# reference calibration response
-file_name = 'MZI_data2_calib'
-file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
-PORT = 0
-ref_response= SiEPIC_PP.core.download_response(url,PORT)
+for i in unit:
+    file_name = 'SpiralWG'+str(i)+'TE'
+    file_extension = '.mat'
+    url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
+    PORT = 1
+    input_data_response.append( SiEPIC_PP.core.download_response(url,PORT) )
 
 #%% apply SiEPIC_PP cutback extraction function
-"""
-[power_corrected, power_calib_fit] = SiEPIC_PP.core.calibrate( input_response, ref_response )
+    
+wavelength = SiEPIC_PP.core.cutback( input_data_response, unit, 1550e-9 )
 
+"""
 #%% plot responses and save pdf
 # raw responses of reference calibration data and input data
 wavelength = input_response[0]*1e9
