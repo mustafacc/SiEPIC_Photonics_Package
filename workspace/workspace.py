@@ -4,7 +4,7 @@ SiEPIC Photonics Package
 Author:     Mustafa Hammood
             Mustafa@ece.ubc.ca
 
-Example:    Application of SiEPIC_PP calibration function
+Example:    Application of SiEPIC_PP cutback function
 """
 
 #%% import package and installed dependent packages
@@ -31,8 +31,8 @@ url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Example
 PORT = 0
 ref_response= SiEPIC_PP.core.download_response(url,PORT)
 
-#%% apply SiEPIC_PP calibration correction function
-
+#%% apply SiEPIC_PP cutback extraction function
+"""
 [power_corrected, power_calib_fit] = SiEPIC_PP.core.calibrate( input_response, ref_response )
 
 #%% plot responses and save pdf
@@ -64,3 +64,4 @@ matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
 matplotlib.pyplot.title("Experimental data (calibrated)")
 matplotlib.pyplot.savefig(file_name+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+"""

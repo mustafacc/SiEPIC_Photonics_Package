@@ -53,7 +53,7 @@ matplotlib.pyplot.title("Experimental data (raw)")
 matplotlib.pyplot.savefig(file_name_in+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
-# raw responses of reference calibration data and input data
+# Calibrated responses of the input data
 matplotlib.pyplot.figure(1)
 fig1 = matplotlib.pyplot.plot(wavelength,power_corrected, label='Calibrated input data', color='red')
 matplotlib.pyplot.legend(loc=0)

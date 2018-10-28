@@ -12,7 +12,7 @@ calibrate( input_response, reference_response): response correction function to 
 baseline_correction( input_response ): baseline correction function to flatten a response with respect to it self
 cutback( input_data_response, input_data_count):
 to_s_params( input_data ):
-download_response (url, port): downloads input .mat response from a url and parses it into array
+download_response (url, port): downloads input .mat response from a url and parses data into array
 """
 
 from SiEPIC_Photonics_Package.setup import *
