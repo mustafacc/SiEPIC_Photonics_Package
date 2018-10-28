@@ -10,7 +10,7 @@ functions:
 
 calibrate( input_response, reference_response): response correction function to calibrate an input response with respect to a reference response
 baseline_correction( input_response ): baseline correction function to flatten a response with respect to it self
-cutback( input_data_response, input_data_count):
+cutback( input_data_response, input_data_count, wavelength): extract insertion losses of a structure using cutback method
 to_s_params( input_data ):
 download_response (url, port): downloads input .mat response from a url and parses data into array
 """
@@ -50,8 +50,15 @@ def baseline_correction( input_response ):
     return [power_corrected, power_baseline]
 
 #%% cutback function
-def cutback( input_data_response, input_data_count):
-    return
+# input list format:
+# output list format: [insertion loss at wavelength (dB/unit), insertion loss vs wavelength (dB)]
+def cutback( input_data_response, input_data_count, wavelength):
+    # fit the responses to a polynomial
+    fitOrder = 8
+    wavelength = input_data_response[0]
+    power = input_data_response[1]
+    
+    return [1,1]
 
 #%% to_s_params function
 def to_s_params( input_data ):
