@@ -18,8 +18,12 @@ from SiEPIC_Photonics_Package.setup import *
 
 #%% download .mat files from GitHub repo and parse it to a variable (data)
 # responses to extract losses from
-# in this example, unit is um (microns)
+# in this example, file name units are in um (microns)
 unit = [0, 5000, 10000, 30000]
+
+# divide by 10000 to see result in dB/cm
+unit_cm = [i/10000 for i in unit]
+
 input_data_response = []
 
 for i in unit:
@@ -30,37 +34,20 @@ for i in unit:
     input_data_response.append( SiEPIC_PP.core.download_response(url,PORT) )
 
 #%% apply SiEPIC_PP cutback extraction function
-    
-wavelength = SiEPIC_PP.core.cutback( input_data_response, unit, 1550e-9 )
+[insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = SiEPIC_PP.core.cutback( input_data_response, unit_cm, 1550e-9 )
 
-"""
+
 #%% plot responses and save pdf
-# raw responses of reference calibration data and input data
-wavelength = input_response[0]*1e9
-power_calib = input_response[1]
-power_in = ref_response[1]
+# Insertion loss vs wavelength plot
 matplotlib.pyplot.figure(0)
-fig1 = matplotlib.pyplot.plot(wavelength,power_calib, label='Reference data', color='red')
-fig2 = matplotlib.pyplot.plot(wavelength,power_calib_fit, label='Reference data fit', color='black')
-fig2 = matplotlib.pyplot.plot(wavelength,power_in, label='Input data', color='blue')
+fig1 = matplotlib.pyplot.plot(unit_cm,insertion_loss_fit, label='Insertion loss (fit)', color='red')
+fig2 = matplotlib.pyplot.plot(unit_cm,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
 matplotlib.pyplot.legend(loc=0)
-matplotlib.pyplot.ylabel('Power (dBm)', color = 'black')
+matplotlib.pyplot.ylabel('Loss (dB/cm)', color = 'black')
 matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
 matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
 matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
-matplotlib.pyplot.title("Experimental data (raw)")
-matplotlib.pyplot.savefig(file_name+'.pdf')
+matplotlib.pyplot.title("Insertion losses using the cut-back method")
+matplotlib.pyplot.savefig('cutback'+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
-# raw responses of reference calibration data and input data
-matplotlib.pyplot.figure(1)
-fig1 = matplotlib.pyplot.plot(wavelength,power_corrected, label='Calibrated input data', color='red')
-matplotlib.pyplot.legend(loc=0)
-matplotlib.pyplot.ylabel('Response (dB)', color = 'black')
-matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
-matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
-matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
-matplotlib.pyplot.title("Experimental data (calibrated)")
-matplotlib.pyplot.savefig(file_name+'.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
-"""
