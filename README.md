@@ -24,7 +24,7 @@ Extrapolate the losses of different input data files losses using the cutback me
 
 * **to_s_params**
 
-Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format.
+Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
 
 * **download_response**
 
