@@ -10,7 +10,7 @@ Example:    Application of SiEPIC_PP calibration function
 #%% import package and installed dependent packages
 import sys, os
 # go up two directories
-dir_path = os.path.dirname(os.path.abspath(__file__))
+#dir_path = os.path.dirname(os.path.abspath(__file__))
 #sys.path.append(os.path.dirname(os.path.dirname(dir_path)))
 
 import SiEPIC_Photonics_Package as SiEPIC_PP
@@ -41,9 +41,9 @@ wavelength = input_response[0]*1e9
 power_calib = input_response[1]
 power_in = ref_response[1]
 matplotlib.pyplot.figure(0)
-fig1 = matplotlib.pyplot.plot(wavelength,power_calib, label='Reference data', color='red')
+fig1 = matplotlib.pyplot.plot(wavelength,power_calib, label='Input data', color='red')
 fig2 = matplotlib.pyplot.plot(wavelength,power_calib_fit, label='Reference data fit', color='black')
-fig2 = matplotlib.pyplot.plot(wavelength,power_in, label='Input data', color='blue')
+fig2 = matplotlib.pyplot.plot(wavelength,power_in, label='Reference data', color='blue')
 matplotlib.pyplot.legend(loc=0)
 matplotlib.pyplot.ylabel('Power (dBm)', color = 'black')
 matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')

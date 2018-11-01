@@ -12,7 +12,7 @@ Example:    Application of SiEPIC_PP cutback function
 import sys, os
 # go up two directories
 dir_path = os.path.dirname(os.path.abspath(__file__))
-#sys.path.append(os.path.dirname(os.path.dirname(dir_path)))
+sys.path.append(os.path.dirname(os.path.dirname(dir_path)))
 
 import SiEPIC_Photonics_Package as SiEPIC_PP
 from SiEPIC_Photonics_Package.setup import *
@@ -38,15 +38,31 @@ for i in unit:
 [insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = SiEPIC_PP.core.cutback( input_data_response, unit_cm, 1550e-9 )
 
 #%% plot responses and save pdf
+
+# plot all cutback structures responses
+matplotlib.pyplot.figure(2)
+wavelength = input_data_response[0][0]*1e9
+fig0 = matplotlib.pyplot.plot(wavelength,input_data_response[0][1], label='L = 0', color='blue')
+fig1 = matplotlib.pyplot.plot(wavelength,input_data_response[1][1], label='L = 5000 um', color='black')
+fig2 = matplotlib.pyplot.plot(wavelength,input_data_response[2][1], label='L = 10000 um', color='green')
+fig3 = matplotlib.pyplot.plot(wavelength,input_data_response[3][1], label='L = 30000 um', color='red')
+matplotlib.pyplot.legend(loc=0)
+matplotlib.pyplot.ylabel('Power (dBm)', color = 'black')
+matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
+matplotlib.pyplot.xlim(round(min(wavelength)),round(max(wavelength)))
+matplotlib.pyplot.title("Raw measurement of cutback structures")
+matplotlib.pyplot.savefig('cutback_measurement'+'.pdf')
+matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+
 # Insertion loss vs wavelength plot
-matplotlib.pyplot.figure(0)
+matplotlib.pyplot.figure(1)
 linspace = numpy.linspace(unit_cm[0],unit_cm[len(unit_cm)-1], len(insertion_loss_fit))
 fig1 = matplotlib.pyplot.plot(linspace,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
 fig2 = matplotlib.pyplot.plot(linspace,insertion_loss_fit, label='Insertion loss (fit)', color='red')
 matplotlib.pyplot.legend(loc=0)
 matplotlib.pyplot.ylabel('Loss (dB/cm)', color = 'black')
 matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
-matplotlib.pyplot.setp(fig2, 'linewidth', 2.0)
+matplotlib.pyplot.setp(fig2, 'linewidth', 4.0)
 matplotlib.pyplot.xlim(round(min(unit_cm)),round(max(unit_cm)))
 matplotlib.pyplot.title("Insertion losses using the cut-back method")
 matplotlib.pyplot.savefig('cutback'+'.pdf')
