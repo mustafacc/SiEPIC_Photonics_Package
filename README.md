@@ -19,7 +19,8 @@ Calibrates an input response with respect to it's baseline. [Example](https://gi
 
 * **cutback**
 
-Extrapolate the losses of different input data files losses using the cutback method.
+Extrapolate the losses of different input data files losses using the cutback method. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
+
 
 * **to_s_params**
 
