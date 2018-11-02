@@ -63,7 +63,6 @@ omega = csqrt(kappa**2-deltaB**2)
 
 
 t = []; r = []
-count=0
 for i in range(len(lambda_0)):
     G_L = [
         [np.cosh(omega[i]*Lg_L)-j*deltaB[i]/omega[i]*np.sinh(omega[i]*Lg_L),
@@ -83,7 +82,6 @@ for i in range(len(lambda_0)):
     H1 = np.matmul(G_L,Y)
     H = np.matmul(H1,G_R)
     
-    count = -H[1][0]/H[1][1]
     t.append(H[0][0]-H[1][0]*H[0][1]/H[1][1])
     r.append(-H[1][0]/H[1][1])
     
@@ -101,6 +99,19 @@ matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
 matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
 matplotlib.pyplot.setp(fig2, 'linewidth', 2.0)
 matplotlib.pyplot.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
-matplotlib.pyplot.title("Calculated response of the structure using CMT")
-matplotlib.pyplot.savefig('bragg_CMT'+'.pdf')
+matplotlib.pyplot.title("Calculated response of the structure using CMT (log scale)")
+matplotlib.pyplot.savefig('bragg_cmt_log'+'.pdf')
+matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+
+matplotlib.pyplot.figure(1)
+fig1 = matplotlib.pyplot.plot(lambda_0*1e9,np.absolute(t), label='Transmission', color='blue')
+fig2 = matplotlib.pyplot.plot(lambda_0*1e9,np.absolute(r), label='Reflection', color='red')
+matplotlib.pyplot.legend(loc=0)
+matplotlib.pyplot.ylabel('Response', color = 'black')
+matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
+matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
+matplotlib.pyplot.setp(fig2, 'linewidth', 2.0)
+matplotlib.pyplot.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
+matplotlib.pyplot.title("Calculated response of the structure using CMT (linear scale)")
+matplotlib.pyplot.savefig('bragg_cmt_linear'+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
