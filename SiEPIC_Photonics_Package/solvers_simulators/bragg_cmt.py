@@ -20,7 +20,7 @@ from numpy.lib.scimath import sqrt as csqrt
 #%% user input
 wavelength_start = 1500e-9
 wavelength_stop = 1600e-9
-resolution = 0.1
+resolution = 0.001
 
 # Grating waveguide compact model (cavity)
 # these are polynomial fit constants from a waveguide width of 500 nm
