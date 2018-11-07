@@ -102,10 +102,12 @@ def download_response ( url, port):
     if( 'scanResults' in data ):
         wavelength = data['scanResults'][0][port][0][:,0]
         power = data['scanResults'][0][port][0][:,1]
-        data = [wavelength,power]
     elif( 'scandata' in data ):
         wavelength = data['scandata'][0][0][0][:][0]
         power = data['scandata'][0][0][1][:,port]
-        data = [wavelength,power]
-            
+    elif( 'wavelength' in data ):
+        wavelength = data['wavelength'][0][:]
+        power = data['power'][:,port][:]
+    
+    data = [wavelength,power]
     return data
