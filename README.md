@@ -52,7 +52,7 @@ Model the response of a Bragg grating based on the transfer matrix method (TMM).
 
 * **Bragg_CMT**
 
-Model the response of a Bragg grating based on the coupled-mode theory (CMT). [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators)
+Model the response of a Bragg grating based on the coupled-mode theory (CMT). [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/bragg_cmt)
 
 * **Contra_DC**
 
