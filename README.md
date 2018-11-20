@@ -2,7 +2,10 @@
 <b>Provided by SiEPIC Kits Ltd.</b>
 </p>
 <p align="center">
-<img src="Documentation/img/siepic_kits_logo2.png" width="40%">.
+<img src="Documentation/img/siepic_kits_logo2.png" width="40%">
+</p>
+<p align="center">
+<b><a href=http://siepic.com/>SiEPIC.com</a></b>
 </p>
 
 # SiEPIC_Photonics_Package
@@ -49,7 +52,7 @@ Model the response of a Bragg grating based on the transfer matrix method (TMM).
 
 * **Bragg_CMT**
 
-Model the response of a Bragg grating based on the coupled-mode theory (CMT).
+Model the response of a Bragg grating based on the coupled-mode theory (CMT). [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators)
 
 * **Contra_DC**
 
