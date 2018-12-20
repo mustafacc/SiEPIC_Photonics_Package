@@ -40,7 +40,7 @@ Eigenmode solver for a 2D waveguide structure.
 
 * **Ring_Designer**
 
-Microrings designer: model N-order rings system spectrum.
+Microrings designer: model N-order rings system spectrum. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/rings)
 
 * **MZI_simulator**
 
