@@ -2,7 +2,9 @@
 SiEPIC Photonics Package
 
 Author:     Mustafa Hammood
-            Mustafa@ece.ubc.ca
+            Mustafa@siepic.com
+            
+            https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package
 
 Module:     __init__.py package identifer
 """
@@ -12,7 +14,7 @@ class pkg_id:
     __version__ = "0.0.1"
     name = "SiEPIC_Photonics_Package"
     author="Mustafa Hammood"
-    author_email="Mustafa@ece.ubc.ca"
+    author_email="Mustafa@siepic.com"
     description="A Python (v3.6.5) package to be used in the UBC Photonics Group"
     url="https://github.com/mustafacc/SiEPIC_Photonics_Package"
     

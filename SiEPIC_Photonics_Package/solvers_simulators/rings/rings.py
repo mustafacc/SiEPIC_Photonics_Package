@@ -15,11 +15,10 @@ Based on H. Shoman MATLAB implementation
 import numpy as np
 import math, cmath
 import matplotlib.pyplot as plt
-from numpy.lib.scimath import sqrt as csqrt
 
 #%% user input
-wavelength_start = 1530e-9
-wavelength_stop = 1570e-9
+wavelength_start = 1543e-9
+wavelength_stop = 1545e-9
 resolution = 0.01
 
 # waveguide compact mode
@@ -32,11 +31,12 @@ n3 = -0.046366956781710
 alpha = 4
 
 # coupling coefficients (power coupling coefficient)
-k1 = .2; k2= 0.0123; k3 = 0.2;
+k1 = .2; k2= 0.0123; k3 = k1/1000;
+k2 = k1**2 /(2-k1)**2
 kappa = [k1, k2, k3]
 
 # rings radii (um)
-r1 = 15e-6; r2 = (4/5)*r1;
+r1 = 35e-6; r2 = (4/5)*r1;
 R = [r1,r2]
 
 # phase shift (radians)
@@ -79,8 +79,8 @@ def StoM( S ):
 
 #%% theoretical analysis
 # number of rings
-nor = len(R
-          )
+nor = len(R)
+
 R.append(0)
 phi.append(0)
 L = [i * (2*math.pi) for i in R]
@@ -108,7 +108,7 @@ for beta in beta0:
     rN1.append(S[0][1])
     r1N.append(S[1][0]) # Electric field Through
     tN1.append(S[1][1])
-    
+
 #%% power
 Drop = t1N; D = np.absolute( Drop )**2; DdB = 10*np.log10(D)
 Thru = r1N; T = np.absolute( Thru )**2; TdB = 10*np.log10(T)
@@ -126,8 +126,8 @@ Tdelay = -np.diff(Tphi)/np.diff(omega)
 Ddelay = -np.diff(Dphi)/np.diff(omega)
 
 #%% dispersion
-Tdispersion = np.diff(Tdelay)/np.diff(omega[1:len(omega)])
-Ddispersion = np.diff(Ddelay)/np.diff(omega[1:len(omega)])
+Tdispersion = np.diff(Tdelay)/np.diff(omega[0:len(omega)-1])
+Ddispersion = np.diff(Ddelay)/np.diff(omega[0:len(omega)-1])
 
 #%% plot spectrums
 # power

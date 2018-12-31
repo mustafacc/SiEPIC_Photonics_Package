@@ -2,7 +2,9 @@
 SiEPIC Photonics Package
 
 Author:     Mustafa Hammood
-            Mustafa@ece.ubc.ca
+            Mustafa@siepic.com
+            
+            https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package
 
 Module:     Intialize and setup information for SiEPIC PP
 """

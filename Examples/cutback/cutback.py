@@ -2,7 +2,7 @@
 SiEPIC Photonics Package 
 
 Author:     Mustafa Hammood
-            Mustafa@ece.ubc.ca
+            Mustafa@siepic.com
 
 Example:    Application of SiEPIC_PP cutback function
             to extract the porpagation losses from three different length spirals.
