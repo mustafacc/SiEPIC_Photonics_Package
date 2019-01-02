@@ -20,9 +20,12 @@ download_response (url, port): downloads input .mat response from a url and pars
 from SiEPIC_Photonics_Package.setup import *
 
 #%% calibration function
-# input list format: [input_response[wavelength (nm), power (dBm)], reference_response[wavelength (nm), power (dBm)]]
-# output list format: [input power (dBm) with calibration correction, polynomial fit of reference power (dBm)]
+
 def calibrate( input_response, reference_response):
+    # calibrate( input_response, reference_response): response correction function to calibrate an input response with respect to a reference response
+    # input list format: [input_response[wavelength (nm), power (dBm)], reference_response[wavelength (nm), power (dBm)]]
+    # output list format: [input power (dBm) with calibration correction, polynomial fit of reference power (dBm)]
+    
     # fit the calibration response to a polynomial
     fitOrder = 8
     wavelength = reference_response[0]
@@ -36,9 +39,11 @@ def calibrate( input_response, reference_response):
     return [power_corrected, power_calib_fit]
 
 #%% baseline_correction function
-# input list format: input_response[wavelength (nm), power (dBm)]
-# output list format: [input power (dBm) with baseline correction, baseline correction fit]
 def baseline_correction( input_response ):
+    #baseline_correction( input_response ): baseline correction function to flatten a response with respect to it self
+    # input list format: input_response[wavelength (nm), power (dBm)]
+    # output list format: [input power (dBm) with baseline correction, baseline correction fit]
+        
     fitOrder = 4
     wavelength = input_response[0]
     power = input_response[1]
@@ -52,11 +57,12 @@ def baseline_correction( input_response ):
     return [power_corrected, power_baseline]
 
 #%% cutback function
-# input list format: input_data_response (list) [wavelength (nm), power (dBm)]
-#                   input_data_count (array) [array of unit count]
-#                   wavelength of insertion loss measurement
-# output list format: [insertion loss (fit) at wavelength (dB/unit), insertion loss (dB) vs wavelength (nm)]
 def cutback( input_data_response, input_data_count, wavelength):
+    #cutback( input_data_response, input_data_count, wavelength): extract insertion losses of a structure using cutback method
+    # input list format: input_data_response (list) [wavelength (nm), power (dBm)]
+    #                   input_data_count (array) [array of unit count]
+    #                   wavelength of insertion loss measurement
+    # output list format: [insertion loss (fit) at wavelength (dB/unit), insertion loss (dB) vs wavelength (nm)]
     # fit the responses to a polynomial
     fitOrder = 8
     wavelength_data = input_data_response[0][0]
@@ -90,10 +96,11 @@ def to_s_params( input_data ):
     return
 
 #%% download_response function
-# download input .mat url data
-# outputs parsed data array [wavelength (m), power (dBm)]
-# data is assumed to be from automated measurement scanResults or scandata format
 def download_response ( url, port):
+    # download_response (url, port): downloads input .mat response from a url and parses data into array
+    # input: (.mat data download url, port response) 
+    # outputs parsed data array [wavelength (m), power (dBm)]
+    # data is assumed to be from automated measurement scanResults or scandata format
     r = requests.get(url,allow_redirects=True)
     file_name = 'downloaded_data'+str(port)
     with open(file_name, 'wb') as f:
