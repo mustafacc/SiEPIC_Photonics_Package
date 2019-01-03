@@ -20,14 +20,14 @@ from SiEPIC_Photonics_Package.setup import *
 # response to be calibrated
 file_name_in = 'MZI_data2'
 file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_in+file_extension+'?raw=true'
+url = 'https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_in+file_extension+'?raw=true'
 PORT = 1
 input_response= SiEPIC_PP.core.download_response(url,PORT)
 
 # reference calibration response
 file_name_ref = 'MZI_data2_calib'
 file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_ref+file_extension+'?raw=true'
+url = 'https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name_ref+file_extension+'?raw=true'
 PORT = 0
 ref_response= SiEPIC_PP.core.download_response(url,PORT)
 

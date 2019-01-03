@@ -19,7 +19,7 @@ from SiEPIC_Photonics_Package.setup import *
 #%% download .mat file from GitHub repo and parse it to a variable (data)
 file_name = 'MZI_data'
 file_extension = '.mat'
-url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
+url = 'https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
 r = requests.get(url,allow_redirects=True)
 with open(file_name+file_extension, 'wb') as f:
     f.write(r.content)

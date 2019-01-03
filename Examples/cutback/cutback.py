@@ -30,7 +30,7 @@ input_data_response = []
 for i in unit:
     file_name = 'SpiralWG'+str(i)+'TE'
     file_extension = '.mat'
-    url = 'https://github.com/mustafacc/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
+    url = 'https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/blob/master/Examples/'+file_name+file_extension+'?raw=true'
     PORT = 1
     input_data_response.append( SiEPIC_PP.core.download_response(url,PORT) )
 
