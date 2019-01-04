@@ -14,24 +14,24 @@ A Python (v3.6.5) package that provides a set of basic functions commonly used b
 ## Functions
 * **calibrate**
 
-Calibrates an input spectrum response with respect to another input response. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/calibrate)
+Calibrates an input spectrum response with respect to another input response. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/calibrate)
 
 * **baseline_correction**
 
-Calibrates an input response with respect to it's baseline. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/baseline_correction)
+Calibrates an input response with respect to it's baseline. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/baseline_correction)
 
 * **cutback**
 
-Extrapolate the losses of different input data files losses using the cutback method. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
+Extrapolate the losses of different input data files losses using the cutback method. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
 
 
 * **to_s_params**
 
-Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
+Converts the input data to generate a .dat file compatible with Lumerical INTERCONNECT's N-port s-parameter file format. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/cutback)
 
 * **download_response**
 
-Downloads a .mat response (Caverley's pyoptomip format) from a url and parses data into a variable. [Example](https://github.com/mustafacc/SiEPIC_Photonics_Package/tree/master/Examples/grab_mat_file)
+Downloads a .mat response (Caverley's pyoptomip format) from a url and parses data into a variable. [Example](https://github.com/v/SiEPIC_Photonics_Package/tree/master/Examples/grab_mat_file)
 
 ## Simulators and solvers
 * **EM_solver**
@@ -44,11 +44,11 @@ Microrings designer: model N-order rings system spectrum. [Example](https://gith
 
 * **MZI_simulator**
 
-Simulate the spectrum of a Mach-Zehnder interferometer with different input parameters.
+Simulate the spectrum of a Mach-Zehnder interferometer with different input parameters. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/mzi)
 
 * **Bragg_TMM**
 
-Model the response of a Bragg grating based on the transfer matrix method (TMM).
+Model the response of a Bragg grating based on the transfer matrix method (TMM). [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/bragg_tmm)
 
 * **Bragg_CMT**
 
