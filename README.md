@@ -2,7 +2,7 @@
 <b>Provided by SiEPIC Kits Ltd.</b>
 </p>
 <p align="center">
-<img src="Documentation/img/siepic_kits_logo2.png" width="40%">
+<img src="Documentation/img/siepic_kits_logo_0.png" width="40%">
 </p>
 <p align="center">
 <b><a href=http://siepic.com/>SiEPIC.com</a></b>
