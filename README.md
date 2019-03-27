@@ -56,7 +56,7 @@ Model the response of a Bragg grating based on the coupled-mode theory (CMT). [E
 
 * **Contra_DC**
 
-Model the response of a contra-directional coupler based on a coupled-mode theory (CMT) and transfer matrix method.
+Fully automated, Lumerical-assisted flow to model the response of a contra-directional coupler based on a coupled-mode theory (CMT) and transfer matrix method. [Example (run main.py)](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC)
 
 
 ## Lab equipment and testing stage scripts
