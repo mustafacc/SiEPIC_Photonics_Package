@@ -155,7 +155,7 @@ def contraDC_model(contraDC, simulation_setup, waveguides):
     
     n=np.arange(N_seg)
   
-#%% progress bar
+#%% a disgustingly hideous progress bar
     toolbar_width = lenghtLambda
     # setup toolbar
     sys.stdout.write("[%s]" % (" " * toolbar_width))

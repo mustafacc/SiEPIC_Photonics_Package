@@ -91,7 +91,7 @@ def run_FDTD(contraDC, simulation_setup):
     lumapi.evalScript(fdtd,"setnamed('::model','bus1_width',%s); setnamed('::model','bus1_delta',%s); setnamed('::model','bus2_width',%s); setnamed('::model','bus2_delta',%s);setnamed('::model','si_thickness',%s);"
                       % (contraDC.w1, contraDC.dW1, contraDC.w2, contraDC.dW2, contraDC.thick_si))
     
-    lumapi.evalScript(fdtd,"setnamed('::model','f1',%s); setnamed('::model','f2',%s)"
+    lumapi.evalScript(fdtd,"setnamed('::model','f1',%s); setnamed('::model','f2',%s);"
                       % (frequency_start, frequency_end))
     lumapi.evalScript(fdtd,"cd('%s');"%dir_path)
     lumapi.evalScript(fdtd,'kappa_bandstructure;')
