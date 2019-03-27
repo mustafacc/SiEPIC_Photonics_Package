@@ -155,6 +155,6 @@ def gen_sparams( contraDC, simulation):
     sio.savemat('ContraDC_sparams.mat', S)
     
     # create .dat file for circuit simulations
-    lumerical_tools.generate_dat(S)
+    lumerical_tools.generate_dat(contraDC, simulation, S)
     
-    return S,T24, T43
+    return S

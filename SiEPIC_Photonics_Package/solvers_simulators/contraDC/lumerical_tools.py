@@ -24,7 +24,7 @@ import lumapi
 
 #%% run MODE for dispersion analysis
 def run_mode(contraDC, simulation_setup):
-    mode = lumapi.open('mode')#,hide=True)
+    mode = lumapi.open('mode')
     
     # feed parameters into model
     lumapi.evalScript(mode,"gap = %s; width_1 = %s; width_2 = %s; thick_Si = %s; period = %s;" 
@@ -105,5 +105,18 @@ def run_FDTD(contraDC, simulation_setup):
     return [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra]
 
 #%% run MODE to generate S-parameters .dat file
-def generate_dat( S_Matrix ):
+def generate_dat( contraDC, simulation_setup, S_Matrix ):
+    mode = lumapi.open('mode')
+    
+    # feed polarization into model
+    if contraDC.pol == 'TE':
+        lumapi.evalScript(mode,"mode_label = 'TE'; mode_ID = '1';")
+    elif contraDC.pol == 'TM':
+        lumapi.evalScript(mode,"mode_label = 'TM'; mode_ID = '2';")
+        
+    # run write sparams script
+    lumapi.evalScript(mode,"cd('%s');"%dir_path)
+    lumapi.evalScript(mode,'write_sparams;')
+    
+    lumapi.close(mode)
     return

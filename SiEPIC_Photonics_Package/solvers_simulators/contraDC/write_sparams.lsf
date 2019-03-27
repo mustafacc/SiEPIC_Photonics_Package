@@ -4,8 +4,8 @@ lambda = lambda*1e-9;
 f = transpose(c/lambda);
 
 
-mode_label = "TE";
-mode_ID = "1";
+#mode_label = "TE";
+#mode_ID = "1";
 sfile = 'ContraDC_sparams.dat';
 
 S11 = transpose(S11);
