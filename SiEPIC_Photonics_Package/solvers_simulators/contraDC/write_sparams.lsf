@@ -1,4 +1,4 @@
-clear;
+#clear;
 matlabload('ContraDC_sparams.dat');
 lambda = lambda*1e-9;
 f = transpose(c/lambda);

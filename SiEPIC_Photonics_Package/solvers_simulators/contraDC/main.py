@@ -20,7 +20,7 @@ class contra_DC():
         self.gap = 100e-9
         self.period = 318e-9
         self.N = 1000
-
+ 
         self.thick_si = 220e-9
         
         self.slab = False
