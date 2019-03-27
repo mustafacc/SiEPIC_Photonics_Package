@@ -54,7 +54,7 @@ def contraDC_model(contraDC, simulation_setup, waveguides):
     ApoFunc=np.exp(-np.linspace(0,1,num=1000)**2)     #Function used for apodization (window function)
 
     mirror = False                #makes the apodization function symetrical
-    N_seg = 50                   #Number of flat steps in the coupling profile
+    N_seg = 100                   #Number of flat steps in the coupling profile
     
     rch=0                        #random chirping, maximal fraction of index randomly changing each segment
     lch=0                         #linear chirp across the length of the device

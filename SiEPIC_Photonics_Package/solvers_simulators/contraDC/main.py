@@ -28,14 +28,16 @@ class contra_DC():
         
         self.sinusoidal = False
         
-        self.apodization = 10
+        self.apodization = 2
 
-        #behavioral parameters (leave as default if you wish the script to calculate it based on bandstructure)
+        #behavioral parameters 
         self.pol = 'TE' # TE or TM
         self.alpha = 10
+        
+        #leave kappas as default if you wish the script to calculate it based on bandstructure
         self.kappa_contra = 30000 
-        self.kappa_self1 = 300
-        self.kappa_self2 = 300
+        self.kappa_self1 = 3000
+        self.kappa_self2 = 3000
 
     def results(self, *args):
         self.E_thru = 0

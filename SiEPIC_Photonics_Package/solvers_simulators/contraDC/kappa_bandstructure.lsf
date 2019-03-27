@@ -7,7 +7,7 @@
 #       
 clear;
 closeall;
-kx1 = 0.485;
+kx1 = 0.49;
 kx2 = 0.5;
 
 runsweep('bandstructure');
@@ -19,11 +19,11 @@ lambda = spectrum.lambda;
 kx1_data = fs(:,1);
 kx2_data = fs(:,2);
 
-kx1_peaks = findpeaks(kx1_data,4);
-kx2_peaks = findpeaks(kx2_data,4);
+kx1_peaks = findpeaks(kx1_data,4); kx1_peaks = sort(kx1_peaks);
+kx2_peaks = findpeaks(kx2_data,4); kx2_peaks = sort(kx2_peaks);
 
-kx1_lambdas = [lambda(kx1_peaks(1)), lambda(kx1_peaks(2))]; kx1_lambdas = sort(kx1_lambdas);
-kx2_lambdas = [lambda(kx2_peaks(1)), lambda(kx2_peaks(2))]; kx2_lambdas = sort(kx2_lambdas);
+kx1_lambdas = [lambda(kx1_peaks(2)), lambda(kx1_peaks(3))]; kx1_lambdas = sort(kx1_lambdas);
+kx2_lambdas = [lambda(kx2_peaks(2)), lambda(kx2_peaks(3))]; kx2_lambdas = sort(kx2_lambdas);
 
 m1 = (kx1-kx2)/(kx1_lambdas(1)-kx2_lambdas(1));
 m2 = (kx2-kx1)/(kx2_lambdas(2)-kx1_lambdas(2));
@@ -37,6 +37,6 @@ kx0 = m1*(lambda0-kx1_lambdas(1))+kx1;
 #kx0 = a*((a*kx1_lambdas(1)-b*kx1_lambdas(2))/(a-b)-kx1_lambdas(1))+kx1;
 
 setnamed('::model','kx',kx0);
-clear;
+#clear;
 run;
 delta_lambda = getresult('bandstructure','delta_lambda');

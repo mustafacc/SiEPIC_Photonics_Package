@@ -27,10 +27,12 @@ def run_mode(contraDC, simulation_setup):
     mode = lumapi.open('mode')
     
     # feed parameters into model
-    lumapi.evalScript(mode,"gap = %s; width_1 = %s; width_2 = %s; thick_Si = %s; period = %s;" 
+    command = "gap = %s; width_1 = %s; width_2 = %s; thick_Si = %s; period = %s;" 
+    lumapi.evalScript(mode, command
                       % (contraDC.gap, contraDC.w1, contraDC.w2, contraDC.thick_si, contraDC.period))
     
-    lumapi.evalScript(mode,"wavelength = %s; wavelength_stop = %s;" 
+    command = "wavelength = %s; wavelength_stop = %s;" 
+    lumapi.evalScript(mode,"wavelength = %s; wavelength_stop = %s;"
                       % (simulation_setup.lambda_start, simulation_setup.lambda_end))
     
     if contraDC.pol == 'TE':
@@ -119,4 +121,35 @@ def generate_dat( contraDC, simulation_setup, S_Matrix ):
     lumapi.evalScript(mode,'write_sparams;')
     
     lumapi.close(mode)
+    
+    run_INTC()
+    return
+
+#%% run INTERCONNECT with compact model loaded
+def run_INTC():
+    intc = lumapi.open('interconnect')
+    
+    svg_file = "contraDC.svg"
+    sparam_file = "ContraDC_sparams.dat"
+    command ='cd("%s");'%dir_path
+    command += 'switchtodesign; new; deleteall; \n'
+    command +='addelement("Optical N Port S-Parameter"); createcompound; select("COMPOUND_1");\n'
+    command += 'component = "contraDC"; set("name",component); \n' 
+    command += 'seticon(component,"%s");\n' %(svg_file)
+    command += 'select(component+"::SPAR_1"); set("load from file", true);\n'
+    command += 'set("s parameters filename", "%s");\n' % (sparam_file)
+    command += 'set("load from file", false);\n'
+    command += 'set("passivity", "enforce");\n'
+    
+    command += 'addport(component, "%s", "Bidirectional", "Optical Signal", "%s",%s);\n' %("Port 1",'Left',0.25)
+    command += 'connect(component+"::RELAY_%s", "port", component+"::SPAR_1", "port %s");\n' % (1, 1)
+    command += 'addport(component, "%s", "Bidirectional", "Optical Signal", "%s",%s);\n' %("Port 2",'Left',0.75)
+    command += 'connect(component+"::RELAY_%s", "port", component+"::SPAR_1", "port %s");\n' % (2, 2)
+    command += 'addport(component, "%s", "Bidirectional", "Optical Signal", "%s",%s);\n' %("Port 3",'Right',0.25)
+    command += 'connect(component+"::RELAY_%s", "port", component+"::SPAR_1", "port %s");\n' % (3, 3)
+    command += 'addport(component, "%s", "Bidirectional", "Optical Signal", "%s",%s);\n' %("Port 4",'Right',0.75)
+    command += 'connect(component+"::RELAY_%s", "port", component+"::SPAR_1", "port %s");\n' % (4, 4)
+    
+    lumapi.evalScript(intc, command)
+    
     return
