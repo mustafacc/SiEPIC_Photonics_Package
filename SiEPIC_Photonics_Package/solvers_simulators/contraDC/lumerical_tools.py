@@ -23,7 +23,7 @@ else:
 import lumapi
 
 #%% run MODE for dispersion analysis
-def run_mode(contraDC, simulation_setup):
+def run_mode(contraDC, simulation_setup, close = True):
     mode = lumapi.open('mode')
     
     # feed parameters into model
@@ -62,12 +62,13 @@ def run_mode(contraDC, simulation_setup):
     lambda_self1 = lumapi.getVar(mode, 'self1_lambda')
     lambda_self2 = lumapi.getVar(mode, 'self2_lambda')
     
-    lumapi.close(mode)
+    if close == True:
+        lumapi.close(mode)
     
     return [neff_data, lambda_fit, ng_contra, ng1, ng2, lambda_self1, lambda_self2]
 
 #%% run MODE for EME simulation of device
-def run_EME(contraDC, simulation_setup):
+def run_EME(contraDC, simulation_setup, close = True):
     mode = lumapi.open('mode')
     
     projectname = 'ContraDC_EME'
@@ -103,12 +104,13 @@ def run_EME(contraDC, simulation_setup):
     delta_lambda_self1 = lumapi.getVar(mode,"delta_lambda_self1")
     delta_lambda_self2 = lumapi.getVar(mode,"delta_lambda_self2")
     
-    lumapi.close(mode)
+    if close == True:
+        lumapi.close(mode)
 
     return [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra]
 
 #%% run FDTD for bandstructure simulation of device
-def run_FDTD(contraDC, simulation_setup):
+def run_FDTD(contraDC, simulation_setup, close = True):
     c = 299792458           #[m/s]
     frequency_start = c/simulation_setup.lambda_end
     frequency_end = c/simulation_setup.lambda_start
@@ -139,12 +141,13 @@ def run_FDTD(contraDC, simulation_setup):
     delta_lambda_self1 = lumapi.getVar(fdtd,"delta_lambda_self1")
     delta_lambda_self2 = lumapi.getVar(fdtd,"delta_lambda_self2")
     
-    lumapi.close(fdtd)
+    if close == True:    
+        lumapi.close(fdtd)
     
     return [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra]
 
 #%% run MODE to generate S-parameters .dat file
-def generate_dat( contraDC, simulation_setup, S_Matrix ):
+def generate_dat( contraDC, simulation_setup, S_Matrix, close = True ):
     mode = lumapi.open('mode')
     
     # feed polarization into model
@@ -157,7 +160,8 @@ def generate_dat( contraDC, simulation_setup, S_Matrix ):
     lumapi.evalScript(mode,"cd('%s');"%dir_path)
     lumapi.evalScript(mode,'write_sparams;')
     
-    lumapi.close(mode)
+    if close == True:
+        lumapi.close(mode)
     
     run_INTC()
     return

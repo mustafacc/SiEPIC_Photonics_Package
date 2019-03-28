@@ -39,7 +39,7 @@ def swap_rows(arr, frm, to):
     return arr
     
 #%% the bread and butter
-def contraDC_model(contraDC, simulation_setup, waveguides):
+def contraDC_model(contraDC, simulation_setup, waveguides, plot = True):
     
     #%% System constants Constants
     c = 299792458           #[m/s]
@@ -134,11 +134,12 @@ def contraDC_model(contraDC, simulation_setup, waveguides):
 
     n_profile = np.linspace(0,N_seg,profile.size)
     profile=np.interp(n_apodization, n_profile, profile)
-
-    plt.figure(1)
-    plt.plot(zaxis*1e6, profile)
-    plt.ylabel('Profile (normalized)')
-    plt.xlabel('Length (um)')
+    
+    if plot == True:
+        plt.figure(1)
+        plt.plot(zaxis*1e6, profile)
+        plt.ylabel('Profile (normalized)')
+        plt.xlabel('Length (um)')
     
     kappaMin = contraDC.kappa_contra*profile[0]
     kappaMax = contraDC.kappa_contra

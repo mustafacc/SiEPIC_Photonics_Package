@@ -82,7 +82,7 @@ def performance( contraDC, simulation, plot = True):
 # T-parameter conversion with symmetry extension. IEEE Transactions on 
 # Microwave Theory and Techniques, 56(11):2493?2504, 2008.
 
-def gen_sparams( contraDC, simulation):
+def gen_sparams( contraDC, simulation, run_INTC = True):
     T = contraDC.TransferMatrix
     lambda0 = contraDC.wavelength*1e9
     f =  299792458/lambda0
