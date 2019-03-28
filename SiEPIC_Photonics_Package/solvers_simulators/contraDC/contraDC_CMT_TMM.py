@@ -39,7 +39,7 @@ def swap_rows(arr, frm, to):
     return arr
     
 #%% the bread and butter
-def contraDC_model(contraDC, simulation_setup, waveguides, plot = True):
+def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
     
     #%% System constants Constants
     c = 299792458           #[m/s]
@@ -134,13 +134,13 @@ def contraDC_model(contraDC, simulation_setup, waveguides, plot = True):
 
     n_profile = np.linspace(0,N_seg,profile.size)
     profile=np.interp(n_apodization, n_profile, profile)
-    
+
     if plot == True:
         plt.figure(1)
         plt.plot(zaxis*1e6, profile)
         plt.ylabel('Profile (normalized)')
         plt.xlabel('Length (um)')
-    
+        
     kappaMin = contraDC.kappa_contra*profile[0]
     kappaMax = contraDC.kappa_contra
     
@@ -156,17 +156,19 @@ def contraDC_model(contraDC, simulation_setup, waveguides, plot = True):
     
     n=np.arange(N_seg)
   
-#%% a disgustingly hideous progress bar
-    toolbar_width = lenghtLambda
-    # setup toolbar
-    sys.stdout.write("[%s]" % (" " * toolbar_width))
-    sys.stdout.flush()
-    sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
-
+#%% Beautiful Progress Bar
+    #https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
+    #Thank Greenstick.
+    
+    # A List of Items
+    progressbar_width = lenghtLambda
+    # Initial call to print 0% progress
+    printProgressBar(0, progressbar_width, prefix = 'Progress:', suffix = 'Complete', length = 50)
+            
     for ii in range(lenghtLambda):
-        sys.stdout.write("-")
-        sys.stdout.flush()
-        
+        #Update Bar
+        printProgressBar(ii + 1, progressbar_width, prefix = 'Progress:', suffix = 'Complete', length = 50)
+
         randomChirp = np.zeros((1,N_seg))
         chirpWL = chirpDev + randomChirp 
         
@@ -237,3 +239,24 @@ def contraDC_model(contraDC, simulation_setup, waveguides, plot = True):
         contraDC.TransferMatrix = LeftRightTransferMatrix
         
     return contraDC
+
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
