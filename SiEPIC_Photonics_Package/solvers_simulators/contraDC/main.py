@@ -5,7 +5,7 @@
     Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
     SiEPIC Kits Ltd. 2019     ; University of British Columbia
 
-    """
+"""
 
 import dispersion_analysis, contraDC_CMT_TMM, analysis
 
@@ -64,7 +64,7 @@ simulation = simulation()
 
 #%% main program
 [waveguides, simulation] = dispersion_analysis.phaseMatch_analysis(device, simulation)
-#device = dispersion_analysis.kappa_analysis(device, simulation, waveguides)
+device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME')
 device = contraDC_CMT_TMM.contraDC_model(device, simulation, waveguides)
 
 #%% analysis and export parameters

@@ -68,7 +68,44 @@ def run_mode(contraDC, simulation_setup):
 
 #%% run MODE for EME simulation of device
 def run_EME(contraDC, simulation_setup):
-    return
+    mode = lumapi.open('mode')
+    
+    projectname = 'ContraDC_EME'
+    filename = 'ContraDC_EMEscript'
+    
+    command ='cd("%s");'%dir_path
+    command += 'min_wavelength=%s;'%simulation_setup.lambda_start
+    command += 'max_wavelength=%s;'%simulation_setup.lambda_end
+    
+    command += 'grating_period=%s;'%contraDC.period
+    command += 'Wa=%s;'%contraDC.w1
+    command += 'Wb=%s;'%contraDC.w2
+    command += 'dWa=%s;'%contraDC.dW1
+    command += 'dWb=%s;'%contraDC.dW2
+    command += 'gap=%s;'%contraDC.gap
+    command += 'number_of_periods=%s;'%contraDC.N
+    
+    command += 'wl_ref = %s;'%simulation_setup.central_lambda
+    
+    if contraDC.pol == 'TE':
+        command += "pol='TE';"
+    else:
+        command += "pol='TM';"
+        
+    command += "load('%s');"%projectname
+    command += '%s;'%filename
+    
+    lumapi.evalScript(mode, command)
+    
+    delta_lambda_contra = lumapi.getVar(mode,"delta_lambda")
+    lambda_contra = lumapi.getVar(mode,"lambda0")
+    
+    delta_lambda_self1 = lumapi.getVar(mode,"delta_lambda_self1")
+    delta_lambda_self2 = lumapi.getVar(mode,"delta_lambda_self2")
+    
+    lumapi.close(mode)
+
+    return [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra]
 
 #%% run FDTD for bandstructure simulation of device
 def run_FDTD(contraDC, simulation_setup):

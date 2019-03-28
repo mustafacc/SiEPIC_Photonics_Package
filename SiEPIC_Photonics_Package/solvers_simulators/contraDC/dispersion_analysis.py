@@ -58,17 +58,21 @@ def get_kappa(delta_lambda, lambda0, ng):
     kappa = np.pi*ng*delta_lambda/(lambda0**2)
     return kappa
 
-def kappa_analysis(contraDC, simulation_setup, waveguides):
+def kappa_analysis(contraDC, simulation_setup, waveguides, sim_type = 'FDTD'):
+    
     ng_contra = waveguides[4]
     ng1 = waveguides[5]
     ng2 = waveguides[6]
     lambda_self1 = waveguides[7]
     lambda_self2 = waveguides[8]
-    
-    [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra] = lumerical_tools.run_FDTD(contraDC, simulation_setup)
-    
+        
+    if sim_type == 'FDTD':
+        [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra] = lumerical_tools.run_FDTD(contraDC, simulation_setup)
+        
+    else:
+        [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra] = lumerical_tools.run_EME(contraDC, simulation_setup)
+        
     contraDC.kappa_contra = get_kappa(delta_lambda_contra, lambda_contra, ng_contra)
     contraDC.kappa_self1 = get_kappa(delta_lambda_self1, lambda_self1, ng1)
-    contraDC.kappa_self2 = get_kappa(delta_lambda_self2, lambda_self2, ng2)
-    
+    contraDC.kappa_self2 = get_kappa(delta_lambda_self2, lambda_self2, ng2)        
     return contraDC

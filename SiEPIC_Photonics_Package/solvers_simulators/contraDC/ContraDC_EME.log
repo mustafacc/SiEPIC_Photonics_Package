@@ -1,0 +1,68 @@
+MODE Solutions Version 7.13.1854 (Windows 64bit)
+ expires (month/day/year): 12/11/2023
+using config file: C:/Users/musta/AppData/Roaming/Lumerical/MODE Solutions.ini
+license host: <a href=http://photonics.ece.ubc.ca:8095>photonics.ece.ubc.ca:8095</a>
+current time: Thu Mar 28 11:48:12 2019
+Running on host: ece-cdw-nj04
+Running lms file: C:\Program Files\Lumerical\MODE\bin\eme-engine-msmpi.exe -t 8 -remote C:/Users/musta/Documents/GitHub/SiEPIC_Photonics_Package/SiEPIC_Photonics_Package/solvers_simulators/contraDC/ContraDC_EME.lms
+Running MODE Simulation
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0.015625 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0.125 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0.09375 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 1 x 202 x 103
+Refined 0 mesh cells (0%)
+Completed meshing!
+Meshing complete in 0.125 seconds of CPU time
