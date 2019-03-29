@@ -30,10 +30,12 @@ def switchTop( P ):
     
     return H
 
+# Swap columns of a given array
 def swap_cols(arr, frm, to):
     arr[:,[frm, to]] = arr[:,[to, frm]]
     return arr
 
+# Swap rows of a given array
 def swap_rows(arr, frm, to):
     arr[[frm, to],:] = arr[[to, frm],:]
     return arr
@@ -186,11 +188,11 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
             beta_del_2=beta_right*chirpWL.item(n)-math.pi/period-j*alpha_e/2
 
             # S1 = Matrix of propagation in each guide & direction
-            S_1=[ [j*beta_del_1.item(ii), 0, 0, 0], [0, j*beta_del_2.item(ii), 0, 0],
+            S_1=[  [j*beta_del_1.item(ii), 0, 0, 0], [0, j*beta_del_2.item(ii), 0, 0],
                    [0, 0, -j*beta_del_1.item(ii), 0],[0, 0, 0, -j*beta_del_2.item(ii)]]
 
             # S2 = transfert matrix
-            S_2= [[-j*beta_del_1.item(ii),  0,  -j*kappa_11*np.exp(j*2*beta_del_1.item(ii)*L_0),  -j*kappa_12*np.exp(j*(beta_del_1.item(ii)+beta_del_2.item(ii))*L_0)],
+            S_2=  [[-j*beta_del_1.item(ii),  0,  -j*kappa_11*np.exp(j*2*beta_del_1.item(ii)*L_0),  -j*kappa_12*np.exp(j*(beta_del_1.item(ii)+beta_del_2.item(ii))*L_0)],
                    [0,  -j*beta_del_2.item(ii),  -j*kappa_12*np.exp(j*(beta_del_1.item(ii)+beta_del_2.item(ii))*L_0),  -j*kappa_22*np.exp(j*2*beta_del_2.item(ii)*L_0)],
                    [j*np.conj(kappa_11)*np.exp(-j*2*beta_del_1.item(ii)*L_0),  j*np.conj(kappa_12)*np.exp(-j*(beta_del_1.item(ii)+beta_del_2.item(ii))*L_0),  j*beta_del_1.item(ii),  0],
                    [j*np.conj(kappa_12)*np.exp(-j*(beta_del_1.item(ii)+beta_del_2.item(ii))*L_0),  j*np.conj(kappa_22)*np.exp(-j*2*beta_del_2.item(ii)*L_0),  0,  j*beta_del_2.item(ii)]]
