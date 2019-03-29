@@ -73,9 +73,45 @@ def group_delay( contraDC, simulation, plot = True):
         
     return [thruGroupDelay, dropGroupDelay]
 
-#%% find bandwidths of response
-def performance( contraDC, simulation, plot = True):
-    return
+#%% bandwidth analysis
+# find nearest index to value in a numpy array
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+# find bandwidth of a given response
+def bandwidth( response, wavelength, limit):
+    
+    center_index = find_nearest( response, max(response))
+    isInBand = response>max(response) - limit
+
+    leftBound = center_index
+
+    while isInBand[leftBound] == 1:
+        leftBound = leftBound-1
+
+    rightBound=center_index
+
+    while isInBand[rightBound] == 1:
+        rightBound = rightBound+1
+
+    bandwidth = wavelength[rightBound] - wavelength[leftBound]
+    
+    return bandwidth
+
+# find performance of the device
+def performance( S ):
+    #find 3 dB bandwidth of drop port
+    bw_3dB = bandwidth( 10*np.log10(np.abs(S['S21'])**2), S['lambda'],  3)
+    #find 20 dB bandwidth of drop port
+    bw_20dB = bandwidth( 10*np.log10(np.abs(S['S21'])**2), S['lambda'],  20)
+    
+    print("######## Contra-DC Analysis ########")
+    print("3 dB bandwidth = %s nm"%bw_3dB)
+    print("20 dB bandwidth = %s nm"%bw_20dB)
+    
+    return [bw_3dB, bw_20dB]
 
 #%% generate S-parameters
 # Source: J. Frei, X.-D. Cai, and S. Muller. Multiport s-parameter and 

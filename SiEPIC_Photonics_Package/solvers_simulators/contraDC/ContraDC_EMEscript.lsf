@@ -84,7 +84,7 @@ center_index = find(drop,max(drop));
 lambda0 = S.wavelength(center_index);
 
 
-isInBand = drop>max(drop) - 3;
+isInBand = drop>max(drop) - 20;
 leftBound = center_index;
 
 for(0; isInBand(leftBound)==1; 0) {
@@ -106,7 +106,7 @@ drop = 10*log10(abs(S.s11)^2);
 tol = 0.001;
 center_index = find(drop,max(drop));
 
-isInBand = drop>max(drop) - 3;
+isInBand = drop>max(drop) - 20;
 leftBound = center_index;
 
 for(0; isInBand(leftBound)==1; 0) {
@@ -129,7 +129,7 @@ drop = 10*log10(abs(S.s22)^2);
 tol = 0.001;
 center_index = find(drop,max(drop));
 
-isInBand = drop>max(drop) - 3;
+isInBand = drop>max(drop) - 20;
 leftBound = center_index;
 
 for(0; isInBand(leftBound)==1; 0) {
