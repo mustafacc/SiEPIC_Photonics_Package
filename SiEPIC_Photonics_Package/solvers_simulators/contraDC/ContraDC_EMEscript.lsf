@@ -11,20 +11,20 @@ switchtolayout;
 groupscope("::model");
 
 # Frequency sweep parameters
-number_of_plot_points=1000;
-min_wavelength=1.5e-6;
-max_wavelength=1.6e-6;
+#number_of_plot_points=1000;
+#min_wavelength=1.5e-6;
+#max_wavelength=1.6e-6;
 
 # Grating parameters
-grating_period = 318e-9;
-number_of_periods=500;
-Wa = 560e-9;
-dWa = 12e-9;
-Wb = 440e-9;
-dWb = 24e-9;
-gap = 100e-9;
-wl_ref = 1550e-9;  
-pol = 'TE';
+#grating_period = 318e-9;
+#number_of_periods=500;
+#Wa = 560e-9;
+#dWa = 12e-9;
+#Wb = 440e-9;
+#dWb = 24e-9;
+#gap = 100e-9;
+#wl_ref = 1550e-9;  
+#pol = 'TE';
 
 # Set contra DC object parameters
 closeall;
