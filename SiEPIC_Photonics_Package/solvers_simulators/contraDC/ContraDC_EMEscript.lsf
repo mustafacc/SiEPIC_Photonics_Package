@@ -12,19 +12,19 @@ groupscope("::model");
 
 # Frequency sweep parameters
 number_of_plot_points=1000;
-#min_wavelength=1.5e-6;
-#max_wavelength=1.6e-6;
+min_wavelength=1.5e-6;
+max_wavelength=1.6e-6;
 
 # Grating parameters
-#grating_period = 318e-9;
-#number_of_periods=500;
-#Wa = 560e-9;
-#dWa = 12e-9;
-#Wb = 440e-9;
-#dWb = 24e-9;
-#gap = 100e-9;
-#wl_ref = 1550e-9;  
-#pol = 'TE';
+grating_period = 318e-9;
+number_of_periods=500;
+Wa = 560e-9;
+dWa = 12e-9;
+Wb = 440e-9;
+dWb = 24e-9;
+gap = 100e-9;
+wl_ref = 1550e-9;  
+pol = 'TE';
 
 # Set contra DC object parameters
 closeall;
@@ -83,9 +83,63 @@ tol = 0.001;
 center_index = find(drop,max(drop));
 lambda0 = S.wavelength(center_index);
 
-#isInBand = drop>max(drop) - 3;
-#leftBound = center_index;
-delta_lambda = 9e-9;
-delta_lambda_self1 = 3e-9;
-delta_lambda_self2 = 2e-9;
 
+isInBand = drop>max(drop) - 3;
+leftBound = center_index;
+
+for(0; isInBand(leftBound)==1; 0) {
+    leftBound = leftBound-1;
+}
+
+rightBound=center_index;
+
+for(0; isInBand(rightBound)==1; 0) {
+    rightBound = rightBound+1;
+}
+
+delta_lambda = S.wavelength(rightBound)-S.wavelength(leftBound);
+
+# analysis: find bandwidth of self-bragg response
+drop = 10*log10(abs(S.s11)^2);
+# find center wavelength and index
+# solve for self coupling wavelength
+tol = 0.001;
+center_index = find(drop,max(drop));
+
+isInBand = drop>max(drop) - 3;
+leftBound = center_index;
+
+for(0; isInBand(leftBound)==1; 0) {
+    leftBound = leftBound-1;
+}
+
+rightBound=center_index;
+
+for(0; isInBand(rightBound)==1; 0) {
+    rightBound = rightBound+1;
+}
+
+delta_lambda_self1 = S.wavelength(rightBound)-S.wavelength(leftBound);
+
+
+# analysis: find bandwidth of self-bragg response
+drop = 10*log10(abs(S.s22)^2);
+# find center wavelength and index
+# solve for self coupling wavelength
+tol = 0.001;
+center_index = find(drop,max(drop));
+
+isInBand = drop>max(drop) - 3;
+leftBound = center_index;
+
+for(0; isInBand(leftBound)==1; 0) {
+    leftBound = leftBound-1;
+}
+
+rightBound=center_index;
+
+for(0; isInBand(rightBound)==1; 0) {
+    rightBound = rightBound+1;
+}
+
+delta_lambda_self2 = S.wavelength(rightBound)-S.wavelength(leftBound);
