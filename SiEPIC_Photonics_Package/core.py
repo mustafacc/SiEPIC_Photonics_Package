@@ -38,7 +38,7 @@ def calibrate( input_response, reference_response):
     
     return [power_corrected, power_calib_fit]
 
-#%% baseline_correction function
+#%% baseline_correction function (useful to normalize and calibrate periodic responses)
 def baseline_correction( input_response ):
     #baseline_correction( input_response ): baseline correction function to flatten a response with respect to it self
     # input list format: input_response[wavelength (nm), power (dBm)]
@@ -55,6 +55,12 @@ def baseline_correction( input_response ):
     power_corrected = power_corrected + max(power_baseline) -max(power)
     
     return [power_corrected, power_baseline]
+
+#%% calibrate a response based on an envelope response (useful for non-periodic responses, i.e. Bragg)
+def calibrate_envelope( input_response, reference_response):
+    # 1-pick points on the reference response that create an envelope fit
+    # 2-call calibrate function with envelope fit as a reference response
+    return
 
 #%% cutback function
 def cutback( input_data_response, input_data_count, wavelength):
