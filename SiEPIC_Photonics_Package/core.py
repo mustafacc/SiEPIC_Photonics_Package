@@ -85,7 +85,6 @@ def calibrate_envelope( input_response, reference_response):
             power_ref.append(power[cursor*step])
             wavelength_ref.append(wavelength[cursor*step])
     
-    print(wavelength_ref)
     pfit_ref = numpy.polyfit(wavelength_ref-numpy.mean(wavelength_ref), power_ref, fitOrder)
     powerfit_ref = numpy.polyval(pfit_ref, wavelength-numpy.mean(wavelength))
     
