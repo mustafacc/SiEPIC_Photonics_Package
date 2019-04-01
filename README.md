@@ -18,11 +18,11 @@ Calibrates an input spectrum response with respect to another input response. [E
 
 * **calibrate_envelope**
 
-Calibrates an input spectrum response with respect to the envelope of another input response. This is useful for calibrating non-periodic responses using another non-periodic response. i.e. calibrating the reflection port spectrum of a Bragg response using its through port spectrum.
+Calibrates an input spectrum response with respect to the envelope of another input response. This is useful for calibrating non-periodic responses using another non-periodic response. i.e. calibrating the reflection port spectrum of a Bragg response using its through port spectrum. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/calibrate_envelope)
 
 * **baseline_correction**
 
-Calibrates an input response with respect to it's baseline. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/baseline_correction)
+Calibrates an input response with respect to it's baseline. This is useful for calibrating periodic responses, using their own response as a reference, i.e. a ring resonator response or a mach-zehnder interferometer response. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/Examples/baseline_correction)
 
 * **cutback**
 
