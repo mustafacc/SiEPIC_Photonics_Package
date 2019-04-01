@@ -58,9 +58,44 @@ def baseline_correction( input_response ):
 
 #%% calibrate a response based on an envelope response (useful for non-periodic responses, i.e. Bragg)
 def calibrate_envelope( input_response, reference_response):
-    # 1-pick points on the reference response that create an envelope fit
-    # 2-call calibrate function with envelope fit as a reference response
-    return
+    # step 1-pick points on the reference response that create an envelope fit
+    # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
+    fitOrder = 5
+    wavelength = reference_response[0]
+    power = reference_response[1]
+    
+    wavelength_input = input_response[0]
+    power_input = input_response[1]
+    
+    seg = 25
+    step = int(numpy.size(power)/seg)
+    
+    difference_tol = 5
+    
+    power_ref = []
+    wavelength_ref = []
+    for i in range(seg):
+        cursor = i
+        point_initial = power[cursor*step]
+        point_next = power[step*(cursor+1)]
+        
+        if abs(point_initial - point_next) < difference_tol:
+            if cursor != seg-1:
+                cursor = cursor+1
+            power_ref.append(power[cursor*step])
+            wavelength_ref.append(wavelength[cursor*step])
+    
+    print(wavelength_ref)
+    pfit_ref = numpy.polyfit(wavelength_ref-numpy.mean(wavelength_ref), power_ref, fitOrder)
+    powerfit_ref = numpy.polyval(pfit_ref, wavelength-numpy.mean(wavelength))
+    
+    pfit_input = numpy.polyfit(wavelength_input-numpy.mean(wavelength_input), power_input, fitOrder)
+    powerfit_input = numpy.polyval(pfit_input, wavelength_input-numpy.mean(wavelength_input))
+    
+    # step 2-call calibrate input with envelope fit as a reference response
+    power_input_calibrated = power_input - powerfit_ref
+    
+    return [power_input_calibrated, powerfit_ref]
 
 #%% cutback function
 def cutback( input_data_response, input_data_count, wavelength):
