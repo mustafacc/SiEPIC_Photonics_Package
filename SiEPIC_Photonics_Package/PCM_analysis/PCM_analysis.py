@@ -25,8 +25,8 @@ import requests, zipfile, matplotlib
 #%%
 def PCM_analysis( URL, pol, download = True ):
     # create new directory for storing downloaded PCM data, download and unzip all the data
-    path = "download/"
-    file_name = 'experimental_data.zip'
+    path = 'download'+pol+'/'
+    file_name = 'experimental_data'+pol+'.zip'
     os.chdir(path)
     
     if download == True:
@@ -52,15 +52,18 @@ def PCM_analysis( URL, pol, download = True ):
             continue
         if filename.startswith("PCM_") == False:
             os.remove(filename)
-    print ("Data clean up complete, remove all .pdf and non PCM data. . . ")
+    print ("Data clean up complete, remove all .pdf and non PCM data. . .\n")
     
     # run all
     WGloss_straight(pol)
     WGloss_spiral(pol)
-    WGloss_SWG()
-    Bragg_sweep()
-    contraDC()
-    contraDCloss()
+    
+    # PCM structures that are only available to TE measurements
+    if pol == 'TE':
+        WGloss_SWG()
+        Bragg_sweep()
+        contraDC()
+        contraDCloss()
     
 #%%
 # analyze the losses of straight waveguides by cutback method
@@ -172,10 +175,60 @@ def WGloss_spiral(pol):
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
     return
-    return
 
 # analyze the losses of sub-wavelength waveguides by cutback method
 def WGloss_SWG():
+    # PCM structure ID
+    file_ID = 'PCM_SWG'
+    
+    # PCM structure lengths
+    length = [20, 800, 1600, 4800]
+    
+    # measurement port
+    PORT = 1
+     
+    # divide by 10000 to see result in dB/cm
+    length_cm = [i/10000 for i in length]
+    
+    input_data_response = []
+    for i in length:
+        for filename in os.listdir(os.getcwd()):
+            if filename.startswith(file_ID+str(i)) == True:
+                print(filename)
+                input_data_response.append( SiEPIC_PP.core.parse_response(filename,PORT) )
+    
+    #%% apply SiEPIC_PP cutback extraction function and plot
+    [insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = SiEPIC_PP.core.cutback( input_data_response, length_cm, 1550e-9 )
+
+    # plot all cutback structures responses
+    plt.figure(4)
+    wavelength = input_data_response[0][0]*1e9
+    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 20 um (tapers only)', color='blue')
+    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 800 um', color='black')
+    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 1600 um', color='green')
+    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4800 um', color='red')
+    plt.legend(loc=0)
+    plt.ylabel('Power (dBm)', color = 'black')
+    plt.xlabel('Wavelength (nm)', color = 'black')
+    plt.xlim(round(min(wavelength)),round(max(wavelength)))
+    plt.title("Raw measurement of cutback structures")
+    plt.savefig('WGloss_SWG'+'.pdf')
+    matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+    
+    # Insertion loss vs wavelength plot
+    plt.figure(5)
+    linspace = numpy.linspace(wavelength[0],wavelength[len(wavelength)-1], len(insertion_loss_fit))
+    fig1 = plt.plot(linspace,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
+    fig2 = plt.plot(linspace,insertion_loss_fit, label='Insertion loss (fit)', color='red')
+    plt.legend(loc=0)
+    plt.ylabel('Loss (dB/cm)', color = 'black')
+    plt.xlabel('Wavelength (nm)', color = 'black')
+    plt.setp(fig2, 'linewidth', 4.0)
+    plt.xlim(round(min(linspace)),round(max(linspace)))
+    plt.title("Insertion losses using the cut-back method")
+    plt.savefig('WGloss_SWG_fit'+'.pdf')
+    matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+
     return
 
 # analyze the bandwidth and central wavelength of Bragg gratings as a function of corrugation strength
@@ -190,7 +243,7 @@ def contraDC():
 def contraDCloss():
     return
 
-#%%
+#%% measurement URL and polarization
 URL = 'https://www.dropbox.com/sh/awlo2zj5h1o9zhk/AADN6PL5c-ToW31pXzfpKs84a?dl=1'
 pol = 'TE'
 
