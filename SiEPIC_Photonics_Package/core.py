@@ -11,6 +11,7 @@ Module:     Core functionalities of SiEPIC PP
 functions:
 
 calibrate( input_response, reference_response): response correction function to calibrate an input response with respect to a reference response
+calibrate_envelope( input_response, reference_response): response correction function to calibrate an input response with respect to the envelope of a reference response
 baseline_correction( input_response ): baseline correction function to flatten a response with respect to it self
 cutback( input_data_response, input_data_count, wavelength): extract insertion losses of a structure using cutback method
 to_s_params( input_data ):
@@ -147,6 +148,27 @@ def download_response ( url, port):
         f.write(r.content)
         
     data = scipy.io.loadmat(file_name)
+    
+    if( 'scanResults' in data ):
+        wavelength = data['scanResults'][0][port][0][:,0]
+        power = data['scanResults'][0][port][0][:,1]
+    elif( 'scandata' in data ):
+        wavelength = data['scandata'][0][0][0][:][0]
+        power = data['scandata'][0][0][1][:,port]
+    elif( 'wavelength' in data ):
+        wavelength = data['wavelength'][0][:]
+        power = data['power'][:,port][:]
+    
+    data = [wavelength,power]
+    return data
+
+#%% parse_response function (local files version)
+def parse_response ( filename, port):
+    # parse_response (filename, port): parses an input .mat response from a local file and parses data into array
+    # input: (.mat data download filename, port response) 
+    # outputs parsed data array [wavelength (m), power (dBm)]
+    # data is assumed to be from automated measurement scanResults or scandata format
+    data = scipy.io.loadmat(filename)
     
     if( 'scanResults' in data ):
         wavelength = data['scanResults'][0][port][0][:,0]
