@@ -101,7 +101,7 @@ def WGloss_straight(pol):
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.xlim(round(min(wavelength)),round(max(wavelength)))
-    plt.title("Raw measurement of cutback structures")
+    plt.title("Raw measurement of cutback structures (Straight waveguides)")
     plt.savefig('WGloss_straight_'+pol+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
     
@@ -115,7 +115,7 @@ def WGloss_straight(pol):
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.setp(fig2, 'linewidth', 4.0)
     plt.xlim(round(min(linspace)),round(max(linspace)))
-    plt.title("Insertion losses using the cut-back method")
+    plt.title("Insertion losses using the cut-back method (Straight waveguides)")
     plt.savefig('WGloss_straight_fit_'+pol+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
@@ -156,7 +156,7 @@ def WGloss_spiral(pol):
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.xlim(round(min(wavelength)),round(max(wavelength)))
-    plt.title("Raw measurement of cutback structures")
+    plt.title("Raw measurement of cutback structures (Spiral waveguides)")
     plt.savefig('WGloss_spiral_'+pol+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
     
@@ -170,7 +170,7 @@ def WGloss_spiral(pol):
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.setp(fig2, 'linewidth', 4.0)
     plt.xlim(round(min(linspace)),round(max(linspace)))
-    plt.title("Insertion losses using the cut-back method")
+    plt.title("Insertion losses using the cut-back method (Spiral waveguides)")
     plt.savefig('WGloss_spiral_fit_'+pol+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
@@ -211,7 +211,7 @@ def WGloss_SWG():
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.xlim(round(min(wavelength)),round(max(wavelength)))
-    plt.title("Raw measurement of cutback structures")
+    plt.title("Raw measurement of cutback structures (SWG waveguides)")
     plt.savefig('WGloss_SWG'+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
     
@@ -225,7 +225,7 @@ def WGloss_SWG():
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.setp(fig2, 'linewidth', 4.0)
     plt.xlim(round(min(linspace)),round(max(linspace)))
-    plt.title("Insertion losses using the cut-back method")
+    plt.title("Insertion losses using the cut-back method (SWG waveguides)")
     plt.savefig('WGloss_SWG_fit'+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
@@ -233,6 +233,16 @@ def WGloss_SWG():
 
 # analyze the bandwidth and central wavelength of Bragg gratings as a function of corrugation strength
 def Bragg_sweep():
+    # PCM structure ID
+    file_ID = 'PCM_PCMBraggDW'
+    
+    # PCM structure lengths
+    sweep = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
+    
+    # measurement port
+    PORT_thru = 1
+    PORT_drop = 0
+    
     return
 
 # analyze the spectrum of a contra-directional coupler, observe sidelobes and self-reflection
