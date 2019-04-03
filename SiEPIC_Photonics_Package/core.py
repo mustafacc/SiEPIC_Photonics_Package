@@ -61,30 +61,46 @@ def baseline_correction( input_response ):
 def calibrate_envelope( input_response, reference_response):
     # step 1-pick points on the reference response that create an envelope fit
     # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
-    fitOrder = 5
+    fitOrder = 4
     wavelength = reference_response[0]
     power = reference_response[1]
-    
+
     wavelength_input = input_response[0]
     power_input = input_response[1]
-    
-    seg = 25
+
+    seg = 35
     step = int(numpy.size(power)/seg)
-    
-    difference_tol = 5
-    
+
+    difference_tol = 3
+
     power_ref = []
     wavelength_ref = []
+    cursor_initial = 0
+    cursor_next = 1
     for i in range(seg):
-        cursor = i
-        point_initial = power[cursor*step]
-        point_next = power[step*(cursor+1)]
+
+        point_initial = power[cursor_initial*step]
+        point_next = power[step*(cursor_next)]
         
-        if abs(point_initial - point_next) < difference_tol:
-            if cursor != seg-1:
-                cursor = cursor+1
-            power_ref.append(power[cursor*step])
-            wavelength_ref.append(wavelength[cursor*step])
+        if abs(point_initial - point_next) < difference_tol:              
+            power_ref.append(power[cursor_initial*step])
+            wavelength_ref.append(wavelength[cursor_initial*step])
+            cursor_initial = cursor_initial+1
+            cursor_next = cursor_next+1
+        else:
+            while abs(point_initial - point_next) > difference_tol and (cursor_next+2)*step < numpy.size(power):
+                cursor_next = cursor_next+1
+                point_next = power[step*(cursor_next)]
+                
+            cursor_initial = cursor_next
+            cursor_next = cursor_next+1
+                
+
+        if cursor_next*step >= numpy.size(power):
+            break
+
+    print(wavelength_ref)
+    print(power_ref)
     
     pfit_ref = numpy.polyfit(wavelength_ref-numpy.mean(wavelength_ref), power_ref, fitOrder)
     powerfit_ref = numpy.polyval(pfit_ref, wavelength-numpy.mean(wavelength))
