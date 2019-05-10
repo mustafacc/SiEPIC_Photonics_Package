@@ -58,7 +58,7 @@ Model the response of a Bragg grating based on the transfer matrix method (TMM).
 
 Model the response of a Bragg grating based on the coupled-mode theory (CMT). [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/bragg_cmt)
 
-* **Contra_DC**
+* **[Contra_DC](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/blob/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC/Documentation/contraDC_Simulator.pdf)**
 
 Fully automated, Lumerical-assisted flow to model the response of a contra-directional coupler based on a coupled-mode theory (CMT) and transfer matrix method. [Example (run main.py)](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC)
 
