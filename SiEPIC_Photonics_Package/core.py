@@ -198,3 +198,40 @@ def parse_response ( filename, port):
     
     data = [wavelength,power]
     return data
+
+#%% bandwidth function
+# find nearest index to value in a numpy array
+def find_nearest(array, value):
+    array = numpy.asarray(array)
+    idx = (numpy.abs(array - value)).argmin()
+    return idx
+
+def bandwidth ( input_data_response, threshold = 3):
+    # bandwidth (filename, port): parses an input .mat response from a local file and parses data into array
+    # input list format: input_data_response (list) [wavelength (nm), power (dBm)]
+    #                    bandwidth threshold, default 3 dB
+    # output list format: [bandwidth of threshold, central wavelength]
+
+    wavelength = input_data_response[0]
+    response = input_data_response[1]
+    
+    center_index = find_nearest( response, max(response))
+    isInBand = response>max(response) - threshold
+
+    leftBound = center_index
+
+    while isInBand[leftBound] == 1:
+        leftBound = leftBound-1
+
+    rightBound=center_index
+
+    while isInBand[rightBound] == 1:
+        rightBound = rightBound+1
+
+    bandwidth = wavelength[rightBound] - wavelength[leftBound]
+    
+    central_wavelength = (wavelength[rightBound] + wavelength[leftBound])/2
+    
+    return [bandwidth, central_wavelength]
+    
+    
