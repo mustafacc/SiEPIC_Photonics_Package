@@ -11,6 +11,8 @@ reference: "Bragg grating based Fabry-Perot filters for characterizing silicon-o
 Y. Painchaud, Group IV Photonics, 2012
 
 Based on A. Mistry MATLAB implementation
+
+Test by Wei
 """
 #%% dependent packages
 import numpy as np
