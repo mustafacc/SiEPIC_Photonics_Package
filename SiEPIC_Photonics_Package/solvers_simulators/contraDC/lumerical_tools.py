@@ -8,10 +8,15 @@
             
 """
 #%% find lumapi 
-import sys, os
+import sys, os, platform
 
 # Lumerical Python API path on system
-lumapi_path = 'C:/Program Files/Lumerical/INTERCONNECT/api/python'
+
+if platform.system() == 'Windows':
+    lumapi_path = 'C:/Program Files/Lumerical/INTERCONNECT/api/python'
+else:
+    lumapi_path = '/Applications/Lumerical/FDTD\ Solutions/FDTD\ Solutions.app/Contents/API/Python/
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 if os.path.exists(os.path.join(lumapi_path,'lumapi.py')):
     print('Found lumapi path at' + ': ' +lumapi_path)
