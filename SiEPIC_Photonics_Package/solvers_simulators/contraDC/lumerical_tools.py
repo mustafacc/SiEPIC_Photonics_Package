@@ -15,7 +15,7 @@ import sys, os, platform
 if platform.system() == 'Windows':
     lumapi_path = 'C:/Program Files/Lumerical/INTERCONNECT/api/python'
 else:
-    lumapi_path = '/Applications/Lumerical/INTERCONNET/INTERCONNET.app/Contents/API/Python/
+    lumapi_path = '/Applications/Lumerical/INTERCONNET/INTERCONNET.app/Contents/API/Python/'
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 if os.path.exists(os.path.join(lumapi_path,'lumapi.py')):

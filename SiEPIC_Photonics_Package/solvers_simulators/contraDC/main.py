@@ -15,9 +15,9 @@ class contra_DC():
         # physical geometry parameters
         self.w1 = 560e-9
         self.w2 = 440e-9
-        self.dW1 = 48e-9
-        self.dW2 = 24e-9
-        self.gap = 100e-9
+        self.dW1 = 40e-9
+        self.dW2 = 20e-9
+        self.gap = 150e-9
         self.period = 318e-9
         self.N = 1000
  
@@ -36,8 +36,8 @@ class contra_DC():
         
         #leave kappas as default if you wish the script to calculate it based on bandstructure
         self.kappa_contra = 30000 
-        self.kappa_self1 = 3000
-        self.kappa_self2 = 3000
+        self.kappa_self1 = 2000
+        self.kappa_self2 = 2000
 
     def results(self, *args):
         self.E_thru = 0
@@ -64,7 +64,7 @@ simulation = simulation()
 
 #%% main program
 [waveguides, simulation] = dispersion_analysis.phaseMatch_analysis(device, simulation)
-device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
+#device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
 device = contraDC_CMT_TMM.contraDC_model(device, simulation, waveguides)
 
 #%% analysis and export parameters

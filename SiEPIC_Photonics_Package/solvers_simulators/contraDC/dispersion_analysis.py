@@ -73,6 +73,6 @@ def kappa_analysis(contraDC, simulation_setup, waveguides, sim_type = 'FDTD', cl
         [delta_lambda_contra, delta_lambda_self1, delta_lambda_self2, lambda_contra] = lumerical_tools.run_EME(contraDC, simulation_setup, close)
         
     contraDC.kappa_contra = get_kappa(delta_lambda_contra, lambda_contra, ng_contra)
-    contraDC.kappa_self1 = get_kappa(delta_lambda_self1, lambda_self1, ng1)
-    contraDC.kappa_self2 = get_kappa(delta_lambda_self2, lambda_self2, ng2)        
+    contraDC.kappa_self1 = get_kappa(delta_lambda_self1, lambda_self1, ng1)/10
+    contraDC.kappa_self2 = get_kappa(delta_lambda_self2, lambda_self2, ng2)/10     
     return contraDC
