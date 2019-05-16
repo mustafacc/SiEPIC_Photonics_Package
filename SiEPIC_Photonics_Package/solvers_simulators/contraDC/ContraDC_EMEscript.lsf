@@ -16,15 +16,15 @@ number_of_plot_points=1000;
 #max_wavelength=1.6e-6;
 
 # Grating parameters
-#grating_period = 318e-9;
-#number_of_periods=500;
+#grating_period = 430e-9;
+#number_of_periods=1000;
 #Wa = 560e-9;
-#dWa = 12e-9;
+#dWa = 24e-9;
 #Wb = 440e-9;
-#dWb = 24e-9;
-#gap = 100e-9;
+#dWb = 12e-9;
+#gap = 200e-9;
 #wl_ref = 1550e-9;  
-#pol = 'TE';
+#pol = 'TM';
 
 # Set contra DC object parameters
 closeall;
@@ -38,6 +38,15 @@ set("widthB",Wb);
         
 set("grating_period",grating_period);
 set("gap",gap);
+
+# set number of trial modes
+select('EME::Ports::port_1');
+set('mode selection', 'user select');
+seteigensolver('number of trial modes',4);
+
+select('EME::Ports::port_2');
+set('mode selection', 'user select');
+seteigensolver('number of trial modes',4);
 
 # Find modes of unperturbed system
 select("EME::Ports::port_1");
