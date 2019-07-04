@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 import requests, zipfile, matplotlib
 
 #%%
-def PCM_analysis( URL, pol, download = True ):
+def PCM_analysis( URL, pol, download = True, PORT = 1 ):
     # create new directory for storing downloaded PCM data, download and unzip all the data
     path = 'download'+pol+'/'
     file_name = 'experimental_data'+pol+'.zip'
@@ -55,28 +55,28 @@ def PCM_analysis( URL, pol, download = True ):
     print ("Data clean up complete, remove all .pdf and non PCM data. . .\n")
     
     # run all
-    WGloss_straight(pol)
-    WGloss_spiral(pol)
+    WGloss_straight(pol, PORT)
+    WGloss_spiral(pol, PORT)
     
     # PCM structures that are only available to TE measurements
     if pol == 'TE':
-        WGloss_SWG()
-        Bragg_sweep()
-        contraDC()
-        contraDCloss()
+        WGloss_SWG(PORT)
+        #Bragg_sweep(PORT)
+        #contraDC(PORT)
+        #contraDCloss(PORT)
     
 #%%
 # analyze the losses of straight waveguides by cutback method
-def WGloss_straight(pol):
+def WGloss_straight(pol, PORT):
     # PCM structure ID
     file_ID = 'PCM_PCM_StraightWGloss'
     
     # PCM structure lengths
-    length = [7418, 14618, 21818, 29018]
-    
-    # measurement port
-    PORT = 1
-     
+    if pol == 'TE':
+        length = [7418, 14618, 21818, 29018]
+    if pol == 'TM':
+        length = [10000, 17200, 24400, 31600]
+        
     # divide by 10000 to see result in dB/cm
     length_cm = [i/10000 for i in length]
     
@@ -122,15 +122,13 @@ def WGloss_straight(pol):
     return
 
 # analyze the losses of spiral waveguides by cutback method
-def WGloss_spiral(pol):
+def WGloss_spiral(pol, PORT):
     # PCM structure ID
     file_ID = 'PCM_PCM_SpiralWG'
     
     # PCM structure lengths
-    length = [0, 5733, 9429, 20613]
     
-    # measurement port
-    PORT = 1
+    length = [0, 5733, 9429, 20613]
      
     # divide by 10000 to see result in dB/cm
     length_cm = [i/10000 for i in length]
@@ -177,15 +175,12 @@ def WGloss_spiral(pol):
     return
 
 # analyze the losses of sub-wavelength waveguides by cutback method
-def WGloss_SWG():
+def WGloss_SWG(PORT):
     # PCM structure ID
     file_ID = 'PCM_SWG'
     
     # PCM structure lengths
-    length = [20, 800, 1600, 4800]
-    
-    # measurement port
-    PORT = 1
+    length = [0, 800, 1600, 4000, 9600 ]
      
     # divide by 10000 to see result in dB/cm
     length_cm = [i/10000 for i in length]
@@ -206,7 +201,8 @@ def WGloss_SWG():
     fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 20 um (tapers only)', color='blue')
     fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 800 um', color='black')
     fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 1600 um', color='green')
-    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4800 um', color='red')
+    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4000 um', color='red')
+    fig4 = plt.plot(wavelength,input_data_response[4][1], label='L = 9600 um', color='yellow')
     plt.legend(loc=0)
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
@@ -232,16 +228,13 @@ def WGloss_SWG():
     return
 
 # analyze the bandwidth and central wavelength of Bragg gratings as a function of corrugation strength
-def Bragg_sweep():
+def Bragg_sweep(PORT):
     # PCM structure ID
     file_ID = 'PCM_PCMBraggDW'
     
     # PCM structure lengths
     sweep = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
     
-    # measurement port
-    PORT_thru = 1
-    PORT_drop = 0
     
     return
 
@@ -254,7 +247,7 @@ def contraDCloss():
     return
 
 #%% measurement URL and polarization
-URL = 'https://www.dropbox.com/sh/awlo2zj5h1o9zhk/AADN6PL5c-ToW31pXzfpKs84a?dl=1'
+URL = 'https://www.dropbox.com/sh/ovwocr62bzt5q7d/AABlx3ptTsMlM4Ycepfu7_mxa?dl=1'
 pol = 'TE'
 
-PCM_analysis(URL, pol, download = False)
+PCM_analysis(URL, pol, download = False, PORT = 1)
