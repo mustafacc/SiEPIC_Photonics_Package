@@ -63,7 +63,7 @@ def PCM_analysis( URL, pol, download = True, PORT = 1 ):
         WGloss_SWG(PORT)
         #Bragg_sweep(PORT)
         #contraDC(PORT)
-        #contraDCloss(PORT)
+        contraDCloss(PORT)
     
 #%%
 # analyze the losses of straight waveguides by cutback method
@@ -93,10 +93,8 @@ def WGloss_straight(pol, PORT):
     # plot all cutback structures responses
     plt.figure(0)
     wavelength = input_data_response[0][0]*1e9
-    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 7418', color='blue')
-    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 14618 um', color='black')
-    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 21818 um', color='green')
-    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 29018 um', color='red')
+    for i in enumerate(length):
+        fig0 = plt.plot(wavelength,input_data_response[i[0]][1], label = 'L = '+str(length[i[0]])+' um')
     plt.legend(loc=0)
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
@@ -146,10 +144,8 @@ def WGloss_spiral(pol, PORT):
     # plot all cutback structures responses
     plt.figure(2)
     wavelength = input_data_response[0][0]*1e9
-    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 0', color='blue')
-    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 5733 um', color='black')
-    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 9429 um', color='green')
-    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 20613 um', color='red')
+    for i in enumerate(length):
+        fig1 = plt.plot(wavelength,input_data_response[i[0]][1], label = 'L = '+str(length[i[0]])+' um')
     plt.legend(loc=0)
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
@@ -198,11 +194,8 @@ def WGloss_SWG(PORT):
     # plot all cutback structures responses
     plt.figure(4)
     wavelength = input_data_response[0][0]*1e9
-    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 20 um (tapers only)', color='blue')
-    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 800 um', color='black')
-    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 1600 um', color='green')
-    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4000 um', color='red')
-    fig4 = plt.plot(wavelength,input_data_response[4][1], label='L = 9600 um', color='yellow')
+    for i in enumerate(length):
+        fig2 = plt.plot(wavelength,input_data_response[i[0]][1], label = 'L = '+str(length[i[0]])+' um')
     plt.legend(loc=0)
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
@@ -242,12 +235,54 @@ def Bragg_sweep(PORT):
 def contraDC():
     return
 
-# analyze the losses of contra-directional coupler (drop port) by cutback method
-def contraDCloss():
+#%% analyze the losses of contra-directional coupler (drop port) by cutback method
+def contraDCloss(PORT):
+    # PCM structure ID
+    file_ID = 'PCM_PCMcontraDCcascaded'
+    
+    # PCM structure lengths
+    length = [3, 5, 8, 11]
+ 
+    if PORT == 1:
+        PORT_REF = 0
+    else:
+        PORT_REF = 1
+        
+    # import the data
+    input_data_response = []
+    ref_data_response = []
+    calibrated_data_response = []
+    for i in length:
+        for filename in os.listdir(os.getcwd()):
+            if filename.startswith(file_ID+str(i)) == True:
+                print(filename)
+                input_data_response.append( SiEPIC_PP.core.parse_response(filename,PORT) )
+                ref_data_response.append( SiEPIC_PP.core.parse_response(filename,PORT_REF) )
+                # Calibrate the data with respect to the throguh port using SiEPIC PP calibrate envelope function
+                [power_corrected,power_calib_fit] = SiEPIC_PP.core.calibrate_envelope( input_data_response[i][1], ref_data_response[i][1] )
+                calibrated_data_response.append(power_corrected)
+
+    #%% plot all cutback structures responses
+    plt.figure(4)
+    wavelength = input_data_response[0][0]*1e9
+    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 20 um (tapers only)', color='blue')
+    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 800 um', color='black')
+    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 1600 um', color='green')
+    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4000 um', color='red')
+    fig4 = plt.plot(wavelength,input_data_response[4][1], label='L = 9600 um', color='yellow')
+    plt.legend(loc=0)
+    plt.ylabel('Power (dBm)', color = 'black')
+    plt.xlabel('Wavelength (nm)', color = 'black')
+    plt.xlim(round(min(wavelength)),round(max(wavelength)))
+    plt.title("Raw measurement of cutback structures (SWG waveguides)")
+    plt.savefig('WGloss_SWG'+'.pdf')
+    matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+    
     return
 
 #%% measurement URL and polarization
 URL = 'https://www.dropbox.com/sh/ovwocr62bzt5q7d/AABlx3ptTsMlM4Ycepfu7_mxa?dl=1'
 pol = 'TE'
 
+# Port either 0 or 1, if data makes no sense, switch.
 PCM_analysis(URL, pol, download = False, PORT = 1)
