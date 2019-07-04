@@ -13,7 +13,7 @@ import sys, os, platform
 # Lumerical Python API path on system
 
 if platform.system() == 'Windows':
-    lumapi_path = 'C:/Program Files/Lumerical/INTERCONNECT/api/python'
+    lumapi_path = 'C:/Program Files/Lumerical/2019b/api/python'
 else:
     lumapi_path = '/Applications/Lumerical/INTERCONNECT/INTERCONNECT.app/Contents/API/Python/'
 
