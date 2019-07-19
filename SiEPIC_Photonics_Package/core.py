@@ -61,7 +61,7 @@ def baseline_correction( input_response ):
 def calibrate_envelope( input_response, reference_response):
     # step 1-pick points on the reference response that create an envelope fit
     # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
-    fitOrder = 4
+    fitOrder = 3
     wavelength = reference_response[0]
     power = reference_response[1]
 
@@ -94,13 +94,10 @@ def calibrate_envelope( input_response, reference_response):
                 
             cursor_initial = cursor_next
             cursor_next = cursor_next+1
-                
+
 
         if cursor_next*step >= numpy.size(power):
             break
-
-    print(wavelength_ref)
-    print(power_ref)
     
     pfit_ref = numpy.polyfit(wavelength_ref-numpy.mean(wavelength_ref), power_ref, fitOrder)
     powerfit_ref = numpy.polyval(pfit_ref, wavelength-numpy.mean(wavelength))

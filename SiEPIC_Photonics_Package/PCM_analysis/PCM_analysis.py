@@ -244,7 +244,7 @@ def contraDCloss(PORT):
     length = [3, 5, 8, 11]
  
     if PORT == 1:
-        PORT_REF = 0
+        PORT_REF = 2
     else:
         PORT_REF = 1
         
@@ -252,24 +252,21 @@ def contraDCloss(PORT):
     input_data_response = []
     ref_data_response = []
     calibrated_data_response = []
-    for i in length:
+    for idx, val in enumerate(length):
         for filename in os.listdir(os.getcwd()):
-            if filename.startswith(file_ID+str(i)) == True:
+            if filename.startswith(file_ID+str(val)) == True:
                 print(filename)
                 input_data_response.append( SiEPIC_PP.core.parse_response(filename,PORT) )
                 ref_data_response.append( SiEPIC_PP.core.parse_response(filename,PORT_REF) )
                 # Calibrate the data with respect to the throguh port using SiEPIC PP calibrate envelope function
-                [power_corrected,power_calib_fit] = SiEPIC_PP.core.calibrate_envelope( input_data_response[i][1], ref_data_response[i][1] )
+                [power_corrected,power_calib_fit] = SiEPIC_PP.core.calibrate_envelope( input_data_response[idx], ref_data_response[idx] )
                 calibrated_data_response.append(power_corrected)
 
     #%% plot all cutback structures responses
-    plt.figure(4)
+    plt.figure(6)
     wavelength = input_data_response[0][0]*1e9
-    fig0 = plt.plot(wavelength,input_data_response[0][1], label='L = 20 um (tapers only)', color='blue')
-    fig1 = plt.plot(wavelength,input_data_response[1][1], label='L = 800 um', color='black')
-    fig2 = plt.plot(wavelength,input_data_response[2][1], label='L = 1600 um', color='green')
-    fig3 = plt.plot(wavelength,input_data_response[3][1], label='L = 4000 um', color='red')
-    fig4 = plt.plot(wavelength,input_data_response[4][1], label='L = 9600 um', color='yellow')
+    for i in enumerate(length):
+        fig = plt.plot(wavelength,calibrated_data_response[i[0]], label = 'Stages = '+str(length[i[0]]))
     plt.legend(loc=0)
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
