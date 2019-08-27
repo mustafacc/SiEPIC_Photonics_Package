@@ -43,6 +43,7 @@ Downloads a .mat response (Caverley's pyoptomip format) from a url and parses da
 Eigenmode solver for a 2D waveguide structure.
 
 * **RAMZI_Modulators**
+
 Ring-assisted Mach-Zehnder Interferometer-based modulators designer. [Example](https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/RAMZI_modulator)
 
 * **Ring_Designer**
