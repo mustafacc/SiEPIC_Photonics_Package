@@ -42,7 +42,7 @@ N_right = 160       # number of periods (right of cavity)
 
 # Cavity Parameters
 alpha = 150/4.34
-L = period/2    # length of cavity
+L = 0#period/2    # length of cavity
 
 
 #%% analysis
@@ -86,8 +86,8 @@ for i in range(len(lambda_0)):
     r.append(-H[1][0]/H[1][1])
     
 # to log scale
-T = np.log10(np.absolute(t)**2)
-R = np.log10(np.absolute(r)**2)
+T = 10*np.log10(np.absolute(t)**2)
+R = 10*np.log10(np.absolute(r)**2)
 
 #%% plot spectrum
 matplotlib.pyplot.figure(0)
