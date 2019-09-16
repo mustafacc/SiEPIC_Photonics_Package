@@ -13,9 +13,19 @@ import sys, os, platform
 # Lumerical Python API path on system
 
 if platform.system() == 'Windows':
-    lumapi_path = 'C:/Program Files/Lumerical/2019b/api/python'
+    try:
+        lumapi_path = 'C:/Program Files/Lumerical/2019b/api/python'
+        os.chdir(lumapi_path)
+        import lumapi
+    except FileNotFoundError:
+        lumapi_path = 'C:/Program Files/Lumerical/FDTD/api/python'
+        os.chdir(lumapi_path)
+        import lumapi
+        
 else:
     lumapi_path = '/Applications/Lumerical/INTERCONNECT/INTERCONNECT.app/Contents/API/Python/'
+    os.chdir(lumapi_path)
+    import lumapi
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 if os.path.exists(os.path.join(lumapi_path,'lumapi.py')):
@@ -24,7 +34,7 @@ if os.path.exists(os.path.join(lumapi_path,'lumapi.py')):
 else:
     print('lumapi path does not exist, edit lumapi_path variable')
     
-#os.chdir(lumapi_path)
+os.chdir(lumapi_path)
 import lumapi
 
 #%% run MODE for dispersion analysis
