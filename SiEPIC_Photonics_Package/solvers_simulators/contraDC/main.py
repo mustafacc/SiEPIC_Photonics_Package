@@ -1,9 +1,7 @@
 """
     Contra-directional coupler Lumerical simulation flow
-    see [] for documentation
-
-    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
-    SiEPIC Kits Ltd. 2019     ; University of British Columbia
+    see URL for documentation
+    https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC/Documentation
 
 """
 
@@ -64,7 +62,7 @@ simulation = simulation()
 
 #%% main program
 [waveguides, simulation] = dispersion_analysis.phaseMatch_analysis(device, simulation)
-#device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
+device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
 device = contraDC_CMT_TMM.contraDC_model(device, simulation, waveguides)
 
 #%% analysis and export parameters
