@@ -1,11 +1,9 @@
 """
     contraDC_CMT_TMM.py
     Contra-directional coupler Lumerical simulation flow
-    see [] for documentation
+    see URL for documentation
+    https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC/Documentation
 
-    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
-    SiEPIC Kits Ltd. 2019     ; University of British Columbia
-            
 """
 #%% import dependencies
 import cmath, math
