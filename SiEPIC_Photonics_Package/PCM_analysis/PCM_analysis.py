@@ -271,15 +271,15 @@ def contraDCloss(PORT):
     plt.ylabel('Power (dBm)', color = 'black')
     plt.xlabel('Wavelength (nm)', color = 'black')
     plt.xlim(round(min(wavelength)),round(max(wavelength)))
-    plt.title("Raw measurement of cutback structures (SWG waveguides)")
+    plt.title("Raw measurement of contra-directional couplers (drop port)")
     plt.savefig('WGloss_SWG'+'.pdf')
     matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
     
     return
 
-#%% measurement URL and polarization
-URL = 'https://www.dropbox.com/sh/ovwocr62bzt5q7d/AABlx3ptTsMlM4Ycepfu7_mxa?dl=1'
+#%% measurement URL and polarization (ensure dl=1 in case of Dropbox)
+URL = 'https://www.dropbox.com/sh/hqycb5zuekuncoc/AABCY99C70yDGQjhVOnLgo3Ma?dl=1'
 pol = 'TE'
 
 # Port either 0 or 1, if data makes no sense, switch.
-PCM_analysis(URL, pol, download = False, PORT = 1)
+PCM_analysis(URL, pol, download = False, PORT = 0)
