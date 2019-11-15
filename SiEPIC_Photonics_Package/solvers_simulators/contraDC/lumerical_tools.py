@@ -12,6 +12,8 @@ import sys, os, platform
 
 # Lumerical Python API path on system
 
+cwd = os.getcwd()
+
 if platform.system() == 'Windows':
     try:
         lumapi_path = 'C:/Program Files/Lumerical/2019b/api/python'
@@ -34,8 +36,7 @@ if os.path.exists(os.path.join(lumapi_path,'lumapi.py')):
 else:
     print('lumapi path does not exist, edit lumapi_path variable')
     
-os.chdir(lumapi_path)
-import lumapi
+os.chdir(cwd)
 
 #%% run MODE for dispersion analysis
 def run_mode(contraDC, simulation_setup, close = True):
