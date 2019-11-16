@@ -53,10 +53,10 @@ class simulation():
         self.lambda_start = 1500e-9
         self.lambda_end = 1600e-9
         self.resolution = 5001
-
+        
         self.deviceTemp = 300
         self.chipTemp = 300
-
+        
         self.central_lambda = 1550e-9
 
 #%% instantiate the class constructors        

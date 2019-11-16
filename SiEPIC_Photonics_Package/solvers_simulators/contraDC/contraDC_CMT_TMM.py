@@ -130,26 +130,21 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
         kappa_apodG=np.exp(-a*((n_apodization)-0.5*N_seg)**2/N_seg**2)
         ApoFunc=kappa_apodG
 
-        profile= (ApoFunc-min(ApoFunc))/(max(ApoFunc)-(min(ApoFunc))) # normalizes the profile
+    profile= (ApoFunc-min(ApoFunc))/(max(ApoFunc)-(min(ApoFunc))) # normalizes the profile
 
-        n_profile = np.linspace(0,N_seg,profile.size)
-        profile=np.interp(n_apodization, n_profile, profile)
+    n_profile = np.linspace(0,N_seg,profile.size)
+    profile=np.interp(n_apodization, n_profile, profile)
 
-        kappaMin = contraDC.kappa_contra*profile[0]
-        kappaMax = contraDC.kappa_contra
-    
-        kappa_apod=kappaMin+(kappaMax-kappaMin)*profile
+    if plot == True:
+        plt.figure(1)
+        plt.plot(zaxis*1e6, profile)
+        plt.ylabel('Profile (normalized)')
+        plt.xlabel('Length (um)')
         
-        if plot == True:
-            plt.figure(1)
-            plt.plot(zaxis*1e6, profile)
-            plt.ylabel('Profile (normalized)')
-            plt.xlabel('Length (um)')        
-    else:
-        kappa_apod = contraDC.kappa_contra*np.ones(N_seg)
-
-
-
+    kappaMin = contraDC.kappa_contra*profile[0]
+    kappaMax = contraDC.kappa_contra
+    
+    kappa_apod=kappaMin+(kappaMax-kappaMin)*profile
   
     lenghtLambda=Lambda.size
     
