@@ -26,7 +26,7 @@ class contra_DC():
         
         self.sinusoidal = False
         
-        self.apodization = 2
+        self.apodization = 0
 
         #behavioral parameters 
         self.pol = 'TE' # TE or TM
@@ -61,8 +61,8 @@ device = contra_DC()
 simulation = simulation()
 
 #%% main program
-[waveguides, simulation] = dispersion_analysis.phaseMatch_analysis(device, simulation)
-device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
+#[waveguides, simulation] = dispersion_analysis.phaseMatch_analysis(device, simulation)
+#device = dispersion_analysis.kappa_analysis(device, simulation, waveguides, sim_type = 'EME', close = False)
 device = contraDC_CMT_TMM.contraDC_model(device, simulation, waveguides)
 
 #%% analysis and export parameters
