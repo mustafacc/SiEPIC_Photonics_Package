@@ -54,12 +54,18 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
     ApoFunc=np.exp(-np.linspace(0,1,num=1000)**2)     #Function used for apodization (window function)
 
     mirror = False                #makes the apodization function symetrical
-    N_seg = 100                   #Number of flat steps in the coupling profile
+    N_seg = 50                   #Number of flat steps in the coupling profile
     
-    rch=0                        #random chirping, maximal fraction of index randomly changing each segment
-    lch=0                         #linear chirp across the length of the device
-    kch=0                        #coupling dependant chirp, normalized to the max coupling
-    
+    if simulation_setup.chirp == True:
+        rch= 0.01                        #random chirping, maximal fraction of index randomly changing each segment
+        lch= 0.1                         #linear chirp across the length of the device
+        kch= 0.1                        #coupling dependant chirp, normalized to the max coupling
+    else:
+        rch= 0                        #random chirping, maximal fraction of index randomly changing each segment
+        lch= 0                         #linear chirp across the length of the device
+        kch= 0                        #coupling dependant chirp, normalized to the max coupling
+        
+        
     neff_detuning_factor = 1
     
     #%% calculate waveguides propagation constants
@@ -147,6 +153,7 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
                 plt.xlabel('Length (um)')
     else:
         kappa_apod = contraDC.kappa_contra*np.ones(N_seg)
+        profile = 0
 
 
             
@@ -154,8 +161,8 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
     
     kappa_12max= max(kappa_apod)
     
-    couplingChirpFrac= np.zeros((1,N_seg))
-    lengthChirpFrac = np.zeros((1,N_seg))
+    couplingChirpFrac= profile*kch/100 - kch/100
+    lengthChirpFrac = np.linspace(-1,1,N_seg)*lch/100
     chirpDev = 1 + couplingChirpFrac + lengthChirpFrac
     
     n=np.arange(N_seg)
@@ -173,7 +180,7 @@ def contraDC_model(contraDC, simulation_setup, waveguides,plot = True):
         #Update Bar
         printProgressBar(ii + 1, progressbar_width, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
-        randomChirp = np.zeros((1,N_seg))
+        randomChirp = np.random.rand(1,N_seg)*rch/100
         chirpWL = chirpDev + randomChirp 
         
         P=1

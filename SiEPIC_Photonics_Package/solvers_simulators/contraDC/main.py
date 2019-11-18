@@ -54,6 +54,8 @@ class simulation():
         self.deviceTemp = 300
         self.chipTemp = 300
         
+        self.chirp = True
+        
         self.central_lambda = 1550e-9
 
 #%% instantiate the class constructors        
