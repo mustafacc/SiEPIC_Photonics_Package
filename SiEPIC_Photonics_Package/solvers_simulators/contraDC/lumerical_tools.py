@@ -16,7 +16,7 @@ cwd = os.getcwd()
 
 if platform.system() == 'Windows':
     try:
-        lumapi_path = 'C:/Program Files/Lumerical/2019b/api/python'
+        lumapi_path = 'C:/Program Files/Lumerical/2020a/api/python'
         os.chdir(lumapi_path)
         import lumapi
     except FileNotFoundError:
