@@ -40,9 +40,9 @@ n3_c = -0.046366956781710
 
 # grating parameters
 period = 317e-9     # period of pertrubation
-n_delta = .05      # effective index pertrubation
+n_delta = .0      # effective index pertrubation
 lambda_Bragg = 1550e-9 
-dw = 50e-9
+dw = 20e-9
 kappa = -1.53519e19 * dw**2+ 2.2751e12 * dw
 n_delta = kappa * lambda_Bragg / 2
 print(n_delta)
@@ -142,7 +142,7 @@ for i in range(len(lambda_0)):
 
 sio.savemat('bragg_tmm.mat', {'R':R, 'T':T, 'lambda_0': lambda_0})
 
-sio.loadmat('bragg_interconnect.mat')
+#sio.loadmat('bragg_interconnect.mat')
 
 #%% plot spectrum
 plt.figure(0)
