@@ -1,0 +1,30 @@
+#
+#    Bragg grating Lumerical simulation flow
+#    see [] for documentation
+#
+#    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
+#    SiEPIC Kits Ltd. 2019     ; University of British Columbia
+#
+#    (c)2020
+#############################
+# Corrugation sweep         #
+#############################
+dW_arr = 1e-9*[55, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
+size_arr = size(dW_arr); size_arr = size_arr(2);
+
+bandwidth_arr = matrix( size_arr, 1);
+lambda_arr = matrix (size_arr, 1);
+dW = 0;
+
+for(k=1; k<=size_arr; k=k+1){
+
+    ?dW = dW_arr(k);
+    Bragg_EME;
+    ?bandwidth_arr(k,1) = dropBandwidth_3dB;
+    ?lambda_arr(k,1) = centralWavelength;
+    switchtolayout;
+}
+closeall;
+plot(dW_arr*1e9, bandwidth_arr*1e9, 'Corrugation (nm)','3 dB Bandwidth (nm)');
+plot(dW_arr*1e9, lambda_arr*1e9, 'Corrugation (nm)','Central wavelength (nm)');
