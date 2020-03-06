@@ -31,7 +31,7 @@ adduserprop("mat_substrate",5,mat_substrate);
 adduserprop("mat_handle",5,mat_handle);
 
 set('script','
-#deleteall;
+deleteall;
 
 x_extra_length = 10e-6;
 y_extra_length = 4e-6;
@@ -90,6 +90,8 @@ if(%sidewall_angle% != 90){
     angle_rad = %sidewall_angle% * pi / 180;
     dx = %thickness_device%/tan(angle_rad);
     width_waveguide = %W%+dx;
+} else {
+    width_waveguide = %W%;
 }
 
 # Draw waveguide grating
