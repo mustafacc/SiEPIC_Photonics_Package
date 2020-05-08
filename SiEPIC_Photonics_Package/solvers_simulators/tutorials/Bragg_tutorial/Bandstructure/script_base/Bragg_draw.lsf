@@ -1,0 +1,187 @@
+#
+#    Bragg grating Lumerical simulation flow
+#    see [] for documentation
+#
+#    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
+#    SiEPIC Kits Ltd. 2019     ; University of British Columbia
+#
+#    (c)2020
+#############################
+# Draw device               #
+#############################
+
+materials;
+# Create structure group
+addstructuregroup;
+set("name","Bragg");
+adduserprop("W",2,W);
+adduserprop("dW",2,dW); # initially set dW as zero for modes calculation
+adduserprop("period",2,period);
+adduserprop("rib",0,rib);
+adduserprop("sidewall_angle",0,sidewall_angle);
+adduserprop("thickness_device",2,thickness_device);
+adduserprop("thickness_superstrate",2,thickness_superstrate);
+adduserprop("thickness_substrate",2,thickness_substrate);
+adduserprop("thickness_handle",2,thickness_handle);
+adduserprop("thickness_rib",2,thickness_rib);
+adduserprop("mat_device",5,mat_device);
+adduserprop("mat_superstrate",5,mat_superstrate);
+adduserprop("mat_substrate",5,mat_substrate);
+adduserprop("mat_handle",5,mat_handle);
+
+set('script','
+deleteall;
+
+x_extra_length = 10e-6;
+y_extra_length = 4e-6;
+
+x_span =  %period% + x_extra_length;
+y_span = %W% + y_extra_length;
+
+# Draw structures
+
+# Superstrate
+addrect;
+set("name","superstrate");
+set("x",0);
+set("x span",x_span);
+set("y",0);
+set("y span",y_span);
+set("z min",0);
+set("z max",%thickness_superstrate%);
+set("alpha",0.3);
+
+# Substrate
+addrect;
+set("name","substrate");
+set("x",0);
+set("x span",x_span);
+set("y",0);
+set("y span",y_span);
+set("z min",-%thickness_substrate%);
+set("z max",0);
+
+# Handle
+addrect;
+set("name","handle");
+set("x",0);
+set("x span",x_span);
+set("y",0);
+set("y span",y_span);
+set("z min",-%thickness_substrate%-%thickness_handle%);
+set("z max",-%thickness_substrate%);
+set("alpha",0.1);
+
+x_max = get("x max");
+x_min = get("x min");
+y_max = get("y max");
+y_min = get("y min");
+if(%thickness_superstrate% != 0){
+    z_max = %thickness_superstrate%;
+}
+else{
+    z_max = %thickness_device%;
+}
+z_min = get("z min");
+
+
+if(%sidewall_angle% != 90){
+    angle_rad = %sidewall_angle% * pi / 180;
+    dx = %thickness_device%/tan(angle_rad);
+    width_waveguide = %W%+dx;
+} else {
+    width_waveguide = %W%;
+}
+
+# Draw waveguide grating
+addwaveguide;
+set("name","wg_narrow");
+set("base width",width_waveguide-%dW%);
+set("base height",%thickness_device%);
+pole = [-%period%/2,0; 0,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+addwaveguide;
+set("name","wg_narrow");
+set("base width",width_waveguide-%dW%);
+set("base height",%thickness_device%);
+pole = [%period%/2,0; %period%,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+addwaveguide;
+set("name","wg_wide");
+set("base width",width_waveguide+%dW%);
+set("base height",%thickness_device%);
+pole = [0,0; %period%/2,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+addwaveguide;
+set("name","wg_wide");
+set("base width",width_waveguide+%dW%);
+set("base height",%thickness_device%);
+pole = [-%period%/2,0; -%period%,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+addwaveguide;
+set("name","wg_right");
+set("base width",width_waveguide);
+set("base height",%thickness_device%);
+pole = [%period%,0; x_max,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+addwaveguide;
+set("name","wg_left");
+set("base width",width_waveguide);
+set("base height",%thickness_device%);
+pole = [x_min,0; -%period%,0];
+set("poles",pole);
+set("z",%thickness_device%/2);
+set("base angle", %sidewall_angle%);
+
+
+if(rib==true){
+    addrect;
+    set("name","rib");
+    set("x",0);
+    set("x span",x_span);
+    set("y",0);
+    set("y span",y_span);
+    set("z min",0);
+    set("z max",%thickness_rib%);
+    set("alpha",0.2);
+}
+
+# Set material
+select("superstrate");
+set("material",mat_superstrate);
+
+select("substrate");
+set("material",mat_substrate);
+
+select("handle");
+set("material",mat_handle);
+
+select("wg_narrow");
+shiftselect("wg_wide");
+shiftselect("wg_right");
+shiftselect("wg_left");
+if(rib==true){
+    shiftselect("rib");
+}
+set("material",mat_device);
+');
+
+select("Bragg");
+set("x",0);
+set("y",0);
+set("z",0);
