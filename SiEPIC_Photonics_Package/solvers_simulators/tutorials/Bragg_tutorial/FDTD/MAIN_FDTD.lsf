@@ -1,11 +1,12 @@
 #
 #    Bragg grating Lumerical simulation flow
-#    see [] for documentation
+#    see https://github.com/mustafacc/SiEPIC_Photonics_Package/ for documentation
 #
 #    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
-#    SiEPIC Kits Ltd. 2019     ; University of British Columbia
+#    SiEPIC Kits Ltd. 2020     ; University of British Columbia
 #
 #    (c)2020
+
 newproject;
 save("Bragg_FDTD.fsp");
 clear;
