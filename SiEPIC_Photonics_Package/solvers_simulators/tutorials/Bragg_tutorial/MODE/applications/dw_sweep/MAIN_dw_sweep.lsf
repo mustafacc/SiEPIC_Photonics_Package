@@ -9,16 +9,15 @@
 #############################
 # Corrugation sweep         #
 #############################
-dW_arr = 1e-9*[55, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+dW_arr = 1e-9*[5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+# define other device parameters in Bragg_EME.lsf
 
 size_arr = size(dW_arr); size_arr = size_arr(2);
-
 bandwidth_arr = matrix( size_arr, 1);
 lambda_arr = matrix (size_arr, 1);
 dW = 0;
 
 for(k=1; k<=size_arr; k=k+1){
-
     ?dW = dW_arr(k);
     Bragg_EME;
     ?bandwidth_arr(k,1) = dropBandwidth_3dB;

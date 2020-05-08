@@ -24,9 +24,9 @@ addmesh;
 set('x min',-period);
 set('x max',period);
 set('y',0);
-set('y span',sim_y_span);
-set('z',0);
-set('z span',sim_z_span );
+set('y span',W+2*dW);
+set('z',thickness_device/2);
+set('z span',thickness_device*1.5 );
 set('dx',mesh_x);
 set('dy',mesh_y);
 set('dz',mesh_z);
@@ -49,6 +49,16 @@ setnamed('EME',"z span", sim_z_span );
 setnamed('EME',"x min", -period);
 setnamed('EME',"group spans",[period/2;period/2;period/2;period/2]);
 
+# select modes
+if( pol == 'TE'){
+    setnamed('EME::Ports::port_1','mode selection','fundamental TE mode');
+    setnamed('EME::Ports::port_2','mode selection','fundamental TE mode');
+    setnamed('EME','y min bc','anti-symmetric');
+}
+else{
+    setnamed('EME::Ports::port_1','mode selection','fundamental TM mode');
+    setnamed('EME::Ports::port_2','mode selection','fundamental TM mode');
+}
 run;
 
 setemeanalysis("update monitors",false); # saves time

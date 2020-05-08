@@ -131,7 +131,6 @@ set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
 
-
 if(rib==true){
     addrect;
     set("name","rib");

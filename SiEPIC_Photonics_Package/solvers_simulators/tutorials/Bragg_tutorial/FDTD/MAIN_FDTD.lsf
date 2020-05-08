@@ -41,8 +41,8 @@ thickness_substrate = 3e-6; # substrate thickness
 thickness_handle = 300e-6; # handle substrate thickness
 
 mat_device = 'Si (Silicon) - Dispersive & Lossless'; # device material
-mat_superstrate = 'SiO2 (Glass) - Const'; # superstrate material
-mat_substrate = 'SiO2 (Glass) - Const'; # substrate material
+mat_superstrate = 'SiO2 (Glass) - Palik'; # superstrate material
+mat_substrate = 'SiO2 (Glass) - Palik'; # substrate material
 mat_handle = 'Si (Silicon) - Dispersive & Lossless'; # handle substrate material
 
 Bragg_draw;
