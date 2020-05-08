@@ -29,9 +29,9 @@ mesh_z = 10e-9;
 # Device geometry           #
 #############################
 
-W = 420e-9; # uncorrugated waveguide width
+W = 500e-9; # uncorrugated waveguide width
 dW = 75e-9; # waveguide corrugation
-period = 312e-9; # corrugations period
+period = 317e-9; # corrugations period
 N_periods = 500; # number of periods
 rib = false; # enable or disable rib layered waveguide type (do not enable with TM mode)
 sidewall_angle = 81;
