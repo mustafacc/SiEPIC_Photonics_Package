@@ -35,14 +35,14 @@ n2_c = -0.982556173493906
 n3_c = -0.046366956781710
 
 # grating parameters
-kappa = 75000       # coupling strength (/m)
-period = 316e-9     # period of pertrubation
-N_left = 160        # number of periods (left of cavity)
-N_right = 160       # number of periods (right of cavity)
+kappa = 45000       # coupling strength (/m)
+period = 317e-9     # period of pertrubation
+N_left = 200        # number of periods (left of cavity)
+N_right = 200       # number of periods (right of cavity)
 
 # Cavity Parameters
 alpha = 150/4.34
-L = 0#period/2    # length of cavity
+L = period/2    # length of cavity
 
 
 #%% analysis
