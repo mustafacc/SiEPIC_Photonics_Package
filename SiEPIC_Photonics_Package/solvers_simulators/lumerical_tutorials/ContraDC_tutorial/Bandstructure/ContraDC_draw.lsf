@@ -21,7 +21,6 @@ adduserprop("W2",2,W2);
 adduserprop("dW2",2,dW2); # initially set dW as zero for modes calculation
 adduserprop("gap",2,gap);
 adduserprop("period",2,period);
-adduserprop("N_periods",0,N_periods);
 adduserprop("rib",0,rib);
 adduserprop("sidewall_angle",0,sidewall_angle);
 adduserprop("thickness_device",2,thickness_device);
