@@ -8,7 +8,7 @@
 #    (c)2020
 
 newproject;
-save("Bragg_Bandstructure.fsp");
+save("ContraDC_Bandstructure.fsp");
 clear;
 
 #############################
