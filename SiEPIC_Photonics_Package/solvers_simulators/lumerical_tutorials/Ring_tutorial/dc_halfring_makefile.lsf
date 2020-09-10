@@ -2,9 +2,9 @@ clear;
 newproject;
 deleteall;
 
-radius = 10e-6;
+radius = 15e-6;
 gap = 0.100e-6;
-Lc = 0.1e-6;
+Lc = 0e-6;
 
 thickness_device = 0.22e-6;
 thickness_handle = 300e-6;
@@ -13,7 +13,7 @@ thickness_substrate = 2e-6;
 thickness_rib = 0.09e-6;
 
 width_wg = 0.5e-6;
-sidewall_angle = 82;
+sidewall_angle = 90;
 rib = false;
 
 mat_device = "Si (Silicon) - Palik";
@@ -102,6 +102,7 @@ set('script','
         setnamed("rib","y span",sim_y_span);
         setnamed("rib","z min",-thickness_device/2);
         setnamed("rib","z max",-thickness_device/2+thickness_rib);
+        setnamed("rib","z",0);
     }
     
     # bus waveguides
@@ -112,11 +113,12 @@ set('script','
     setnamed("Bus0","base width", width_wg+2*dx);
     setnamed("Bus0","base height", thickness_device);
     setnamed("Bus0","base angle", sidewall_angle);
-    center_bus_y = -width_wg/2 -radius/2 - gap+dx/2;
+    center_bus_y = -width_wg/2 -radius/2 - gap/2;
     poles_bus = [-x_extra/2-radius-Lc/2,center_bus_y;-radius-Lc/2,center_bus_y];
     setnamed("Bus0","poles",poles_bus);
     setnamed("Bus0","y",center_bus_y);
     setnamed("Bus0","x",0);
+    setnamed("Bus0","z",0);
 
     addwaveguide;
     set("name","Bus1");
@@ -125,11 +127,11 @@ set('script','
     setnamed("Bus1","base width", width_wg+2*dx);
     setnamed("Bus1","base height", thickness_device);
     setnamed("Bus1","base angle", sidewall_angle);
-    center_bus_y = -width_wg/2 -radius/2 - gap+dx/2;
     poles_bus = [-radius-Lc/2,center_bus_y;-Lc/2,center_bus_y];
     setnamed("Bus1","poles",poles_bus);
     setnamed("Bus1","y",center_bus_y);
     setnamed("Bus1","x",0);
+    setnamed("Bus1","z",0);
     
     addwaveguide;
     set("name","Bus2");
@@ -138,11 +140,11 @@ set('script','
     setnamed("Bus2","base width", width_wg+2*dx);
     setnamed("Bus2","base height", thickness_device);
     setnamed("Bus2","base angle", sidewall_angle);
-    center_bus_y = -width_wg/2 -radius/2 - gap+dx/2;
     poles_bus = [Lc/2,center_bus_y;radius+Lc/2,center_bus_y];
     setnamed("Bus2","poles",poles_bus);
     setnamed("Bus2","y",center_bus_y);
     setnamed("Bus2","x",0);
+    setnamed("Bus2","z",0);
     
     addwaveguide;
     set("name","Bus3");
@@ -151,11 +153,11 @@ set('script','
     setnamed("Bus3","base width", width_wg+2*dx);
     setnamed("Bus3","base height", thickness_device);
     setnamed("Bus3","base angle", sidewall_angle);
-    center_bus_y = -width_wg/2 -radius/2 - gap+dx/2;
     poles_bus = [radius+Lc/2,center_bus_y;radius+Lc/2+x_extra/2,center_bus_y];
     setnamed("Bus3","poles",poles_bus);
     setnamed("Bus3","y",center_bus_y);
     setnamed("Bus3","x",0);
+    setnamed("Bus3","z",0);    
     
     if(Lc != 0){        
         addwaveguide;
@@ -170,7 +172,7 @@ set('script','
         setnamed("Bus4","poles",poles_bus);
         setnamed("Bus4","y",center_bus_y);
         setnamed("Bus4","x",0);
-        
+        setnamed("Bus4","z",0);
         addwaveguide;
         set("name","Bus5");
         setnamed("Bus5","material",mat_device);
@@ -178,11 +180,12 @@ set('script','
         setnamed("Bus5","base width", width_wg+2*dx);
         setnamed("Bus5","base height", thickness_device);
         setnamed("Bus5","base angle", sidewall_angle);
-        center_bus_y = -width_wg/2 -radius/2 - gap+dx/2;
+        center_bus_y = -width_wg/2 -radius/2 - gap/2;
         poles_bus = [-Lc/2,center_bus_y;Lc/2,center_bus_y];
         setnamed("Bus5","poles",poles_bus);
         setnamed("Bus5","y",center_bus_y);
         setnamed("Bus5","x",0);
+        setnamed("Bus5","z",0);
     }
     # ring waveguide (bottom-left half)
     addobject("90_bend_wg");
@@ -196,6 +199,7 @@ set('script','
     setnamed("Ring1","base angle", sidewall_angle);
     setnamed("Ring1","base height", thickness_device);
     setnamed("Ring1","base width", width_wg+2*dx);
+    setnamed("Ring1","z",0);
     
     # ring waveguide (bottom-right half)
     addobject("90_bend_wg");
@@ -209,6 +213,7 @@ set('script','
     setnamed("Ring2","base angle", sidewall_angle);
     setnamed("Ring2","base height", thickness_device);
     setnamed("Ring2","base width", width_wg+2*dx);
+    setnamed("Ring2","z",0);
     
     # ring waveguide (top-left half)
     addobject("90_bend_wg");
@@ -222,6 +227,7 @@ set('script','
     setnamed("Ring3","base angle", sidewall_angle);
     setnamed("Ring3","base height", thickness_device);
     setnamed("Ring3","base width", width_wg+2*dx);
+    setnamed("Ring3","z",0);
     
     # ring waveguide (top-left half)
     addobject("90_bend_wg");
@@ -235,6 +241,7 @@ set('script','
     setnamed("Ring4","base angle", sidewall_angle);
     setnamed("Ring4","base height", thickness_device);
     setnamed("Ring4","base width", width_wg+2*dx);
+    setnamed("Ring4","z",0);
 ');
 
 # FDTD setup
@@ -254,11 +261,11 @@ setnamed("FDTD","mesh accuracy",mesh);
 setnamed("FDTD","min mesh step",mesh_step);
 
 # if we are doing a single-mode simulation, we can use symmetry (box & oxide):
-if (mode_selection == 1) {
+if (mode_selection == 1 and sidewall_angle == 90 and rib == false) {
  set("z min bc", "symmetric");
 }
-setglobalsource ("wavelength start", wavelength_start);
-setglobalsource ("wavelength stop", wavelength_stop);
+setglobalsource("wavelength start", wavelength_start);
+setglobalsource("wavelength stop", wavelength_stop);
 setglobalmonitor("frequency points",frequency_points_monitor);
 
 
@@ -267,7 +274,7 @@ port_span = width_wg+(wavelength_start+wavelength_stop);
 addport;
 set("name","opt1");
 dx = thickness_device / (2*tan(sidewall_angle*pi/180));
-center_bus_y = -width_wg -radius - 2*gap+dx/2;
+center_bus_y = -width_wg -radius - gap+dx/2;
 setnamed("FDTD::ports::opt1","y",center_bus_y);
 setnamed("FDTD::ports::opt1","x",-radius-Lc/2);
 setnamed("FDTD::ports::opt1","y span",port_span);
@@ -276,7 +283,6 @@ updateportmodes(mode_selection);
 
 addport;
 set("name","opt2");
-center_bus_y = -width_wg -radius - 2*gap+dx/2;
 setnamed("FDTD::ports::opt2","y",center_bus_y);
 setnamed("FDTD::ports::opt2","x",radius+Lc/2);
 setnamed("FDTD::ports::opt2","y span",port_span);
