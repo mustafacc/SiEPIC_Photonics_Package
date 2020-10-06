@@ -1,0 +1,51 @@
+#
+#    Waveguide compact model generator
+#    see https://github.com/mustafacc/SiEPIC_Photonics_Package/ for documentation
+#
+#    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
+#    SiEPIC Kits Ltd. 2020     ; University of British Columbia
+#
+#    (c)2021
+
+select('::model::');
+
+wavelength_start = get('wavelength_start');
+wavelength_stop = get('wavelength_stop');
+wavelength_pts = get('wavelength_pts');
+mode_number = get('mode_number');
+thickness_device = get('thickness_device');
+width = get('width');
+thickness_rib = get('thickness_rib');
+
+setnamed("::model",'wavelength_start', wavelength_start);
+setnamed("::model",'wavelength_stop', wavelength_stop);
+setnamed("::model",'mode_number', mode_number);
+setnamed("::model",'width', width);
+
+run;
+
+setanalysis('wavelength', wavelength_start);
+setanalysis('stop wavelength',wavelength_stop);
+setanalysis('number of points',wavelength_pts);
+setanalysis('number of trial modes', mode_number);
+n = findmodes;
+selectmode(mode_number);
+setanalysis("track selected mode",1);
+setanalysis("detailed dispersion calculation",1);
+
+frequencysweep;
+D=getdata("frequencysweep","D");
+f=getdata("frequencysweep","f_D");
+neff=abs(getdata("frequencysweep","neff"));
+
+fit = polyfit(f,neff,2);
+
+# save compact model data fit to a text file
+# file name: wg_WaveguideThickness_WaveguideWidth_RibThickness.txt
+# data format: wavelength_start, wavelength_stop, effective index fit values
+name = 'wg_'+num2str(thickness_device*1e9)+'nm_'+num2str(width*1e9)+'nm_'+num2str(thickness_rib*1e9)+'nm';
+data_str = num2str(c/f(end))+','+num2str(c/f(1))+','+num2str(fit(1))+','+num2str(fit(2))+','+num2str(fit(3));
+write(name, data_str);
+
+# save as an INTC LDF compact model
+savedcard(name);
