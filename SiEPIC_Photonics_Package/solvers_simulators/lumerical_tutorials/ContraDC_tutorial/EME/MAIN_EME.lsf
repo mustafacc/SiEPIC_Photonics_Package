@@ -29,15 +29,18 @@ mesh_z = 10e-9;
 # Device geometry           #
 #############################
 
-W1 = 560e-9; # uncorrugated waveguide width
+W1 = 440e-9; # uncorrugated waveguide width
 dW1 = 24e-9; # waveguide corrugation
-W2 = 440e-9; # uncorrugated waveguide width
+W2 = 560e-9; # uncorrugated waveguide width
 dW2 = 48e-9; # waveguide corrugation
-gap = 150e-9; # average gap between two waveguides
+gap = 100e-9; # average gap between two waveguides
 period = 318e-9; # corrugations period
-N_periods = 500; # number of periods
+N_periods = 1000; # number of periods
 rib = false; # enable or disable rib layered waveguide type (do not enable with TM mode)
-sidewall_angle = 80;
+sidewall_angle = 83;
+
+AR = true; # enable/disablel out-of-phase, anti-reflection gratings design
+
 
 thickness_device = 220e-9; # waveguide full thickness
 thickness_rib = 90e-9; # waveguide rib layer thickness

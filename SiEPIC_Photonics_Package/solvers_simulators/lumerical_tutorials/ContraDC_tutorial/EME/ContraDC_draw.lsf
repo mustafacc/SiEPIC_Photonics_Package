@@ -24,6 +24,7 @@ adduserprop("period",2,period);
 adduserprop("N_periods",0,N_periods);
 adduserprop("rib",0,rib);
 adduserprop("sidewall_angle",0,sidewall_angle);
+adduserprop("AR",0,AR);
 adduserprop("thickness_device",2,thickness_device);
 adduserprop("thickness_superstrate",2,thickness_superstrate);
 adduserprop("thickness_substrate",2,thickness_substrate);
@@ -106,18 +107,30 @@ if(%sidewall_angle% != 90){
 center_wg1 = width_waveguide1/2 + gap/2 - dx/2;
 addwaveguide;
 set("name","wg1_narrow");
-set("base width",width_waveguide1-%dW1%);
 set("base height",%thickness_device%);
-pole = [-%period%/2,center_wg1; 0,center_wg1];
+if(AR){
+    set("base width",width_waveguide1); 
+    pole = [-%period%/2,center_wg1-%dW1%/2; 0,center_wg1-%dW1%/2];
+}
+else{
+    set("base width",width_waveguide1-%dW1%);
+    pole = [-%period%/2,center_wg1; 0,center_wg1];
+}
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
 
 addwaveguide;
 set("name","wg1_wide");
-set("base width",width_waveguide1+%dW1%);
 set("base height",%thickness_device%);
-pole = [0,center_wg1; %period%/2,center_wg1];
+if(AR){
+    set("base width",width_waveguide1); 
+    pole = [0,center_wg1+%dW1%/2; %period%/2,center_wg1+%dW1%/2];
+}
+else{
+    set("base width",width_waveguide1+%dW1%);
+    pole = [0,center_wg1; %period%/2,center_wg1];
+}
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
@@ -144,18 +157,30 @@ set("base angle", %sidewall_angle%);
 center_wg2 = -width_waveguide2/2 - gap/2 + dx/2;
 addwaveguide;
 set("name","wg2_narrow");
-set("base width",width_waveguide2-%dW2%);
 set("base height",%thickness_device%);
-pole = [-%period%/2,center_wg2; 0,center_wg2];
+if(AR){
+    set("base width",width_waveguide2); 
+    pole = [-%period%/2,center_wg2+%dW2%/2; 0,center_wg2+%dW2%/2];
+}
+else{
+    set("base width",width_waveguide2-%dW2%);
+    pole = [-%period%/2,center_wg2; 0,center_wg2];
+}
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
 
 addwaveguide;
 set("name","wg2_wide");
-set("base width",width_waveguide2+%dW2%);
 set("base height",%thickness_device%);
-pole = [0,center_wg2; %period%/2,center_wg2];
+if(AR){
+    set("base width",width_waveguide2); 
+    pole = [0,center_wg2-%dW2%/2; %period%/2,center_wg2-%dW2%/2];
+}
+else{
+    set("base width",width_waveguide2+%dW2%);
+    pole = [0,center_wg2; %period%/2,center_wg2];
+}
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
