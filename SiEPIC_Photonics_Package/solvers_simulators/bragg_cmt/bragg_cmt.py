@@ -15,6 +15,7 @@ Based on A. Mistry MATLAB implementation
 #%% dependent packages
 import numpy as np
 import math, cmath, matplotlib
+import matplotlib.pyplot as plt
 from numpy.lib.scimath import sqrt as csqrt
 
 #%% user input
@@ -43,7 +44,6 @@ N_right = 200       # number of periods (right of cavity)
 # Cavity Parameters
 alpha = 150/4.34
 L = period/2    # length of cavity
-
 
 #%% analysis
 
@@ -91,27 +91,27 @@ R = 10*np.log10(np.absolute(r)**2)
 
 #%% plot spectrum
 matplotlib.pyplot.figure(0)
-fig1 = matplotlib.pyplot.plot(lambda_0*1e9,T, label='Transmission', color='blue')
-fig2 = matplotlib.pyplot.plot(lambda_0*1e9,R, label='Reflection', color='red')
-matplotlib.pyplot.legend(loc=0)
-matplotlib.pyplot.ylabel('Response (dB)', color = 'black')
-matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
-matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
-matplotlib.pyplot.setp(fig2, 'linewidth', 2.0)
-matplotlib.pyplot.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
-matplotlib.pyplot.title("Calculated response of the structure using CMT (log scale)")
-matplotlib.pyplot.savefig('bragg_cmt_log'+'.pdf')
+fig1 = plt.plot(lambda_0*1e9,T, label='Transmission', color='blue')
+fig2 = plt.plot(lambda_0*1e9,R, label='Reflection', color='red')
+plt.legend(loc=0)
+plt.ylabel('Response (dB)', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.setp(fig1, 'linewidth', 2.0)
+plt.setp(fig2, 'linewidth', 2.0)
+plt.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
+plt.title("Calculated response of the structure using CMT (log scale)")
+plt.savefig('bragg_cmt_log'+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
-matplotlib.pyplot.figure(1)
-fig1 = matplotlib.pyplot.plot(lambda_0*1e9,np.absolute(t), label='Transmission', color='blue')
-fig2 = matplotlib.pyplot.plot(lambda_0*1e9,np.absolute(r), label='Reflection', color='red')
-matplotlib.pyplot.legend(loc=0)
-matplotlib.pyplot.ylabel('Response', color = 'black')
-matplotlib.pyplot.xlabel('Wavelength (nm)', color = 'black')
-matplotlib.pyplot.setp(fig1, 'linewidth', 2.0)
-matplotlib.pyplot.setp(fig2, 'linewidth', 2.0)
-matplotlib.pyplot.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
-matplotlib.pyplot.title("Calculated response of the structure using CMT (linear scale)")
-matplotlib.pyplot.savefig('bragg_cmt_linear'+'.pdf')
+plt.figure(1)
+fig1 = plt.plot(lambda_0*1e9,np.absolute(t), label='Transmission', color='blue')
+fig2 = plt.plot(lambda_0*1e9,np.absolute(r), label='Reflection', color='red')
+plt.legend(loc=0)
+plt.ylabel('Response', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.setp(fig1, 'linewidth', 2.0)
+plt.setp(fig2, 'linewidth', 2.0)
+plt.xlim(round(min(lambda_0*1e9)),round(max(lambda_0*1e9)))
+plt.title("Calculated response of the structure using CMT (linear scale)")
+plt.savefig('bragg_cmt_linear'+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
