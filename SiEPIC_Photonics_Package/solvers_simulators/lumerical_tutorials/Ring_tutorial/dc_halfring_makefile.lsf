@@ -200,6 +200,7 @@ set('script','
     setnamed("Ring1","base height", thickness_device);
     setnamed("Ring1","base width", width_wg+2*dx);
     setnamed("Ring1","z",0);
+	setnamed("Ring1","material",mat_device);
     
     # ring waveguide (bottom-right half)
     addobject("90_bend_wg");
@@ -214,6 +215,7 @@ set('script','
     setnamed("Ring2","base height", thickness_device);
     setnamed("Ring2","base width", width_wg+2*dx);
     setnamed("Ring2","z",0);
+	setnamed("Ring2","material",mat_device);
     
     # ring waveguide (top-left half)
     addobject("90_bend_wg");
@@ -228,6 +230,7 @@ set('script','
     setnamed("Ring3","base height", thickness_device);
     setnamed("Ring3","base width", width_wg+2*dx);
     setnamed("Ring3","z",0);
+	setnamed("Ring3","material",mat_device);
     
     # ring waveguide (top-left half)
     addobject("90_bend_wg");
@@ -242,6 +245,7 @@ set('script','
     setnamed("Ring4","base height", thickness_device);
     setnamed("Ring4","base width", width_wg+2*dx);
     setnamed("Ring4","z",0);
+	setnamed("Ring4","material",mat_device);
 ');
 
 # FDTD setup
