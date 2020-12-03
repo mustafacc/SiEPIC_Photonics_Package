@@ -16,8 +16,9 @@ cwd = os.getcwd()
 
 if platform.system() == 'Windows':
     try:
-        lumapi_path = 'C:/Program Files/Lumerical/2020a/api/python'
+        lumapi_path = r'C:\\Program Files\\Lumerical\\v202\\api\\python'
         os.chdir(lumapi_path)
+        sys.path.append(lumapi_path)
         import lumapi
     except FileNotFoundError:
         lumapi_path = 'C:/Program Files/Lumerical/FDTD/api/python'
@@ -184,7 +185,7 @@ def generate_dat( contraDC, simulation_setup, S_Matrix, close = True ):
 
 #%% run INTERCONNECT with compact model loaded
 def run_INTC():
-    intc = lumapi.open('interconnect')
+    intc = lumapi.INTERCONNECT()
     
     svg_file = "contraDC.svg"
     sparam_file = "ContraDC_sparams.dat"

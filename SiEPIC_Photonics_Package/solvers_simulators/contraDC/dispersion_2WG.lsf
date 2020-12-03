@@ -10,36 +10,37 @@
 #
 
 new;
-#clear;
+clear;
 
 # define waveguides geometry (average widths)
-#width_1 = 560e-9;
-#width_2 = 440e-9;
+width_1 = 440e-9;
+width_2 = 560e-9;
 
-#gap = 100e-9;
+gap = 200e-9;
 
-#slab = 0;	# 1: 90 nm slab ridge waveguides, 0: 220 nm strip waveguides
+slab = 1;	# 1: 90 nm slab ridge waveguides, 0: 220 nm strip waveguides
 
 # define pertrubation periods, to calculate phase matching condition
-#period = 320e-9;
+period = 298e-9;
 
 # define wavelength sweep ranges
-#wavelength=1.5e-6;
-#wavelength_stop = 1.6e-6;
+wavelength=1.5e-6;
+wavelength_stop = 1.6e-6;
 
+pol = 1;
 
 ######################## Warning: try to not mess about beyond this point ... ########################
 ## simulation parameters
 thick_Clad = 2.0e-6; 
-#thick_Si   = 0.220e-6;
+thick_Si   = 0.220e-6;
 thick_BOX  = 2.0e-6;
 
-#if(slab==1){
-#    thick_Slab = 90e-9; 
-#}
-#else{
-#    thick_Slab = 0; 
-#}
+if(slab==1){
+    thick_Slab = 90e-9; 
+}
+else{
+    thick_Slab = 0; 
+}
 
 # define materials
 material_Clad = "SiO2 (Glass) - Palik";
@@ -105,7 +106,7 @@ meshsize = 5e-9; # mesh size
 # add 2D mode solver 
 addfde; set("solver type","2D X normal");
 set("x", 0); set("z", 0.1e-6);
-set("y max", Ymin/1.5); set("y min", Ymax/1.5);
+set("y min", Ymin/1.5); set("y max", Ymax/1.5);
 set("y", 0); 
 set("wavelength", wavelength);
 set("define y mesh by","maximum mesh step");
@@ -120,7 +121,7 @@ points = 10;
 set("number of test modes",modes);
 set("number of trial modes",modes);
 set("number of points",points);
-#set("start wavelength", wavelength);
+set("start wavelength", wavelength);
 set("stop wavelength",wavelength_stop);
 set("track selected mode",1);
 

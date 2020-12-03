@@ -4,7 +4,7 @@
     https://github.com/SiEPIC-Kits/SiEPIC_Photonics_Package/tree/master/SiEPIC_Photonics_Package/solvers_simulators/contraDC/Documentation
 
 """
-
+#%%
 import dispersion_analysis, contraDC_CMT_TMM, analysis
 
 #%% device parameters class constructor
