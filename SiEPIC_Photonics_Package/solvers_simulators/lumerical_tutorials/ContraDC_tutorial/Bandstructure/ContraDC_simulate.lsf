@@ -154,5 +154,5 @@ myscript = myscript + "kappa = pi*ng*bandwidth/(center_wavelength^2); \n";
 set("analysis script", myscript); 
 addanalysisresult("kappa");
 addanalysisresult("bandwidth");
-break;
+
 run;

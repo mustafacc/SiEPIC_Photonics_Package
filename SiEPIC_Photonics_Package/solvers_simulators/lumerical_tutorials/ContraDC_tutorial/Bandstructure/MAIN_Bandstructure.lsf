@@ -38,7 +38,7 @@ dW2 = 48e-9; # waveguide corrugation
 gap = 100e-9;
 period = 318e-9; # corrugations period
 rib = false; # enable or disable rib layered waveguide type (do not enable with TM mode)
-sidewall_angle = 90;
+sidewall_angle = 83;
 
 thickness_device = 220e-9; # waveguide full thickness
 thickness_rib = 90e-9; # waveguide rib layer thickness
