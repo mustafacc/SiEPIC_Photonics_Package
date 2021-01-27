@@ -9,7 +9,7 @@
 </p>
 
 # SiEPIC_Photonics_Package
-A Python (v3.6.5) package that provides a set of basic functions commonly used by the UBC photonics group.
+A Python (v3.6.5) package that provides a set of basic functions commonly used in integrated photonics.
 
 ## Functions
 * **calibrate**
