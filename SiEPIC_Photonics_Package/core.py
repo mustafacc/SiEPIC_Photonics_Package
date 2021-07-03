@@ -58,20 +58,16 @@ def baseline_correction( input_response ):
     return [power_corrected, power_baseline]
 
 #%% calibrate a response based on an envelope response (useful for non-periodic responses, i.e. Bragg)
-def calibrate_envelope( input_response, reference_response):
+def calibrate_envelope( input_response, reference_response, seg = 55, difference_tol = 8, fitOrder = 4):
     # step 1-pick points on the reference response that create an envelope fit
     # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
-    fitOrder = 3
     wavelength = reference_response[0]
     power = reference_response[1]
 
     wavelength_input = input_response[0]
     power_input = input_response[1]
 
-    seg = 35
     step = int(numpy.size(power)/seg)
-
-    difference_tol = 3
 
     power_ref = []
     wavelength_ref = []
