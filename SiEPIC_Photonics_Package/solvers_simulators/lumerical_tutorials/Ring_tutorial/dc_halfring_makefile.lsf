@@ -347,6 +347,10 @@ if(sim_symmetry==true){
     setsweep("sparams", "auto symmetry", true);
 }
 
+# save the simulation file
+filename = "dc_halfring_r"+num2str(radius*1e6)+"um_g"+num2str(gap*1e9)+"nm_Lc"+num2str(Lc*1e6)+"um_w"+num2str(width_wg*1e9)+"nm_h"+num2str(thickness_device*1e9)+"nm";
+save(filename);
+
 # run s-parameter sweep
 runsweep("sparams");
  
