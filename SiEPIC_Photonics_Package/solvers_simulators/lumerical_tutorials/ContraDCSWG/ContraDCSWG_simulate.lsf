@@ -22,7 +22,7 @@ kx = 0.5; # you can ignore this :))
 W = (W1+W2)/2;
 dW = dW1+dW2;
 
-sim_y_span = W*4 + dW*5;
+sim_y_span = W*7 + dW*5;
 sim_z_span = thickness_device*12;
 
 # add fine mesh region
@@ -139,6 +139,14 @@ adduserprop('apod_width', 0, apod_width);
 adduserprop('ax', 2, period);
 adduserprop('kx', 0, kx);
 adduserprop('w', 2, dW);
+
+
+# set period and bloch vector of simulation
+myscript = "name='FDTD'; \n";
+myscript = myscript + "setnamed(name,'x span',2*ax); \n";
+myscript = myscript + "setnamed(name,'bloch units','SI'); \n";        # we generally use bandstructure units, but for the simulation region, it's 
+myscript = myscript + "setnamed(name,'kx',kx*2*pi/ax); \n";             # most convenient to use SI units becuase kx and ky can have different 
+set("setup script", myscript);
 
 myscript ="spectrum = getresult('bandstructure','spectrum'); \n";
 myscript = myscript + "fs = spectrum.fs; \n";
