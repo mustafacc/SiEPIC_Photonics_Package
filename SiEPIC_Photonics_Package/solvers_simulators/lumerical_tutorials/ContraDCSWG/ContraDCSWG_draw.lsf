@@ -1,11 +1,11 @@
 #
-#    Bragg grating Lumerical simulation flow
+#    Contra-directional coupler (SWG) Lumerical simulation flow
 #    see https://github.com/mustafacc/SiEPIC_Photonics_Package/ for documentation
 #
 #    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
-#    SiEPIC Kits Ltd. 2020     ; University of British Columbia
+#    SiEPIC Kits Ltd. 2021     ; University of British Columbia
 #
-#    (c)2020
+#    (c)2021
 
 #############################
 # Draw device               #
@@ -14,7 +14,7 @@
 materials;
 # Create structure group
 addstructuregroup;
-set("name","ContraDC");
+set("name","ContraDCSWG");
 adduserprop("W1",2,W1);
 adduserprop("dW1",2,dW1); # initially set dW as zero for modes calculation
 adduserprop("W2",2,W2);
@@ -104,7 +104,7 @@ if(%sidewall_angle% != 90){
 # Draw waveguide1
 center_wg1 = width_waveguide1/2 + gap/2 - dx/2;
 addwaveguide;
-set("name","wg1_narrow");
+set("name","wg1_A");
 set("base width",width_waveguide1);
 set("base height",%thickness_device%);
 pole = [-%period%/2,center_wg1-%dW1%/2; 0,center_wg1-%dW1%/2];
@@ -113,28 +113,10 @@ set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
 
 addwaveguide;
-set("name","wg1_wide");
+set("name","wg1_B");
 set("base width",width_waveguide1);
 set("base height",%thickness_device%);
-pole = [0,center_wg1+%dW1%/2; %period%/2,center_wg1+%dW1%/2];
-set("poles",pole);
-set("z",%thickness_device%/2);
-set("base angle", %sidewall_angle%);
-
-addwaveguide;
-set("name","wg1_right");
-set("base width",width_waveguide1);
-set("base height",%thickness_device%);
-pole = [%period%/2,center_wg1; x_max,center_wg1];
-set("poles",pole);
-set("z",%thickness_device%/2);
-set("base angle", %sidewall_angle%);
-
-addwaveguide;
-set("name","wg1_left");
-set("base width",width_waveguide1);
-set("base height",%thickness_device%);
-pole = [x_min,center_wg1; -%period%/2,center_wg1];
+pole = [%period%/2,center_wg1+%dW1%/2; %period%,center_wg1+%dW1%/2];
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
@@ -142,7 +124,7 @@ set("base angle", %sidewall_angle%);
 # Draw waveguide2
 center_wg2 = -width_waveguide2/2 - gap/2 + dx/2;
 addwaveguide;
-set("name","wg2_narrow");
+set("name","wg2_A");
 set("base width",width_waveguide2);
 set("base height",%thickness_device%);
 pole = [-%period%/2,center_wg2+%dW2%/2; 0,center_wg2+%dW2%/2];
@@ -151,28 +133,10 @@ set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
 
 addwaveguide;
-set("name","wg2_wide");
+set("name","wg2_B");
 set("base width",width_waveguide2);
 set("base height",%thickness_device%);
-pole = [0,center_wg2-%dW2%/2; %period%/2,center_wg2-%dW2%/2];
-set("poles",pole);
-set("z",%thickness_device%/2);
-set("base angle", %sidewall_angle%);
-
-addwaveguide;
-set("name","wg2_right");
-set("base width",width_waveguide2);
-set("base height",%thickness_device%);
-pole = [%period%/2,center_wg2; x_max,center_wg2];
-set("poles",pole);
-set("z",%thickness_device%/2);
-set("base angle", %sidewall_angle%);
-
-addwaveguide;
-set("name","wg2_left");
-set("base width",width_waveguide2);
-set("base height",%thickness_device%);
-pole = [x_min,center_wg2; -%period%/2,center_wg2];
+pole = [%period%/2,center_wg2-%dW2%/2; %period%,center_wg2-%dW2%/2];
 set("poles",pole);
 set("z",%thickness_device%/2);
 set("base angle", %sidewall_angle%);
@@ -199,21 +163,18 @@ set("material",mat_substrate);
 select("handle");
 set("material",mat_handle);
 
-select("wg1_narrow");
-shiftselect("wg1_wide");
-shiftselect("wg1_right");
-shiftselect("wg1_left");
-shiftselect("wg2_narrow");
-shiftselect("wg2_wide");
-shiftselect("wg2_right");
-shiftselect("wg2_left");
+select("wg1_A");
+shiftselect("wg1_B");
+shiftselect("wg2_A");
+shiftselect("wg2_B");
+
 if(rib==true){
     shiftselect("rib");
 }
 set("material",mat_device);
 ');
 
-select("ContraDC");
+select("ContraDCSWG");
 set("x",0);
 set("y",0);
 set("z",0);

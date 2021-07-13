@@ -1,0 +1,368 @@
+#
+#    Directional Couplers Lumerical simulation flow
+#    see https://github.com/mustafacc/SiEPIC_Photonics_Package/ for documentation
+#
+#    Author: Mustafa Hammood   ; mustafa@siepic.com   ; mustafa@ece.ubc.ca
+#    SiEPIC Kits Ltd. 2020     ; University of British Columbia
+#
+#    (c)2020
+
+clear;
+newproject;
+deleteall;
+
+radius = 3e-6;
+gap = 0.100e-6;
+Lc = 0e-6;
+
+thickness_device = 0.22e-6;
+thickness_handle = 300e-6;
+thickness_superstrate = 2.2e-6;
+thickness_substrate = 2e-6;
+thickness_rib = 0.09e-6;
+
+width_wg = 0.5e-6;
+sidewall_angle = 90;
+rib = false;
+
+mat_device = "Si (Silicon) - Palik";
+mat_substrate = "SiO2 (Glass) - Palik";
+mat_handle = "Si (Silicon) - Palik";
+mat_superstrate = "SiO2 (Glass) - Palik";
+
+mesh = 2;
+mesh_step = 25e-9;
+sim_symmetry = true;
+sim_time = 5000e-15; #e-15 is femto...
+
+# Wavelength range and number of points:
+wavelength_start = 1.26e-6;   
+wavelength_stop = 1.36e-6;  
+frequency_points_monitor=101;
+frequency_points_expansion=11;
+
+# define which modes we should simulate:
+#  - 1 = TE, will result in a 3x3 matrix
+#  - 2 = TM, will result in a 3x3 matrix
+#  - 1:2 = {TE, TM}, will result in a 6x6 matrix
+mode_selection=1;
+
+
+##################################################
+#================================================#
+##################################################
+# Create ring's structure group
+addstructuregroup;
+set("name","dc_halfring");
+adduserprop("width_wg",2,width_wg);
+adduserprop("radius",2,radius);
+adduserprop("gap",2,gap);
+adduserprop("Lc",2,Lc);
+adduserprop("rib",0,rib);
+adduserprop("sidewall_angle",0,sidewall_angle);
+adduserprop("thickness_device",2,thickness_device);
+adduserprop("thickness_superstrate",2,thickness_superstrate);
+adduserprop("thickness_substrate",2,thickness_substrate);
+adduserprop("thickness_handle",2,thickness_handle);
+adduserprop("thickness_rib",2,thickness_rib);
+adduserprop("mat_device",5,mat_device);
+adduserprop("mat_superstrate",5,mat_superstrate);
+adduserprop("mat_substrate",5,mat_substrate);
+adduserprop("mat_handle",5,mat_handle);
+
+set('script','
+    deleteall;
+    x_extra = 5e-6;
+    y_extra = 5e-6;
+    sim_x_span = radius*2+Lc+x_extra;
+    sim_y_span = radius*2+y_extra;
+    
+    # device substrate
+    addrect;
+    set("name","substrate");
+    setnamed("substrate","material",mat_substrate);
+    setnamed("substrate","x",0);
+    setnamed("substrate","x span",sim_x_span);
+    setnamed("substrate","y",0);
+    setnamed("substrate","y span",sim_y_span);
+    setnamed("substrate","z min",-%thickness_substrate%);
+    setnamed("substrate","z max",-thickness_device/2);
+    
+    # device superstrate
+    addrect;
+    set("name","superstrate");
+    setnamed("superstrate","material",mat_superstrate);
+    setnamed("superstrate","x",0);
+    setnamed("superstrate","x span",sim_x_span);
+    setnamed("superstrate","y",0);
+    setnamed("superstrate","y span",sim_y_span);
+    setnamed("superstrate","z min",-thickness_device/2);
+    setnamed("superstrate","z max",thickness_superstrate+thickness_device/2);
+    setnamed("superstrate","alpha",0.5);
+    
+    if(rib == true){
+        # device rib layer
+        addrect;
+        set("name","rib");
+        setnamed("rib","material",mat_device);
+        setnamed("rib","x",0);
+        setnamed("rib","x span",sim_x_span);
+        setnamed("rib","y",0);
+        setnamed("rib","y span",sim_y_span);
+        setnamed("rib","z min",-thickness_device/2);
+        setnamed("rib","z max",-thickness_device/2+thickness_rib);
+        setnamed("rib","z",0);
+    }
+    
+    # bus waveguides
+    addwaveguide;
+    set("name","Bus0");
+    setnamed("Bus0","material",mat_device);
+    dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+    setnamed("Bus0","base width", width_wg+2*dx);
+    setnamed("Bus0","base height", thickness_device);
+    setnamed("Bus0","base angle", sidewall_angle);
+    center_bus_y = -width_wg/2 -radius/2 - gap/2;
+    poles_bus = [-x_extra/2-radius-Lc/2,center_bus_y;-radius-Lc/2,center_bus_y];
+    setnamed("Bus0","poles",poles_bus);
+    setnamed("Bus0","y",center_bus_y);
+    setnamed("Bus0","x",0);
+    setnamed("Bus0","z",0);
+
+    addwaveguide;
+    set("name","Bus1");
+    setnamed("Bus1","material",mat_device);
+    dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+    setnamed("Bus1","base width", width_wg+2*dx);
+    setnamed("Bus1","base height", thickness_device);
+    setnamed("Bus1","base angle", sidewall_angle);
+    poles_bus = [-radius-Lc/2,center_bus_y;-Lc/2,center_bus_y];
+    setnamed("Bus1","poles",poles_bus);
+    setnamed("Bus1","y",center_bus_y);
+    setnamed("Bus1","x",0);
+    setnamed("Bus1","z",0);
+    
+    addwaveguide;
+    set("name","Bus2");
+    setnamed("Bus2","material",mat_device);
+    dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+    setnamed("Bus2","base width", width_wg+2*dx);
+    setnamed("Bus2","base height", thickness_device);
+    setnamed("Bus2","base angle", sidewall_angle);
+    poles_bus = [Lc/2,center_bus_y;radius+Lc/2,center_bus_y];
+    setnamed("Bus2","poles",poles_bus);
+    setnamed("Bus2","y",center_bus_y);
+    setnamed("Bus2","x",0);
+    setnamed("Bus2","z",0);
+    
+    addwaveguide;
+    set("name","Bus3");
+    setnamed("Bus3","material",mat_device);
+    dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+    setnamed("Bus3","base width", width_wg+2*dx);
+    setnamed("Bus3","base height", thickness_device);
+    setnamed("Bus3","base angle", sidewall_angle);
+    poles_bus = [radius+Lc/2,center_bus_y;radius+Lc/2+x_extra/2,center_bus_y];
+    setnamed("Bus3","poles",poles_bus);
+    setnamed("Bus3","y",center_bus_y);
+    setnamed("Bus3","x",0);
+    setnamed("Bus3","z",0);    
+    
+    if(Lc != 0){        
+        addwaveguide;
+        set("name","Bus4");
+        setnamed("Bus4","material",mat_device);
+        dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+        setnamed("Bus4","base width", width_wg+2*dx);
+        setnamed("Bus4","base height", thickness_device);
+        setnamed("Bus4","base angle", sidewall_angle);
+        center_bus_y =  -radius/2 ;
+        poles_bus = [-Lc/2,center_bus_y;Lc/2,center_bus_y];
+        setnamed("Bus4","poles",poles_bus);
+        setnamed("Bus4","y",center_bus_y);
+        setnamed("Bus4","x",0);
+        setnamed("Bus4","z",0);
+        addwaveguide;
+        set("name","Bus5");
+        setnamed("Bus5","material",mat_device);
+        dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+        setnamed("Bus5","base width", width_wg+2*dx);
+        setnamed("Bus5","base height", thickness_device);
+        setnamed("Bus5","base angle", sidewall_angle);
+        center_bus_y = -width_wg/2 -radius/2 - gap/2;
+        poles_bus = [-Lc/2,center_bus_y;Lc/2,center_bus_y];
+        setnamed("Bus5","poles",poles_bus);
+        setnamed("Bus5","y",center_bus_y);
+        setnamed("Bus5","x",0);
+        setnamed("Bus5","z",0);
+    }
+    # ring waveguide (bottom-left half)
+    addobject("90_bend_wg");
+    set("name","Ring1");
+    setnamed("Ring1","first axis","z");
+    setnamed("Ring1","rotation 1",180);
+    setnamed("Ring1","radius",radius);
+    center_ring_y = 0;
+    setnamed("Ring1","y",center_ring_y);
+    setnamed("Ring1","x",-Lc/2);
+    setnamed("Ring1","base angle", sidewall_angle);
+    setnamed("Ring1","base height", thickness_device);
+    setnamed("Ring1","base width", width_wg+2*dx);
+    setnamed("Ring1","z",0);
+	setnamed("Ring1","material",mat_device);
+    
+    # ring waveguide (bottom-right half)
+    addobject("90_bend_wg");
+    set("name","Ring2");
+    setnamed("Ring2","first axis","z");
+    setnamed("Ring2","rotation 1",270);
+    setnamed("Ring2","radius",radius);
+    center_ring_y = 0;
+    setnamed("Ring2","y",center_ring_y);
+    setnamed("Ring2","x",Lc/2);
+    setnamed("Ring2","base angle", sidewall_angle);
+    setnamed("Ring2","base height", thickness_device);
+    setnamed("Ring2","base width", width_wg+2*dx);
+    setnamed("Ring2","z",0);
+	setnamed("Ring2","material",mat_device);
+    
+    # ring waveguide (top-left half)
+    addobject("90_bend_wg");
+    set("name","Ring3");
+    setnamed("Ring3","first axis","z");
+    setnamed("Ring3","rotation 1",90);
+    setnamed("Ring3","radius",radius);
+    center_ring_y = 0;
+    setnamed("Ring3","y",center_ring_y);
+    setnamed("Ring3","x",-Lc/2);
+    setnamed("Ring3","base angle", sidewall_angle);
+    setnamed("Ring3","base height", thickness_device);
+    setnamed("Ring3","base width", width_wg+2*dx);
+    setnamed("Ring3","z",0);
+	setnamed("Ring3","material",mat_device);
+    
+    # ring waveguide (top-left half)
+    addobject("90_bend_wg");
+    set("name","Ring4");
+    setnamed("Ring4","first axis","z");
+    setnamed("Ring4","rotation 1",0);
+    setnamed("Ring4","radius",radius);
+    center_ring_y = 0;
+    setnamed("Ring4","y",center_ring_y);
+    setnamed("Ring4","x",Lc/2);
+    setnamed("Ring4","base angle", sidewall_angle);
+    setnamed("Ring4","base height", thickness_device);
+    setnamed("Ring4","base width", width_wg+2*dx);
+    setnamed("Ring4","z",0);
+	setnamed("Ring4","material",mat_device);
+');
+
+# FDTD setup
+addfdtd;
+x_extra = 5e-6;
+y_extra = 5e-6;
+sim_x_span = radius*2+Lc+x_extra;
+sim_y_span = radius*2+y_extra;
+sim_z_span = thickness_device/2+thickness_superstrate/2 + thickness_substrate/2;
+setnamed("FDTD","x",0); setnamed("FDTD","y",0); setnamed("FDTD","z",0);
+setnamed("FDTD","x span",sim_x_span);
+setnamed("FDTD","y span",sim_y_span);
+setnamed("FDTD","y max",1e-6);
+setnamed("FDTD","z span",sim_z_span);
+setnamed("FDTD","simulation time",sim_time);
+setnamed("FDTD","mesh accuracy",mesh);
+setnamed("FDTD","min mesh step",mesh_step);
+
+# if we are doing a single-mode simulation, we can use symmetry (box & oxide):
+if (mode_selection == 1 and sidewall_angle == 90 and rib == false) {
+ set("z min bc", "symmetric");
+}
+setglobalsource("wavelength start", wavelength_start);
+setglobalsource("wavelength stop", wavelength_stop);
+setglobalmonitor("frequency points",frequency_points_monitor);
+
+
+# ports setup
+port_span = width_wg+(wavelength_start+wavelength_stop);
+addport;
+set("name","opt1");
+dx = thickness_device / (2*tan(sidewall_angle*pi/180));
+center_bus_y = -width_wg -radius - gap+dx/2;
+setnamed("FDTD::ports::opt1","y",center_bus_y);
+setnamed("FDTD::ports::opt1","x",-radius-Lc/2);
+setnamed("FDTD::ports::opt1","y span",port_span);
+setnamed("FDTD::ports::opt1","frequency points",frequency_points_expansion);
+updateportmodes(mode_selection); 
+
+addport;
+set("name","opt2");
+setnamed("FDTD::ports::opt2","y",center_bus_y);
+setnamed("FDTD::ports::opt2","x",radius+Lc/2);
+setnamed("FDTD::ports::opt2","y span",port_span);
+setnamed("FDTD::ports::opt2","direction","Backward");
+setnamed("FDTD::ports::opt2","frequency points",frequency_points_expansion);
+updateportmodes(mode_selection); 
+
+addport;
+set("name","opt3");
+center_bus_y = 0;
+setnamed("FDTD::ports::opt3","y",0);
+setnamed("FDTD::ports::opt3","x",-radius-Lc/2);
+setnamed("FDTD::ports::opt3","injection axis","y");
+setnamed("FDTD::ports::opt3","x span",port_span);
+setnamed("FDTD::ports::opt3","direction","Backward");
+setnamed("FDTD::ports::opt3","frequency points",frequency_points_expansion);
+setnamed("FDTD::ports::opt3","phi",90);
+setnamed("FDTD::ports::opt3","bent waveguide",1);
+setnamed("FDTD::ports::opt3","bend radius",radius);
+setnamed("FDTD::ports::opt3","bend orientation",-90);
+updateportmodes(mode_selection); 
+
+addport;
+set("name","opt4");
+center_bus_y = 0;
+setnamed("FDTD::ports::opt4","y",0);
+setnamed("FDTD::ports::opt4","x",radius+Lc/2);
+setnamed("FDTD::ports::opt4","injection axis","y");
+setnamed("FDTD::ports::opt4","x span",port_span);
+setnamed("FDTD::ports::opt4","direction","Backward");
+setnamed("FDTD::ports::opt4","frequency points",frequency_points_expansion);
+setnamed("FDTD::ports::opt4","phi",90);
+setnamed("FDTD::ports::opt4","bent waveguide",1);
+setnamed("FDTD::ports::opt4","bend radius",radius);
+setnamed("FDTD::ports::opt4","bend orientation",90);
+updateportmodes(mode_selection); 
+
+select("FDTD::ports");
+set("monitor frequency points", frequency_points_monitor);
+
+# add s-parameter sweep task
+deletesweep("s-parameter sweep");
+addsweep(3);
+setsweep("s-parameter sweep", "name", "sparams");
+
+
+if(sim_symmetry==true){
+    setsweep("sparams", "Excite all ports", 0);
+    setsweep("sparams", "auto symmetry", true);
+}
+
+# save the simulation file
+filename = "dc_halfring_r"+num2str(radius*1e6)+"um_g"+num2str(gap*1e9)+"nm_Lc"+num2str(Lc*1e6)+"um_w"+num2str(width_wg*1e9)+"nm_h"+num2str(thickness_device*1e9)+"nm";
+save(filename);
+
+# run s-parameter sweep
+runsweep("sparams");
+ 
+# collect results
+S_matrix = getsweepresult("sparams","S matrix");
+S_parameters = getsweepresult("sparams","S parameters");
+S_diagnostic = getsweepresult("sparams","S diagnostic");
+ 
+# visualize results
+visualize(S_matrix);
+visualize(S_parameters);
+visualize(S_diagnostic);
+ 
+# export S-parameter data to file named s_params.dat to be loaded in INTERCONNECT
+exportsweep("sparams",s_filename);
