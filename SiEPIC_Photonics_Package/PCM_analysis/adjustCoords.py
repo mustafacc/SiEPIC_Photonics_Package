@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+Correct coordinate files to be compatible with MLP system.
+
 Created on Thu Aug 26 21:10:38 2021
 
 @author: Mustafa Hammood
@@ -11,15 +13,16 @@ Created on Thu Aug 26 21:10:38 2021
 
 def makeFile(f_name):
     """
-    Parameters.
+    Create a file for writing.
 
+    Parameters.
     ----------
-    f_name : text file
+    f_name : text file location string (include directory + file)
         Original text file to generate the new adjusted file from
 
     Returns
     -------
-    f_new : text file
+    f_new : pointer to text file
         New generated text file with adjusted file format
     """
     name_new = f_name.strip('.txt') + '_adjusted.txt'
@@ -29,10 +32,11 @@ def makeFile(f_name):
 
 def adjustCoords(f_name, del_comment, num_fields):
     """
-    Parameters.
+    Load SiEPIC-Tools coordinates files and adjust for automated measurements.
 
+    Parameters.
     ----------
-    f_name : text file
+    f_name : text file location string (include directory + file)
         Original text file to generate the new adjusted file from
     del_comment : Boolean
         flag to trigger deleting trailing ", comment" fields
