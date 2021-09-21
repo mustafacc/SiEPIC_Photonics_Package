@@ -72,7 +72,7 @@ def adjustCoords(f_name, del_comment, num_fields):
     f_new.close()
 
 
-f_coords = r'C:\Users\musta\Nextcloud\Shared\Lab data LC group\MLP01-4060-Scylla\Public\20210826_AdjustCoords\coords.txt'
+f_coords = r'C:\Users\musta\Nextcloud\Shared\Lab data LC group\MLP01-4060-Scylla\Mustafa\20210909_ANT_20200612_edX\coordinates\coordinates.txt'
 
 del_comment = True  # remove additional trailing ", comment" markers
 

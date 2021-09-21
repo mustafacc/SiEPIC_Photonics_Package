@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Aug 28 04:20:42 2021.
+CSVanalysis with objects and functions to process MLP measurement outputs.
+
+Created on Sat Aug 28 04:20:42 2021
 
 @author: Mustafa Hammood
 
@@ -65,6 +67,8 @@ class measurement(object):
         Plots desired measurement results.
     getDuration()
         Returns the measurement duration in seconds.
+    getGDS()
+        Calculate the GDS X and Y coordinates of the device.
     """
 
     def __init__(self, deviceID, user, start, finish, coordsGDS, coordsMotor,
@@ -279,6 +283,6 @@ def processCSV(f_name):
     return device
 
 
-f_measurement = r"C:\Users\Mustafa\Nextcloud\Shared\Lab data LC group\MLP01-4060-Scylla\Public\20210828_plotCSV\example_single\24-Aug-2021 22.22.52_1.csv"
+f_measurement = r"C:\Users\musta\Nextcloud\Shared\Lab data LC group\MLP01-4060-Scylla\Public\20210828_CSVanalysis\example_single\24-Aug-2021 22.22.52_1.csv"
 
 device = processCSV(f_measurement)
