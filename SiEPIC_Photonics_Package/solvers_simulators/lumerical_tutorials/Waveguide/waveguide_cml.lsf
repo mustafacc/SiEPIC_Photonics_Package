@@ -38,13 +38,14 @@ D=getdata("frequencysweep","D");
 f=getdata("frequencysweep","f_D");
 neff=abs(getdata("frequencysweep","neff"));
 
-fit = polyfit(f,neff,2);
+wavl = c/f;
+fit = polyfit(wavl,neff,2);
 
 # save compact model data fit to a text file
 # file name: wg_WaveguideThickness_WaveguideWidth_RibThickness.txt
 # data format: wavelength_start, wavelength_stop, effective index fit values
 name = 'wg_'+num2str(thickness_device*1e9)+'nm_'+num2str(width*1e9)+'nm_'+num2str(thickness_rib*1e9)+'nm';
-data_str = num2str(c/f(end))+','+num2str(c/f(1))+','+num2str(fit(1))+','+num2str(fit(2))+','+num2str(fit(3));
+data_str = num2str(c/f(1))+','+num2str(c/f(end))+','+num2str(fit(1))+','+num2str(fit(2))+','+num2str(fit(3));
 write(name+'.txt', data_str);
 
 # save as an INTC LDF compact model
