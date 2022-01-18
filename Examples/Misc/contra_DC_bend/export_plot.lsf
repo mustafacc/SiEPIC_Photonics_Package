@@ -1,7 +1,0 @@
-plot(radius_range*1e6, contra_lambda_sweep*1e9);
-
-setplot("title","Effect of bend radius on the phase-match condition");   #add a title to the figure
-setplot("x label", "Bend Radius (um)");
-setplot("y label", "Phase-match wavelength (nm)");
-
-exportfigure("bend_radius_phase_match.jpg");
