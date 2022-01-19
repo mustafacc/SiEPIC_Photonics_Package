@@ -1,0 +1,16 @@
+pip==19.2.3
+bump2version==0.5.11
+wheel==0.33.6
+watchdog==0.9.0
+flake8==3.7.8
+tox==3.14.0
+coverage==4.5.4
+Sphinx==1.8.5
+twine==1.14.0
+Click==7.0
+numpy==1.21.2
+scipy==1.7.1
+scipy.io==1.7.1
+matplotlib==3.4.3
+pyparsing==2.4.7
+requests==2.26.0
