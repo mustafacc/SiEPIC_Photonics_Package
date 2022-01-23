@@ -4,7 +4,7 @@ SiEPIC Analysis Package core module.
 Author:     Mustafa Hammood
             mustafa@siepic.com
 
-Module: Core functionalities of the analysis package
+Module:     Core functionalities of the analysis package
 
 """
 
