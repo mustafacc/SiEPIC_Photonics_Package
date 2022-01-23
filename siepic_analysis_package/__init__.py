@@ -4,4 +4,4 @@ __author__ = """Mustafa Hammood"""
 __email__ = 'mustafa@siepic.com'
 __version__ = '0.1.0'
 
-from siepic_analysis_package import core, analysis
+from siepic_analysis_package import core, analysis, lumerical
