@@ -8,8 +8,6 @@ Example:    Application of SiEPIC_AP cutback function
             to extract the porpagation losses from three different length spirals.
 """
 
-import sys
-sys.path.append(r'C:\Users\musta\Documents\GitHub\siepic_analysis_package')
 import siepic_analysis_package as siap
 import matplotlib.pyplot as plt
 import matplotlib
