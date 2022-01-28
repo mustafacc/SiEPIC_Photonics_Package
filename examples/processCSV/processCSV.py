@@ -7,10 +7,11 @@ Author:     Mustafa Hammood
 
 Example:    Using processCSV function to plot a measurement
 """
-
+import sys
+sys.path.append(r'C:\Users\musta\Documents\GitHub\SiEPIC_Photonics_Package')
 import siepic_analysis_package as siap
 
-f_measurement = r"24-Aug-2021 22.22.52_1.csv"
+f_measurement = r"15-Dec-2021 22.04.48_1.csv"
 
 device = siap.analysis.processCSV(f_measurement)
-device.plot(channels=[0,1,2], savepdf=True, savepng=False)
+device.plot(channels=[2], wavlRange = [1540, 1580], savepdf=True, savepng=False)
