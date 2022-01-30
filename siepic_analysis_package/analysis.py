@@ -344,7 +344,7 @@ def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
         list: [insertion loss (fit) at wavelength (dB/unit), insertion loss (dB) vs wavelength (nm)]
     """
     # fit the responses to a polynomial
-    wavelength_data = input_data_response[0][0]
+    wavelength_data = np.array(input_data_response[0][0])
     
     power = []
     pfit = []
