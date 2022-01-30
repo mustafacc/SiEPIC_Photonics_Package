@@ -16,6 +16,7 @@ import numpy as np
 
 fname_data = "data" # filename containing the desired data
 device_id = "wgloss_straight_350nm_"
+port = 0 # port in the measurement set containing the data
 
 def getDeviceLength(deviceID, idxField = 3):
     """Find the length of a device based on the ID
@@ -53,7 +54,7 @@ lengths_cm = [i/10000 for i in lengths]
 input_data_response = []
 
 for device in devices:
-    input_data_response.append( [np.array(device.wavl), np.array(device.pwr[0])] )
+    input_data_response.append( [np.array(device.wavl), np.array(device.pwr[port])] )
 
 # apply SiEPIC_PP cutback extraction function
 [insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = siap.analysis.cutback( input_data_response, lengths_cm, 1310.0 )
@@ -64,7 +65,7 @@ for device in devices:
 plt.figure(0)
 for device in devices:
     label = 'L = ' + str(getDeviceLength(device.deviceID)) + ' microns'
-    fig0 = plt.plot(device.wavl,device.pwr[0], label=label)
+    fig0 = plt.plot(device.wavl,device.pwr[port], label=label)
     plt.legend(loc=0)
 plt.ylabel('Power (dBm)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
@@ -74,7 +75,6 @@ matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 
 
 #%% Insertion loss vs wavelength plot
 plt.figure(1)
-linspace = np.linspace(lengths_cm[0],lengths_cm[len(lengths_cm)-1], len(insertion_loss_fit))
 fig1 = plt.plot(device.wavl,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
 fig2 = plt.plot(device.wavl,insertion_loss_fit, label='Insertion loss (fit)', color='red')
 plt.legend(loc=0)
