@@ -6,8 +6,11 @@ Author:     Mustafa Hammood
 
 Example:    Application of SiEPIC_AP calibration with envelope function
 """
-# import package and installed dependent packages
+#%% import package and installed dependent packages
+import sys
+sys.path.append(r'C:\Users\musta\Documents\GitHub\SiEPIC_Photonics_Package')
 import siepic_analysis_package as siap
+
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -24,7 +27,7 @@ ref_response= siap.core.parse_response(file_name_ref+file_extension,PORT)
 
 # apply calibration correction function
 
-[power_corrected,power_calib_fit] = siap.analysis.calibrate_envelope( input_response, ref_response )
+[power_corrected,power_calib_fit, wavelength_ref, power_ref] = siap.analysis.calibrate_envelope( input_response, ref_response )
 
 #%% plot responses and save pdf
 # raw responses of reference calibration data and input data
@@ -32,17 +35,18 @@ wavelength = input_response[0]*1e9
 power_calib = input_response[1]
 power_in = ref_response[1]
 plt.figure(0)
-fig1 = plt.plot(wavelength,power_calib, label='Input data', color='red')
-fig2 = plt.plot(wavelength,power_calib_fit, label='Reference data envelope', color='black')
-fig2 = plt.plot(wavelength,power_in, label='Reference data', color='blue')
+fig = plt.plot(wavelength,power_calib, label='Input data', color='red')
+fig = plt.plot(wavelength,power_calib_fit, label='Reference data envelope', color='black')
+fig = plt.plot(wavelength,power_in, label='Reference data', color='blue')
+fig = plt.scatter([i*1e9 for i in wavelength_ref], power_ref, label='Envelope function points')
 plt.legend(loc=0)
 plt.ylabel('Power (dBm)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
-plt.setp(fig1, 'linewidth', 2.0)
+plt.setp(fig, 'linewidth', 2.0)
 plt.xlim(round(min(wavelength)),round(max(wavelength)))
 plt.title("Experimental data (raw)")
 plt.savefig(file_name_in+'.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 # Calibrated responses of the input data
 plt.figure(1)
@@ -54,4 +58,6 @@ plt.setp(fig1, 'linewidth', 2.0)
 plt.xlim(round(min(wavelength)),round(max(wavelength)))
 plt.title("Experimental data (calibrated)")
 plt.savefig(file_name_ref+'_calibrated.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+
+# %%

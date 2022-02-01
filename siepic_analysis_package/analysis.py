@@ -417,10 +417,10 @@ def baseline_correction(input_response, fitOrder = 4):
     
     return [power_corrected, power_baseline]
 
-def calibrate_envelope( input_response, reference_response, seg = 55, difference_tol = 8, fitOrder = 4):
+def calibrate_envelope( input_response, reference_response, seg = 115, difference_tol = 1, fitOrder = 5):
     """calibration function that extracts the "envelope" of a response and use it as a reference
 
-    Args:
+    Args:s
         input_response (list): list containing the response to be corrected.
             input list format: input_response[wavelength (nm), power (dBm)]
         reference_response (list): list of reference data, format: [wavelength, value].
@@ -429,7 +429,11 @@ def calibrate_envelope( input_response, reference_response, seg = 55, difference
         fitOrder (int): order of the polynomial fit. Optional, default = 4.
 
     Returns:
-        list: output list format: [input power (dBm) with envelope correction, envelope correction fit]
+        power_input_calibrated (list): Calibrated measurement result
+        powerfit_ref (list): Reference polynomial fit used for calibration (debugging)
+        wavelength_ref (list): Wavelength points used in the reference polynomial (debugging)
+        power_ref (list): Data points used in the reference polynomial (debugging)
+
     """
     # step 1-pick points on the reference response that create an envelope fit
     # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
@@ -476,4 +480,4 @@ def calibrate_envelope( input_response, reference_response, seg = 55, difference
     # step 2-call calibrate input with envelope fit as a reference response
     power_input_calibrated = power_input - powerfit_ref
     
-    return [power_input_calibrated, powerfit_ref]
+    return [power_input_calibrated, powerfit_ref, wavelength_ref, power_ref]
