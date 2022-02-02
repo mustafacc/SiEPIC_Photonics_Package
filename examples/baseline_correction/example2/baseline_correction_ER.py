@@ -56,14 +56,14 @@ er_wavl_arr = []
 er_arr = []
 
 for device in devices:
-    temp = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib)
+    temp = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, threshold = 6)
     device.er_wavl = temp[0]
     device.er = temp[1]
 
 plt.figure()
 for device in devices:
     plt.scatter(device.er_wavl, device.er, label = device.deviceID)
-plt.legend(loc=0)
+plt.legend(loc=4)
 plt.ylabel('Extinction Ratio (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.title("Extracted extinction ratios from the measurements")
