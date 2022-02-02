@@ -280,6 +280,7 @@ def processCSV(f_name):
                          initRange=initRange, wavl=wavl, pwr=pwr)
     return device
 
+
 def find_nearest(array, value):
     """Find the array index that's nearest to an input value
 
@@ -293,6 +294,7 @@ def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
+
 
 def bandwidth ( input_data_response, threshold = 3):
     """Calculates the bandwidth of an input result
@@ -330,6 +332,7 @@ def bandwidth ( input_data_response, threshold = 3):
     central_wavelength = (wavelength[rightBound] + wavelength[leftBound])/2
     
     return [bandwidth, central_wavelength]
+
 
 def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
     """Extract insertion losses of a structure using cutback method.
@@ -370,6 +373,7 @@ def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
     
     return [ insertion_loss[index][0], np.transpose(insertion_loss)[0], np.transpose(insertion_loss_raw)[0] ]
 
+
 def calibrate(input_response, reference_response, fitOrder = 8):
     """Response correction function to calibrate an input response with respect
         to a reference response
@@ -394,7 +398,7 @@ def calibrate(input_response, reference_response, fitOrder = 8):
     
     return [power_corrected, power_calib_fit]
 
-#%% baseline_correction function (useful to normalize and calibrate periodic responses)
+
 def baseline_correction(input_response, fitOrder = 4):
     """baseline_correction function (useful to normalize and calibrate periodic responses)
 
@@ -416,6 +420,7 @@ def baseline_correction(input_response, fitOrder = 4):
     power_corrected = power_corrected + max(power_baseline) -max(power)
     
     return [power_corrected, power_baseline]
+
 
 def calibrate_envelope( input_response, reference_response, seg = 115, difference_tol = 1, fitOrder = 5):
     """calibration function that extracts the "envelope" of a response and use it as a reference
@@ -481,3 +486,58 @@ def calibrate_envelope( input_response, reference_response, seg = 115, differenc
     power_input_calibrated = power_input - powerfit_ref
     
     return [power_input_calibrated, powerfit_ref, wavelength_ref, power_ref]
+
+
+def getExtinctionRatio(wavl, data, threshold = 3.0, smooth = False, verbose = False):
+    """Get the extinction ratio (ER) of a dataset across the spectrum
+
+    Args:
+        wavl (list): Wavelength range of the spectrum.
+        data (list): Data values of the spectrum.
+        threshold (float): Extinction ratio peak detection threshold. 
+            Set this value to be higher than the minimum ER. Defaults to 3.0
+        smooth (bool, optional): Flag to smooth the input data. Defaults to False.
+        verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
+
+    Returns:
+        er_wavl (list): Wavelengths at which the ER was extracted.
+        er (list): Extracted ER values.
+    """
+
+    import numpy as np
+    from scipy.signal import find_peaks, savgol_filter
+
+    #convert input data to np array, easier for processing
+    wavl = np.array(wavl)
+    data = np.array(data)
+    
+    peaks, _ = find_peaks(data, prominence = threshold)
+    troughs, _ = find_peaks(-data, prominence = threshold)
+
+    er_wavl = []
+    er = []
+
+    for idx, val in enumerate(peaks):
+        try:
+            temp = data[val] + np.abs(data[troughs[idx]])
+            er.append(temp)
+            er_wavl.append(wavl[val])
+        except IndexError:
+            if verbose: print("Reached end of troughs array")
+
+
+    if verbose:
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.scatter(np.array(wavl)[peaks], data[peaks], color='red')
+        plt.scatter(np.array(wavl)[troughs], data[troughs], color='blue')
+        plt.plot(wavl, data, color = 'black')
+        print("Number of peaks = "+str(np.size(peaks)))
+        print("Number of troughs = "+str(np.size(troughs)))
+
+        plt.figure()
+        plt.scatter(er_wavl, er, color = 'black')
+        plt.ylabel('Extinction Ratio (dB)', color = 'black')
+        plt.xlabel('Wavelength (nm)', color = 'black')
+
+    return er_wavl, er
