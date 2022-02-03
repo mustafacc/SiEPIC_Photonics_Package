@@ -422,7 +422,7 @@ def baseline_correction(input_response, fitOrder = 4):
     return [power_corrected, power_baseline]
 
 
-def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrder = 8, verbose = False):
+def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrder = 4, verbose = False):
     """Calibrate an input response by using the envelope of another response.
         Ideal for Bragg gratings and contra-directional couplers
         Can be useful mainy for responses that contain dips.
@@ -481,7 +481,7 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
             y_envelope.append(val)
             tracker = val
         else:
-            oracle = np.poly1d(np.polyfit(x_envelope, y_envelope, 3))
+            oracle = np.poly1d(np.polyfit(x_envelope, y_envelope, 2))
             x_oracle = x
             y_oracle = oracle(x_oracle)
 
@@ -497,7 +497,7 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
         plt.xlabel("X")
         plt.ylabel("Y")
 
-    envelope = np.poly1d(np.polyfit(x_envelope, y_envelope, 8))
+    envelope = np.poly1d(np.polyfit(x_envelope, y_envelope, fitOrder))
     ref = envelope(wavl)
     
     if verbose:
