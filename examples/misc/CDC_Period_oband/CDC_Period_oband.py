@@ -133,5 +133,31 @@ plt.savefig('analysis_BW'+'.pdf')
 matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 # %%
+WL_sim_neg15nmBias = [1281.95, 1284.33, 1286.72, 1289.66, 1292.74, 1294.7, 1299.89]
+BW_sim_neg15nmBias = [14.29, 14.57, 15.1351, 14.29, 14.99, 14.7, 15.415]
+
+plt.figure()
+plt.scatter(period, WL, marker = 'x', label = 'Experiment')
+plt.scatter(period, WL_sim, marker = 'o', label = 'Simulation (215 nm silicon)')
+plt.scatter(period, WL_sim_neg15nmBias, marker = 's', label = 'Simulation with -15 nm bias (215 nm silicon)')
+
+plt.legend()
+plt.ylabel('Bragg Wavelength (nm)', color = 'black')
+plt.xlabel('Grating Period (nm)', color = 'black')
+plt.title("Comparision of Bragg wavelength between simulation and experiment. \nSimulation assumes 215 nm thick silicon.")
+plt.savefig('analysis_WL_withBias'+'.pdf')
+matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
+
+plt.figure()
+plt.scatter(period, BW, marker = 'x', label = 'Experiment')
+plt.scatter(period, BW_sim, marker = 'o', label = 'Simulation (215 nm silicon)')
+plt.scatter(period, BW_sim_neg15nmBias, marker = 's', label = 'Simulation with -15 nm bias (215 nm silicon)')
+
+plt.legend()
+plt.ylabel('3 dB Bandwidth (nm)', color = 'black')
+plt.xlabel('Grating Period (nm)', color = 'black')
+plt.title("Comparision of 3 dB bandwidth between simulation and experiment. \nSimulation assumes 215 nm thick silicon.")
+plt.savefig('analysis_BW_withBias'+'.pdf')
+matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 # %%
