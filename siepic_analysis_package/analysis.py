@@ -525,23 +525,66 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
     return calibrated, ref, x_envelope, y_envelope
 
 
-def getExtinctionRatio(wavl, data, threshold = 3.0, smooth = False, verbose = False):
-    """Get the extinction ratio (ER) of a dataset across the spectrum
+def getFSR(wavl, data, threshold = 3, verbose = False):
+    """Get the free spectral range of an input spectrum.
+
+    Args:
+        wavl (list): wavelength range of the spectrum.
+
+        data (list): Values of the spectrum.
+        threshold (float, optional): Extinction ratio peak detection threshold. 
+            Set this value to be higher than the minimum ER. Defaults to 3.0
+        verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
+
+    Returns:
+        fsr_wavl (list): List of wavelengths at which the FSR is extracted from. Units are the same as wavl unit.
+        fsr (list): List of the calculated free spectral ranges of the spectrum. Units are the same as wavl unit.
+    """
+    from scipy.signal import find_peaks, savgol_filter
+    #convert input data to np array, easier for processing
+    wavl = np.array(device.wavl)
+    data = np.array(device.pwrCalib)
+
+    troughs, _ = find_peaks(-data, prominence = threshold)
+    fsr = []
+    fsr_wavl = []
+    for idx, i in enumerate(troughs):
+        try:
+            fsr.append(np.abs(wavl[troughs[idx+1]]-wavl[i]))
+            fsr_wavl.append((wavl[troughs[idx+1]]+wavl[i])/2)
+        except IndexError:
+            pass
+
+    if verbose:
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.scatter(np.array(wavl)[troughs], data[troughs], color='blue')
+        plt.plot(wavl, data, color = 'black')
+        plt.title("Detected troughs in the spectrum")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+
+        plt.figure()
+        plt.scatter(fsr_wavl, fsr)
+        plt.title("Extracted free spectral ranges")
+        plt.xlabel("X")
+        plt.ylabel("Free Spectral Range")
+    return fsr_wavl, fsr
+
+def getExtinctionRatio(wavl, data, threshold = 3.0, verbose = False):
+    """Get the extinction ratio (ER) of a dataset across the spectrum.
 
     Args:
         wavl (list): Wavelength range of the spectrum.
         data (list): Data values of the spectrum.
-        threshold (float): Extinction ratio peak detection threshold. 
+        threshold (float, optional): Extinction ratio peak detection threshold. 
             Set this value to be higher than the minimum ER. Defaults to 3.0
-        smooth (bool, optional): Flag to smooth the input data. Defaults to False.
         verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
         er_wavl (list): Wavelengths at which the ER was extracted.
         er (list): Extracted ER values.
     """
-
-    import numpy as np
     from scipy.signal import find_peaks, savgol_filter
 
     #convert input data to np array, easier for processing
