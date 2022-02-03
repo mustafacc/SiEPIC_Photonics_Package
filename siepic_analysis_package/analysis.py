@@ -525,27 +525,32 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
     return calibrated, ref, x_envelope, y_envelope
 
 
-def getFSR(wavl, data, threshold = 3, verbose = False):
+def getFSR(wavl, data, prominence = 3, distance = 150, verbose = False):
     """Get the free spectral range of an input spectrum.
 
     Args:
         wavl (list): wavelength range of the spectrum.
 
         data (list): Values of the spectrum.
-        threshold (float, optional): Extinction ratio peak detection threshold. 
+        prominence (float, optional): Extinction ratio peak detection prominence. 
             Set this value to be higher than the minimum ER. Defaults to 3.0
+        distance (int, optional): Required minimal horizontal distance (>= 1) in samples between neighbouring peaks.
+            Defaults to 150.
         verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
         fsr_wavl (list): List of wavelengths at which the FSR is extracted from. Units are the same as wavl unit.
         fsr (list): List of the calculated free spectral ranges of the spectrum. Units are the same as wavl unit.
+    
+    refer to https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
+        for details about prominence and distance parameters.
     """
-    from scipy.signal import find_peaks, savgol_filter
+    from scipy.signal import find_peaks
     #convert input data to np array, easier for processing
     wavl = np.array(wavl)
     data = np.array(data)
 
-    troughs, _ = find_peaks(-data, prominence = threshold)
+    troughs, _ = find_peaks(-data, prominence = prominence, distance = distance)
     fsr = []
     fsr_wavl = []
     for idx, i in enumerate(troughs):
@@ -571,28 +576,88 @@ def getFSR(wavl, data, threshold = 3, verbose = False):
         plt.ylabel("Free Spectral Range")
     return fsr_wavl, fsr
 
-def getExtinctionRatio(wavl, data, threshold = 3.0, verbose = False):
+
+def getGroupIndex(fsr_wavl, fsr, delta_length, verbose = False):
+    """Calculate the group index from a set of free spectral range data
+        extracted from an unbalanced Mach-Zehnder interferometer .
+
+    Args:
+        fsr_wavl (list): List of wavelengths of the free spectral range data.
+            IMPORTANT: unit must be in meters.
+        fsr (list): List of free spectral ranges at the given wavelengths.
+            IMPORTANT: unit must be in meters.
+        delta_length (float): Length imbalance in the Mach-Zehnder interferometer.
+            IMPORTANT: unit must be in meters.
+        verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
+
+    Returns:
+        ng (list): List of group indices at the given fsr_wavl points.
+    """
+
+    c = 299792458
+    fsr_wavl = np.array(fsr_wavl)
+    fsr = np.array(fsr)
+
+    # conver to frequency domain
+    fsr_freq = c/fsr_wavl
+
+    # convert bandwidth from wavelength to frequency domain
+    fsr_hz = []
+    for idx, i in enumerate(list(fsr)):
+        fsr_hz.append(i*c/(fsr_wavl[idx]*fsr_wavl[idx]))
+
+    ng = []
+    for i in fsr_hz:
+        ng.append(c/(delta_length*i))
+
+    if verbose:
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.scatter(fsr_wavl, fsr)
+        plt.title("Free spectral range in SI units")
+        plt.xlabel("Wavelength (m)")
+        plt.ylabel("Free Spectral Range (m)")
+
+        plt.figure()
+        plt.scatter(fsr_freq, fsr_hz)
+        plt.title("Free spectral range in SI units")
+        plt.xlabel("Frequency (Hz)")
+        plt.ylabel("Free Spectral Range (Hz)")
+
+        plt.figure()
+        plt.scatter(fsr_wavl, ng)
+        plt.title("Extracted group index")
+        plt.xlabel("Wavelength (m)")
+        plt.ylabel("group index")
+
+    return ng
+
+
+def getExtinctionRatio(wavl, data, prominence  = 3.0, verbose = False):
     """Get the extinction ratio (ER) of a dataset across the spectrum.
 
     Args:
         wavl (list): Wavelength range of the spectrum.
         data (list): Data values of the spectrum.
-        threshold (float, optional): Extinction ratio peak detection threshold. 
+        prominence (float, optional): Extinction ratio peak detection prominence. 
             Set this value to be higher than the minimum ER. Defaults to 3.0
         verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
         er_wavl (list): Wavelengths at which the ER was extracted.
         er (list): Extracted ER values.
+
+    refer to https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
+        for details about prominence parameter.
     """
-    from scipy.signal import find_peaks, savgol_filter
+    from scipy.signal import find_peaks
 
     #convert input data to np array, easier for processing
     wavl = np.array(wavl)
     data = np.array(data)
     
-    peaks, _ = find_peaks(data, prominence = threshold)
-    troughs, _ = find_peaks(-data, prominence = threshold)
+    peaks, _ = find_peaks(data, prominence = prominence)
+    troughs, _ = find_peaks(-data, prominence = prominence)
 
     er_wavl = []
     er = []
