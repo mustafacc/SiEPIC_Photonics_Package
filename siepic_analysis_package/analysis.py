@@ -422,70 +422,106 @@ def baseline_correction(input_response, fitOrder = 4):
     return [power_corrected, power_baseline]
 
 
-def calibrate_envelope( input_response, reference_response, seg = 115, difference_tol = 1, fitOrder = 5):
-    """calibration function that extracts the "envelope" of a response and use it as a reference
+def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrder = 8, verbose = False):
+    """Calibrate an input response by using the envelope of another response.
+        Ideal for Bragg gratings and contra-directional couplers
+        Can be useful mainy for responses that contain dips.
 
-    Args:s
-        input_response (list): list containing the response to be corrected.
-            input list format: input_response[wavelength (nm), power (dBm)]
-        reference_response (list): list of reference data, format: [wavelength, value].
-        seg (int, optional): Number of segments to split the response into. Defaults to 55.
-        difference_tol (int, optional): Value tolerance to accept within the envelope. Defaults to 8.
-        fitOrder (int): order of the polynomial fit. Optional, default = 4.
+    Args:
+        wavl (list): List of wavelength data points
+        data_envelope (list): List of the values of the envelope response data
+        data (list): List of input data values to be calibrated
+        tol (float, optional): Dip threshold tolerance, i.e., what dips to consider as not dip. Defaults to 2.0.
+        N_seg (int, optional): Number of segments to dice an array into. Defautls to 100.
+        fitOrder(int, optional): Polynomial order used to fit the envelope spectrum. Defautls to 8.
+        verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
-        power_input_calibrated (list): Calibrated measurement result
-        powerfit_ref (list): Reference polynomial fit used for calibration (debugging)
-        wavelength_ref (list): Wavelength points used in the reference polynomial (debugging)
-        power_ref (list): Data points used in the reference polynomial (debugging)
-
+        calbirated (numpy array): List of the data points of the calibrated input response values
+        ref (list): List of the reference polyfit points made using the envelope
+        x_envelope (list): List of X-values used to creat ref polyfit (debugging)
+        y_envelope (list): List of Y-values used to creat ref polyfit (debugging)
     """
-    # step 1-pick points on the reference response that create an envelope fit
-    # split the response into SEG segments, if two segments are seperated by more than TOL, discard second point and go to next point
-    wavelength = reference_response[0]
-    power = reference_response[1]
 
-    wavelength_input = input_response[0]
-    power_input = input_response[1]
+    if verbose:
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.plot(wavl, data, label = 'Input data')
+        plt.plot(wavl, data_envelope, label = "Calibration reference")
+        plt.legend(loc=0)
+        plt.title("Original input data set")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+    
+    # step 1, sample the data_envelope data into N_seg segments
+    idxSteps = int(np.floor(np.size(data_envelope)/N_seg)) # index steps between each segment
+    x = []
+    y = []
+    for i in range(N_seg):
+        idx = i * idxSteps
+        y.append(data_envelope[idx])
+        x.append(wavl[idx])
 
-    step = int(np.size(power)/seg)
+    if verbose:
+        plt.figure()
+        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
+        plt.scatter(x, y, color='red', label = 'Sampling points')
+        plt.legend(loc=0)
+        plt.title("Sampling of reference data set")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+    
+    x_envelope = [] # wavelength data points to include in envelope fitting
+    y_envelope = [] # transmission (or power?) data points to envelope fitting
+    tracker = y[0] # initial threshold tracker value 
 
-    power_ref = []
-    wavelength_ref = []
-    cursor_initial = 0
-    cursor_next = 1
-    for i in range(seg):
-
-        point_initial = power[cursor_initial*step]
-        point_next = power[step*(cursor_next)]
-        
-        if abs(point_initial - point_next) < difference_tol:              
-            power_ref.append(power[cursor_initial*step])
-            wavelength_ref.append(wavelength[cursor_initial*step])
-            cursor_initial = cursor_initial+1
-            cursor_next = cursor_next+1
+    for idx, val in enumerate(y):
+        if np.abs(val-tracker) < tol:
+            x_envelope.append(x[idx])
+            y_envelope.append(val)
+            tracker = val
         else:
-            while abs(point_initial - point_next) > difference_tol and (cursor_next+2)*step < np.size(power):
-                cursor_next = cursor_next+1
-                point_next = power[step*(cursor_next)]
-                
-            cursor_initial = cursor_next
-            cursor_next = cursor_next+1
+            oracle = np.poly1d(np.polyfit(x_envelope, y_envelope, 3))
+            x_oracle = x
+            y_oracle = oracle(x_oracle)
 
+            if np.abs(val-y_oracle[idx]) < tol:
+                tracker = val
 
-        if cursor_next*step >= np.size(power):
-            break
+    if verbose:
+        plt.figure()
+        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
+        plt.scatter(x_envelope, y_envelope, color='red', label = 'Envelope points')
+        plt.legend(loc=0)
+        plt.title("Generated envelope points to used for polynomial fitting")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+
+    envelope = np.poly1d(np.polyfit(x_envelope, y_envelope, 8))
+    ref = envelope(wavl)
     
-    pfit_ref = np.polyfit(wavelength_ref-np.mean(wavelength_ref), power_ref, fitOrder)
-    powerfit_ref = np.polyval(pfit_ref, wavelength-np.mean(wavelength))
-    
-    pfit_input = np.polyfit(wavelength_input-np.mean(wavelength_input), power_input, fitOrder)
-    powerfit_input = np.polyval(pfit_input, wavelength_input-np.mean(wavelength_input))
-    
-    # step 2-call calibrate input with envelope fit as a reference response
-    power_input_calibrated = power_input - powerfit_ref
-    
-    return [power_input_calibrated, powerfit_ref, wavelength_ref, power_ref]
+    if verbose:
+        plt.figure()
+        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
+        plt.scatter(x_envelope, y_envelope, color='red', label = 'Envelope points')
+        plt.plot(wavl, ref, '--', color = 'black', linewidth = 2, label = 'Envelope')
+        plt.legend(loc=0)
+        plt.title("Final generated polynomial for fitting")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+
+    calibrated = np.array(data)-np.array(ref)
+    calibrated_ref = np.array(data_envelope)-np.array(ref)
+
+    if verbose:
+        plt.figure()
+        plt.plot(wavl, calibrated, linewidth = 1, label = 'Calibrated input response')
+        plt.plot(wavl, calibrated_ref, linewidth = 1, label = 'Calibrated envelope response')
+        plt.legend(loc=0)
+        plt.title("Final calibration")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+    return calibrated, ref, x_envelope, y_envelope
 
 
 def getExtinctionRatio(wavl, data, threshold = 3.0, smooth = False, verbose = False):
