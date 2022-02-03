@@ -133,8 +133,8 @@ plt.savefig('analysis_BW'+'.pdf')
 matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 # %%
-WL_sim_neg15nmBias = [1281.95, 1284.33, 1286.72, 1289.66, 1292.74, 1294.7, 1299.89]
-BW_sim_neg15nmBias = [14.29, 14.57, 15.1351, 14.29, 14.99, 14.7, 15.415]
+WL_sim_neg15nmBias = [1274.1, 1281.95, 1284.33, 1286.72, 1289.66, 1292.74, 1294.7, 1299.89]
+BW_sim_neg15nmBias = [15.14, 14.29, 14.57, 15.1351, 14.29, 14.99, 14.7, 15.415]
 
 plt.figure()
 plt.scatter(period, WL, marker = 'x', label = 'Experiment')
