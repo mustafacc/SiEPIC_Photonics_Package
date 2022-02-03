@@ -542,8 +542,8 @@ def getFSR(wavl, data, threshold = 3, verbose = False):
     """
     from scipy.signal import find_peaks, savgol_filter
     #convert input data to np array, easier for processing
-    wavl = np.array(device.wavl)
-    data = np.array(device.pwrCalib)
+    wavl = np.array(wavl)
+    data = np.array(data)
 
     troughs, _ = find_peaks(-data, prominence = threshold)
     fsr = []
