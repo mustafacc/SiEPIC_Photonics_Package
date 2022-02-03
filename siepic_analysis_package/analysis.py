@@ -296,11 +296,12 @@ def find_nearest(array, value):
     return idx
 
 
-def bandwidth ( input_data_response, threshold = 3):
+def bandwidth ( wavl, data , threshold = 3):
     """Calculates the bandwidth of an input result
 
     Args:
-        input_data_response (list): [wavelength (nm), power (dBm)]
+        wavl (list): Wavelength data domain
+        data (list): Transmission (or power?) data to analyze
         threshold (int, optional): bandwidth threshold. Defaults to 3 dB.
 
     Returns:
@@ -311,8 +312,8 @@ def bandwidth ( input_data_response, threshold = 3):
     #                    bandwidth threshold, default 3 dB
     # output list format: [bandwidth of threshold, central wavelength]
 
-    wavelength = input_data_response[0]
-    response = input_data_response[1]
+    wavelength = wavl
+    response = data
     
     center_index = find_nearest( response, max(response))
     isInBand = response>max(response) - threshold
