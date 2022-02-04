@@ -50,15 +50,19 @@ plt.ylabel('Transmission (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.title("Calibrated data (using baseline correction)")
 plt.savefig('data_calibrated.pdf')
-#%% apply SIAP getExtinctionRatio function to calculate extinction ratios
+#%% apply SIAP getExtinctionRatio, getFSR, and getGroupIndex functions
 
 er_wavl_arr = []
 er_arr = []
+DL = 155.564e-6
 
 for device in devices:
-    temp = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, threshold = 6)
+    temp = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, prominence = 6)
     device.er_wavl = temp[0]
     device.er = temp[1]
+    device.fsr_wavl, device.fsr = siap.analysis.getFSR(device.wavl, device.pwrCalib, prominence = 6)
+    device.ng = siap.analysis.getGroupIndex([i*1e-9 for i in device.fsr_wavl], [i*1e-9 for i in device.fsr], delta_length = DL)
+
 
 plt.figure()
 for device in devices:
@@ -68,4 +72,58 @@ plt.ylabel('Extinction Ratio (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.title("Extracted extinction ratios from the measurements")
 plt.savefig('extinction_ratio.pdf')
+
+plt.figure()
+for device in devices:
+    plt.scatter(device.fsr_wavl, device.fsr, label = device.deviceID)
+plt.legend(loc=4)
+plt.ylabel('Free spectral range (nm)', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.title("Extracted free spectral ranges from the measurements")
+plt.savefig('fsr.pdf')
+
+plt.figure()
+for device in devices:
+    plt.plot(device.fsr_wavl, device.ng, label = device.deviceID)
+plt.legend(loc=4)
+plt.ylabel('Group index', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.title("Extracted group indices measurements")
+plt.savefig('group_index.pdf')
+
+
+wavl_sim = [1296.61, 1308.81, 1312.24, 1333.91]
+ng_sim = [4.37898, 4.38968, 4.4002, 4.41045]
+
+plt.figure()
+for device in devices:
+    plt.plot(device.fsr_wavl, device.ng, '--', label = device.deviceID)
+plt.plot(wavl_sim, ng_sim, label = 'Simulation')
+plt.legend(loc=4)
+plt.ylabel('Group index', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.title("Extracted group indices measurements")
+plt.savefig('group_index.pdf')
+
+# %%
+wavl_sim_350 = [1296.61, 1308.81, 1312.24, 1333.91]
+ng_sim_350 = [4.37898, 4.38968, 4.4002, 4.41045]
+
+wavl_sim_335 = [1296.61, 1308.81, 1312.24, 1333.91]
+ng_sim_335 = [4.42644, 4.43656, 4.44627, 4.45546]
+
+wavl_sim_335_215 = [1296.61, 1308.81, 1312.24, 1333.91]
+ng_sim_335_215 = []
+
+plt.figure()
+for device in devices:
+    plt.plot(device.fsr_wavl, device.ng, '--', label = device.deviceID)
+plt.plot(wavl_sim_350, ng_sim_350, label = 'Simulation 350 nm wide, 220 nm thick')
+plt.plot(wavl_sim_335, ng_sim_335, label = 'Simulation 335 nm wide, 220 nm thick')
+plt.plot(wavl_sim_335_215, ng_sim_335_215, label = 'Simulation 335 nm wide, 215 nm thick')
+plt.legend(loc=4)
+plt.ylabel('Group index', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.title("Extracted group indices measurements")
+plt.savefig('group_index_vs_sim.pdf')
 # %%
