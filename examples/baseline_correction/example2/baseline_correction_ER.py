@@ -113,7 +113,7 @@ wavl_sim_335 = [1296.61, 1308.81, 1312.24, 1333.91]
 ng_sim_335 = [4.42644, 4.43656, 4.44627, 4.45546]
 
 wavl_sim_335_215 = [1296.61, 1308.81, 1312.24, 1333.91]
-ng_sim_335_215 = []
+ng_sim_335_215 = [4.42473, 4.43421, 4.44322, 4.45161]
 
 plt.figure()
 for device in devices:
@@ -121,7 +121,7 @@ for device in devices:
 plt.plot(wavl_sim_350, ng_sim_350, label = 'Simulation 350 nm wide, 220 nm thick')
 plt.plot(wavl_sim_335, ng_sim_335, label = 'Simulation 335 nm wide, 220 nm thick')
 plt.plot(wavl_sim_335_215, ng_sim_335_215, label = 'Simulation 335 nm wide, 215 nm thick')
-plt.legend(loc=4)
+plt.legend(bbox_to_anchor=(1.1, 1.05))
 plt.ylabel('Group index', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.title("Extracted group indices measurements")
