@@ -17,8 +17,8 @@ import numpy as np
 
 
 fname_data = "data" # filename containing the desired data
-device_id = "wgloss_spiral_"
-port = 0 # port in the measurement set containing the data
+device_id = "wgloss_straight_350nm_"
+port = 1 # port in the measurement set containing the data
 
 def getDeviceLength(deviceID, idxField = 2):
     """Find the length of a device based on the ID
@@ -77,12 +77,12 @@ matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 
 
 #%% Insertion loss vs wavelength plot
 plt.figure(1)
-fig1 = plt.plot(device.wavl,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
-fig2 = plt.plot(device.wavl,insertion_loss_fit, label='Insertion loss (fit)', color='red')
+fig1 = plt.plot(device.wavl,-insertion_loss_raw, label='Insertion loss (raw)', color='blue')
+fig2 = plt.plot(device.wavl,-insertion_loss_fit, label='Insertion loss (fit)', color='red')
 plt.legend(loc=0)
-plt.ylabel('Loss (dB/cm)', color = 'black')
+plt.ylabel('Propagation Loss (dB/cm)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
-plt.setp(fig1, 'linewidth', .050)
+plt.setp(fig1, 'linewidth', .50)
 plt.setp(fig2, 'linewidth', 4.0)
 plt.title("Insertion losses using the cut-back method")
 plt.savefig('cutback'+'.pdf')

@@ -17,8 +17,8 @@ import numpy as np
 
 
 fname_data = "data" # filename containing the desired data
-device_prefix = "ysplitter_N"
-device_suffix = "_TE"
+device_prefix = "taperloss_50um_2um_"
+device_suffix = "suffix"
 port = 1 # port in the measurement set containing the data
 
 def getDeviceParameter(deviceID, devicePrefix, deviceSuffix = ''):
@@ -32,7 +32,8 @@ def getDeviceParameter(deviceID, devicePrefix, deviceSuffix = ''):
     Returns:
         parameter (float): variable parameter of the device (unit based on whats in the ID)
     """
-    parameter = float(deviceID.strip(devicePrefix).strip(deviceSuffix))
+    parameter = float(deviceID.removeprefix(devicePrefix).removesuffix(deviceSuffix))
+    
     return parameter
 
 #%% crawl available data to choose file
@@ -73,13 +74,13 @@ matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 
 
 #%% Transmission vs wavelength plot
 plt.figure(1)
-fig1 = plt.plot(device.wavl,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
-fig2 = plt.plot(device.wavl,insertion_loss_fit, label='Insertion loss (fit)', color='red')
+fig1 = plt.plot(device.wavl,-insertion_loss_raw, label='Insertion loss (raw)', color='blue')
+fig2 = plt.plot(device.wavl,-insertion_loss_fit, label='Insertion loss (fit)', color='red')
 plt.legend(loc=0)
-plt.ylabel('Transmission (dB)', color = 'black')
+plt.ylabel('Insertion loss (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
-plt.setp(fig1, 'linewidth', .020)
-plt.setp(fig2, 'linewidth', 4.0)
+plt.setp(fig1, 'linewidth', 1.0)
+plt.setp(fig2, 'linewidth', 1.0)
 plt.title("Insertion losses using the cut-back method")
 plt.savefig('cutback'+'.pdf')
 matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
