@@ -13,7 +13,7 @@ sys.path.append(r'C:\Users\musta\Documents\GitHub\SiEPIC_Photonics_Package')
 import siepic_analysis_package as siap
 import os
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 device_prefix = "splitter_SWG"
 port = 1 # port containing the data to process
@@ -57,12 +57,12 @@ er_arr = []
 DL = 155.564e-6
 
 for device in devices:
-    temp = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, prominence = 6)
-    device.er_wavl = temp[0]
-    device.er = temp[1]
+    device.er_wavl, device.er = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, prominence = 6)
     device.fsr_wavl, device.fsr = siap.analysis.getFSR(device.wavl, device.pwrCalib, prominence = 6)
     device.ng = siap.analysis.getGroupIndex([i*1e-9 for i in device.fsr_wavl], [i*1e-9 for i in device.fsr], delta_length = DL)
-
+    device.couplingCoeff = []
+    for er in device.er:
+        device.couplingCoeff.append(0.5 + 0.5 * np.sqrt( 1/10**(er/10)))
 
 plt.figure()
 for device in devices:
@@ -72,6 +72,15 @@ plt.ylabel('Extinction Ratio (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.title("Extracted extinction ratios from the measurements")
 plt.savefig('extinction_ratio.pdf')
+
+plt.figure()
+for device in devices:
+    plt.scatter(device.er_wavl, device.couplingCoeff, label = device.deviceID)
+plt.legend(loc=4)
+plt.ylabel('Splitting ratio', color = 'black')
+plt.xlabel('Wavelength (nm)', color = 'black')
+plt.title("Extracted splitting ratios from the measurements")
+plt.savefig('coupling_coefficient.pdf')
 
 plt.figure()
 for device in devices:
@@ -92,20 +101,11 @@ plt.title("Extracted group indices measurements")
 plt.savefig('group_index.pdf')
 
 
+
+# %%
 wavl_sim = [1296.61, 1308.81, 1312.24, 1333.91]
 ng_sim = [4.37898, 4.38968, 4.4002, 4.41045]
 
-plt.figure()
-for device in devices:
-    plt.plot(device.fsr_wavl, device.ng, '--', label = device.deviceID)
-plt.plot(wavl_sim, ng_sim, label = 'Simulation')
-plt.legend(loc=4)
-plt.ylabel('Group index', color = 'black')
-plt.xlabel('Wavelength (nm)', color = 'black')
-plt.title("Extracted group indices measurements")
-plt.savefig('group_index.pdf')
-
-# %%
 wavl_sim_350 = [1296.61, 1308.81, 1312.24, 1333.91]
 ng_sim_350 = [4.37898, 4.38968, 4.4002, 4.41045]
 
