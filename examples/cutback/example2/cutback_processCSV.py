@@ -17,33 +17,36 @@ import numpy as np
 
 
 fname_data = "data" # filename containing the desired data
-device_id = "wgloss_straight_350nm_"
+device_prefix = "wgloss_straight_2000nm_"
+device_suffix = "u"
 port = 1 # port in the measurement set containing the data
 
-def getDeviceLength(deviceID, idxField = 2):
-    """Find the length of a device based on the ID
+def getDeviceParameter(deviceID, devicePrefix, deviceSuffix = ''):
+    """Find the variable parameter of a device based on the ID
 
     Args:
         deviceID (string): ID of the device.
-        idxField (int): index of the field containing the length
+        devicePrefix (string): Prefix string in the device that's before the variable parameter
+        deviceSuffix (string): Any additional fields in the suffix of a device that need to be stripped, optional.
 
     Returns:
-        length (float): length of the device (unit based on whats in the ID)
+        parameter (float): variable parameter of the device (unit based on whats in the ID)
     """
-    length = float(deviceID.split('_')[idxField].strip('u'))
-    return length
+    parameter = float(deviceID.removeprefix(devicePrefix).removesuffix(deviceSuffix))
+    
+    return parameter
 
 #%% crawl available data to choose file
 
 lengths = []
 devices = []
 for root, dirs, files in os.walk('data'):
-    if os.path.basename(root).startswith(device_id):
+    if os.path.basename(root).startswith(device_prefix):
         for file in files:
             if file.endswith(".csv"):
                 device = siap.analysis.processCSV(root+r'\\'+file)
                 devices.append(device)
-                lengths.append(getDeviceLength(device.deviceID))
+                lengths.append(getDeviceParameter(device.deviceID, device_prefix, device_suffix))
 
 #%%
 # download .mat files from GitHub repo and parse it to a variable (data)
@@ -66,7 +69,7 @@ for device in devices:
 # plot all cutback structures responses
 plt.figure(0)
 for device in devices:
-    label = 'L = ' + str(getDeviceLength(device.deviceID)) + ' microns'
+    label = 'L = ' + str(getDeviceParameter(device.deviceID, device_prefix, device_suffix)) + ' microns'
     fig0 = plt.plot(device.wavl,device.pwr[port], label=label)
     plt.legend(loc=0)
 plt.ylabel('Power (dBm)', color = 'black')

@@ -7,7 +7,7 @@ Author:     Mustafa Hammood
 Example:    Application of SiEPIC_AP cutback function
             to extract the porpagation losses from three different length spirals.
 """
-
+#%%
 import siepic_analysis_package as siap
 import matplotlib.pyplot as plt
 import matplotlib
@@ -52,8 +52,8 @@ matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 
 # Insertion loss vs wavelength plot
 plt.figure(1)
 linspace = np.linspace(unit_cm[0],unit_cm[len(unit_cm)-1], len(insertion_loss_fit))
-fig1 = plt.plot(linspace,insertion_loss_raw, label='Insertion loss (raw)', color='blue')
-fig2 = plt.plot(linspace,insertion_loss_fit, label='Insertion loss (fit)', color='red')
+fig1 = plt.plot(linspace,-insertion_loss_raw, label='Insertion loss (raw)', color='blue')
+fig2 = plt.plot(linspace,-insertion_loss_fit, label='Insertion loss (fit)', color='red')
 plt.legend(loc=0)
 plt.ylabel('Loss (dB/cm)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
@@ -63,3 +63,5 @@ plt.title("Insertion losses using the cut-back method")
 plt.savefig('cutback'+'.pdf')
 matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
+
+# %%
