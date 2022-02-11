@@ -525,7 +525,7 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
     return calibrated, ref, x_envelope, y_envelope
 
 
-def getFSR(wavl, data, prominence = 3, distance = 150, verbose = False):
+def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
     """Get the free spectral range of an input spectrum.
 
     Args:
@@ -535,7 +535,7 @@ def getFSR(wavl, data, prominence = 3, distance = 150, verbose = False):
         prominence (float, optional): Extinction ratio peak detection prominence. 
             Set this value to be higher than the minimum ER. Defaults to 3.0
         distance (int, optional): Required minimal horizontal distance (>= 1) in samples between neighbouring peaks.
-            Defaults to 150.
+            Defaults to 50.
         verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
@@ -633,7 +633,7 @@ def getGroupIndex(fsr_wavl, fsr, delta_length, verbose = False):
     return ng
 
 
-def getExtinctionRatio(wavl, data, prominence  = 3.0, verbose = False):
+def getExtinctionRatio(wavl, data, prominence  = 3.0, distance = 50, verbose = False):
     """Get the extinction ratio (ER) of a dataset across the spectrum.
 
     Args:
@@ -641,6 +641,8 @@ def getExtinctionRatio(wavl, data, prominence  = 3.0, verbose = False):
         data (list): Data values of the spectrum.
         prominence (float, optional): Extinction ratio peak detection prominence. 
             Set this value to be higher than the minimum ER. Defaults to 3.0
+        distance (int, optional): Required minimal horizontal distance (>= 1) in samples between neighbouring peaks.
+            Defaults to 50.
         verbose (bool, optional): Flag to help debugging by plotting detected peaks. Defaults to False.
 
     Returns:
@@ -656,8 +658,8 @@ def getExtinctionRatio(wavl, data, prominence  = 3.0, verbose = False):
     wavl = np.array(wavl)
     data = np.array(data)
     
-    peaks, _ = find_peaks(data, prominence = prominence)
-    troughs, _ = find_peaks(-data, prominence = prominence)
+    peaks, _ = find_peaks(data, prominence = prominence, distance = distance)
+    troughs, _ = find_peaks(-data, prominence = prominence, distance = distance)
 
     er_wavl = []
     er = []
