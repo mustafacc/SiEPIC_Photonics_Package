@@ -8,7 +8,12 @@ Module: Data processing and analysis functionalities of the analysis package
 
 """
 import numpy as np
+import math
 
+#  TODO ( IF current is available for the device save it )
+#  TODO ( dark current if easy to achieve)
+#  TODO ( use baseline correction for periodic responses)
+#  Maybe use find peaks to determine if its periodic 
 class measurement(object):
     """
     An object to represent a measurement.
@@ -55,8 +60,16 @@ class measurement(object):
     wavl : list
         Wavelength points in the sweep. Units : nm
     pwr : list
-        List of detector readout of each channel at each wavelength.
-        Format: [ [ch1], [ch2], ...]
+        List of detector readout of each channel at each wavelength
+        and applied voltage in the case of active measurements.
+        Format: [ [ch1_v1, ch1_v2, ...], [ch2_v1, ch2_v2, ...], ...]
+    dieID : integer 
+        TODO( change to string)
+        Identifier used in cases where multiple dies are present
+    voltage : list
+        Supplementary list to state the voltages associated with pwr when 
+        it has the form of a 3d list for active measurements
+        Format: [ [ch1_v1, ch1_v2, ...], [ch2_v1, ch2_v2, ...], ...]
 
     Methods
     -------
@@ -66,11 +79,14 @@ class measurement(object):
         Returns the measurement duration in seconds.
     getGDS()
         Calculate the GDS X and Y coordinates of the device.
+    getPorts()
+        Returns the number of ports with data present
     """
 
     def __init__(self, deviceID, user, start, finish, coordsGDS, coordsMotor,
                  date, laser, detector, sweepSpd, sweepPwr, wavlStep,
-                 wavlStart, wavlStop, stitch, initRange, wavl, pwr):
+                 wavlStart, wavlStop, stitch, initRange, wavl, pwr, dieID, 
+                 voltage):
         self.deviceID = deviceID
         self.user = user
         self.start = start
@@ -89,6 +105,8 @@ class measurement(object):
         self.initRange = initRange  # dBm
         self.wavl = wavl  # nm
         self.pwr = pwr  # dBm
+        self.dieID = dieID
+        self.voltage = voltage # volts
 
     def plot(self, channels=[0], wavlRange=None, pwrRange=None, savepdf=False,
              savepng=True):
@@ -123,31 +141,63 @@ class measurement(object):
         import matplotlib as mpl
         mpl.style.use('ggplot')  # set plotting style
 
-        fig = plt.figure(figsize=(8, 6))
-        ax = fig.add_subplot(111)
-        ax.set_xlabel('Wavelength (nm)')
-        ax.set_ylabel('Power (dBm)')
-        ax.set_title("Device: " + self.deviceID)
-        ax.grid('on')
+        fig1 = plt.figure(figsize=(8, 6))
+        ax1 = fig1.add_subplot(111)
+        ax1.set_xlabel('Wavelength (nm)')
+        ax1.set_ylabel('Power (dBm)')
+        ax1.set_title("Device: " + self.deviceID)
+        ax1.grid('on')
+        
+        active = False
+        fig2 = plt.figure(figsize=(8, 6))
+        ax2 = fig2.add_subplot(111)
+        ax2.set_xlabel('Wavelength (nm)')
+        ax2.set_ylabel('Power (dBm)')
+        ax2.set_title("Device: " + self.deviceID + " Sweep Results")
+        ax2.grid('on')
 
         if wavlRange is None:
-            ax.set_xlim(min(self.wavl), max(self.wavl))
+            ax1.set_xlim(min(self.wavl), max(self.wavl))
+            ax2.set_xlim(min(self.wavl), max(self.wavl))
+            
+            
         else:
-            ax.set_xlim(wavlRange[0], wavlRange[1])
-
+            ax1.set_xlim(wavlRange[0], wavlRange[1])
+            ax2.set_xlim(wavlRange[0], wavlRange[1])
+            
         if pwrRange is not None:
-            ax.set_ylim(pwrRange[0], pwrRange[1])
+            ax1.set_ylim(pwrRange[0], pwrRange[1])
+            ax2.set_ylim(pwrRange[0], pwrRange[1])
 
         for channel in channels:
-            label = "CH" + str(channel)
-            ax.plot(self.wavl, self.pwr[channel], label=label)
-        ax.legend()
+            for ii in range(len(self.voltage[channel])):
+                if (math.isnan(self.voltage[channel][ii]) == True):     
+                    label = "CH" + str(channel)
+                    ax1.plot(self.wavl, self.pwr[channel][ii], label=label)
+                if (math.isnan(self.voltage[channel][ii]) == False):     
+                    active = True
+                    label = "CH" + str(channel) + " V=" + str(self.voltage[channel][ii])
+                    ax2.plot(self.wavl, self.pwr[channel][ii], label=label)
+                    
+        ax1.legend()
+        ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
 
         if savepdf:
-            fig.savefig(self.deviceID+'.pdf')
+            fig1.savefig(self.deviceID+'.pdf')
+            fig2.savefig(self.deviceID+'_Sweep.pdf')
+            # TODO( FINISH NAMING)
+            # TODO (DONT SAVE ACTIVES IF NOT PRESENT)
         if savepng:
-            fig.savefig(self.deviceID+'.png')
-        return fig, ax
+            fig1.savefig(self.deviceID+'.png')
+            fig2.savefig(self.deviceID+'_Sweep.png')
+             # TODO( FINISH NAMING)
+            
+        
+        if (active == False):
+            plt.close(fig2)
+        
+        return fig1, fig2, ax1, ax2
 
     def getDuration(self):
         """
@@ -185,6 +235,111 @@ class measurement(object):
         self.x = float(self.coordsGDS.split()[0])
         self.y = float(self.coordsGDS.split()[1])
         return self.x, self.y
+    
+    def getPorts(self):
+        """
+        Returns list of ports with data present
+
+        Returns
+        -------
+        Ports : list
+            list of ports with data present
+
+        """    
+        ports = []
+        for ii in range(len(self.pwr)):
+            ports.append(ii)  
+            
+        return ports
+
+
+
+
+def measurementEHVA(desiredDevice):
+    """
+    Creates a measurement object out of the pandas dataframe containing only 1 component ID
+
+    Parameters
+    ----------
+    desiredDevice : pandas dataframe
+        dataframe containing all information regarding a single device
+
+    Returns
+    -------
+    device : measurement object
+        DESCRIPTION.
+
+    """
+    
+    # Pre-initializing everything to None in case there is no data for it?
+    componentName = None
+    timestamp = None
+    wavlStep = None
+    wavlStart = None
+    wavlStop = None
+    wavl = None
+    coordsGDS = None
+    pwr = None
+    
+    
+    componentName = desiredDevice.ComponentName.at[0]
+    timestamp = desiredDevice.ResultCreated.at[0]   
+    domainType = desiredDevice.DomainMetricName.at[0]   
+    dieID = desiredDevice.DieId.at[0]
+    voltage = desiredDevice.Voltage.at[0]
+    coordsGDS = desiredDevice.OpticalPortPosition.at[0]
+    coordsGDS = coordsGDS.replace(","," ")
+    
+    if (domainType == 'wavelength'):
+        wavlString = desiredDevice.ResultDomain.at[0]
+        wavl = np.fromstring(wavlString, dtype=float, sep=',')
+        wavlStart = wavl[0]
+        wavlStop = wavl[-1]
+        wavlStep = wavl[1] - wavl[0]
+        
+
+    pwr = [[]]
+    voltage = [[]]
+    for ii in range(len(desiredDevice)):  
+        resultType = desiredDevice.ResultMetricName.at[ii]
+        if (resultType == 'optical power'):  
+            pwerString = desiredDevice.ResultValue.at[ii]
+            resultName = desiredDevice.ResultName.at[ii]
+            channel = np.fromstring(pwerString, dtype=float, sep=',')
+            channel = channel.astype(float)
+            channel[channel > 0] = np.nan
+            if (resultName == 'opticalPowerFirstOPM'):
+                pwr[0].append(channel)
+                voltage[0].append(round(desiredDevice.Voltage.at[ii],3))
+            elif (resultName == 'opticalPowerSecondOPM'):
+                if (len(pwr) == 1):
+                    pwr.append([channel])
+                    voltage.append([round(desiredDevice.Voltage.at[ii],3)])
+                else:                       
+                    pwr[1].append(channel)
+                    voltage[1].append(round(desiredDevice.Voltage.at[ii],3))
+            elif (resultName == 'opticalPowerThirdOPM'): 
+                if (len(pwr) == 2):
+                    pwr.append([channel])
+                    voltage.append([round(desiredDevice.Voltage.at[ii],3)])
+                else:    
+                    pwr[2].append(channel)
+                    voltage[2].append(round(desiredDevice.Voltage.at[ii],3))
+            else:
+                print("Unkown optical power result name")
+                
+        
+    device = measurement(deviceID=componentName, user=None, start=None,
+                         finish=timestamp, coordsGDS=coordsGDS,
+                         coordsMotor=None, date=None, laser=None,
+                         detector=None, sweepSpd=None,
+                         sweepPwr=None, wavlStep=wavlStep,
+                         wavlStart=wavlStart, wavlStop=wavlStop, stitch=None,
+                         initRange=None, wavl=wavl, pwr=pwr, dieID=dieID,
+                         voltage=voltage)
+    
+    return device
+
 
 
 def processCSV(f_name):
@@ -277,7 +432,8 @@ def processCSV(f_name):
                          detector=detector, sweepSpd=sweepSpd,
                          sweepPwr=sweepPwr, wavlStep=wavlStep,
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=stitch,
-                         initRange=initRange, wavl=wavl, pwr=pwr)
+                         initRange=initRange, wavl=wavl, pwr=pwr, dieID=None, 
+                         voltage=None)
     return device
 
 
