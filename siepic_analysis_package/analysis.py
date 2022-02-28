@@ -62,8 +62,7 @@ class measurement(object):
         List of detector readout of each channel at each wavelength
         and applied voltage in the case of active measurements.
         Format: [ [ch1_v1, ch1_v2, ...], [ch2_v1, ch2_v2, ...], ...]
-    dieID : integer 
-        TODO( change to string)
+    dieID : str 
         Identifier used in cases where multiple dies are present
     voltageExperimental : list
         Supplementary list to state the voltages associated with pwr when 
@@ -73,6 +72,21 @@ class measurement(object):
         Supplementary list to state the current associated with pwr when 
         it has the form of a 3d list for active measurements
         Format: [ [ch1_c1, ch1_c2, ...], [ch2_c1, ch2_c2, ...], ...]
+    IV_current : list
+        List of current values in microamperes to be used in IV plotting
+        Format [[current1], [current2], ...]
+        Only more than 1 current present if multiple repeat measurements were
+        performed on the same device
+    IV_voltage : list
+        List of voltage values in microamperes to be used in IV plotting
+        Format [[voltage1], [voltage2], ...]
+        Only more than 1 voltage present if multiple repeat measurements were
+        performed on the same device
+    darkCurrent : list
+        List of dark current results associated with the device and the 
+        associated voltage applied to measure it at
+        Format [[Dark Current],[Voltage]]
+
 
     Methods
     -------
@@ -84,15 +98,17 @@ class measurement(object):
         Calculate the GDS X and Y coordinates of the device.
     getPorts()
         Returns the number of ports with data present
-    IVcurve()
+    plot_IVcurve()
         Plots the IV curve of the device if available
+    plot_darkCurrent
+        Scatter plots the dark current versus voltage if available
     """
 
     def __init__(self, deviceID, user, start, finish, coordsGDS, coordsMotor,
                  date, laser, detector, sweepSpd, sweepPwr, wavlStep,
                  wavlStart, wavlStop, stitch, initRange, wavl, pwr, dieID, 
                  voltageExperimental, currentExperimental, IV_current,
-                 IV_voltage):
+                 IV_voltage, darkCurrent):
         self.deviceID = deviceID
         self.user = user
         self.start = start
@@ -116,6 +132,7 @@ class measurement(object):
         self.currentExperimental = currentExperimental # uA
         self.IV_current = IV_current # uA
         self.IV_voltage = IV_voltage # V
+        self.darkCurrent = darkCurrent # A #TODO (CONFIRM THE UNITS)
 
     def plot(self, channels=[0], wavlRange=None, pwrRange=None, savepdf=False,
              savepng=True):
@@ -193,12 +210,12 @@ class measurement(object):
 
 
         if savepdf:
-            fig1.savefig(self.deviceID + "_Die" + str(self.dieID) + '.pdf')
-            fig2.savefig(self.deviceID + "_Die" + str(self.dieID) + '_Sweep.pdf')
+            fig1.savefig(self.deviceID + "_Die" + self.dieID + '.pdf')
+            fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.pdf')
             
         if savepng:
-            fig1.savefig(self.deviceID + "_Die" + str(self.dieID) + '.png')
-            fig2.savefig(self.deviceID + "_Die" + str(self.dieID) + '_Sweep.png')
+            fig1.savefig(self.deviceID + "_Die" + self.dieID + '.png')
+            fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.png')
 
         if (active == False):
             plt.close(fig2)
@@ -258,7 +275,7 @@ class measurement(object):
             
         return ports
 
-    def IVcurve(self, savepdf=False, savepng=True):
+    def plot_IVcurve(self, savepdf=False, savepng=True):
         """
         Plots the IV curve of the device if available
 
@@ -288,9 +305,42 @@ class measurement(object):
             
         ax.legend()
         if savepdf:
-            fig.savefig(self.deviceID + "_Die" + str(self.dieID) + "_IVcurve" + '.pdf')
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" + '.pdf')
         if savepng:
-            fig.savefig(self.deviceID + "_Die" + str(self.dieID) + "_IVcurve" +'.png')
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" +'.png')
+        return fig, ax
+    
+    def plot_darkCurrent(self, savepdf=False, savepng=True):
+        """
+        Scatter plots the dark current versus voltage if available
+
+        Returns
+        -------
+        fig : matplotlib Figure object
+            Figure object of the generated plot.
+        ax : matplotlib Axes object
+            Axes object of the generated plot.
+
+        """
+        
+        import matplotlib.pyplot as plt
+        import matplotlib as mpl
+        mpl.style.use('ggplot')  # set plotting style
+
+        fig = plt.figure(figsize=(8, 6))
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('Voltage (V)')
+        ax.set_ylabel('Dark Current (A)')
+        ax.set_title("Device: " + self.deviceID + "\n Dark Current")
+        ax.grid('on')
+        
+        for ii in range(len(self.darkCurrent[0])):
+            ax.scatter( self.darkCurrent[1][ii], self.darkCurrent[0][ii])
+            
+        if savepdf:
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" + '.pdf')
+        if savepng:
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" +'.png')
         return fig, ax
 
 def measurementEHVA(desiredDevice):
@@ -321,9 +371,8 @@ def measurementEHVA(desiredDevice):
     
     
     componentName = desiredDevice.ComponentName.at[0]
-    timestamp = desiredDevice.ResultCreated.at[0]   
-#    domainType = desiredDevice.DomainMetricName.at[0]   
-    dieID = desiredDevice.DieId.at[0]
+    timestamp = desiredDevice.ResultCreated.at[0]     
+    dieID = str(desiredDevice.DieId.at[0])
     coordsGDS = desiredDevice.OpticalPortPosition.at[0]
     coordsGDS = coordsGDS.replace(","," ")
     
@@ -338,10 +387,12 @@ def measurementEHVA(desiredDevice):
     pwr = [[]]
     voltageExperimental = [[]]
     currentExperimental = [[]]
-    IV_current=[]
-    IV_voltage=[]
+    IV_current = []
+    IV_voltage = []
+    darkCurrent = [[],[]]
     for ii in range(len(desiredDevice)):  
         resultType = desiredDevice.ResultMetricName.at[ii]
+        domainType = desiredDevice.DomainMetricName.at[ii] 
         if (resultType == 'optical power'):  
             wavlString = desiredDevice.ResultDomain.at[ii]
             wavl = np.fromstring(wavlString, dtype=float, sep=',')
@@ -378,13 +429,31 @@ def measurementEHVA(desiredDevice):
             else:
                 print("Unkown optical power result name")
                 
-        elif (resultType == 'uCurrent'):
-            currentString = desiredDevice.ResultValue.at[ii]
-            currentData = np.fromstring(currentString, dtype=float, sep=',')
-            voltageString = desiredDevice.ResultDomain.at[ii]
-            voltageData = np.fromstring(voltageString, dtype=float, sep=',')
-            IV_current.append(currentData)
-            IV_voltage.append(voltageData)
+        elif (resultType == 'uCurrent') and (domainType == 'voltage'):
+            resultName = desiredDevice.ResultName.at[ii]
+            if (resultName == 'Current'):
+                currentString = desiredDevice.ResultValue.at[ii]
+                currentData = np.fromstring(currentString, dtype=float, sep=',')
+                voltageString = desiredDevice.ResultDomain.at[ii]
+                voltageData = np.fromstring(voltageString, dtype=float, sep=',')
+                IV_current.append(currentData)
+                IV_voltage.append(voltageData)
+                
+        elif (resultType == 'current'):
+            resultName = desiredDevice.ResultName.at[ii]
+            if (resultName == 'Current'):
+                #TODO(ultize the domain metric name to see if current is voltage or wavelength dependent)
+                #currentString = desiredDevice.ResultValue.at[ii]
+                #currentData = np.fromstring(currentString, dtype=float, sep=',')*0.001
+                #voltageString = desiredDevice.ResultDomain.at[ii]
+                #voltageData = np.fromstring(voltageString, dtype=float, sep=',')
+                #IV_current.append(currentData)
+                #IV_voltage.append(voltageData)
+                print("Not handling this case yet")
+            elif (resultName == 'Dark current'):
+                print("testing worked")
+                darkCurrent[0].append(float(desiredDevice.ResultValue.at[ii]))
+                darkCurrent[1].append(float(desiredDevice.ResultDomain.at[ii]))
                 
         
     device = measurement(deviceID=componentName, user=None, start=None,
@@ -396,7 +465,8 @@ def measurementEHVA(desiredDevice):
                          initRange=None, wavl=wavl, pwr=pwr, dieID=dieID,
                          voltageExperimental=voltageExperimental, 
                          currentExperimental=currentExperimental,
-                         IV_current=IV_current, IV_voltage=IV_voltage)
+                         IV_current=IV_current, IV_voltage=IV_voltage,
+                         darkCurrent=darkCurrent)
     
     return device
 
@@ -494,7 +564,7 @@ def processCSV(f_name):
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=stitch,
                          initRange=initRange, wavl=wavl, pwr=pwr, dieID=None, 
                          voltageExperimental=None, currentExperimental=None,
-                         IV_current=None, IV_voltage=None)
+                         IV_current=None, IV_voltage=None,darkCurrent=None)
     return device
 
 
