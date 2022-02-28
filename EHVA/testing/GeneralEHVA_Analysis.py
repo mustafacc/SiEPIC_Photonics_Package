@@ -32,7 +32,8 @@ except Exception as e:
 # Loading data from CSV file
 
 data = pd.read_pickle("EHVAdata.pkl")
-data.rename(columns={'ExperimentalCondition_Voltage':'Voltage'}, inplace=True)
+data.rename(columns={'ExperimentalCondition_Voltage':'EXPvoltage'}, inplace=True)
+data.rename(columns={'ExperimentalCondition_Current':'EXPcurrent'}, inplace=True)
 print(data)
 
 
@@ -41,16 +42,11 @@ print(data)
 print("The following are queryable")
 print(data.dtypes)
 
-# Can use this to check if there is experimental condition extracted properly
-for i in range(len(data.Voltage)):
-    if (math.isnan(float(data.Voltage.at[i])) == False):
-        print("Non NaN value located at %s for component named: %s" %(i,data.ComponentName.at[i]))
-        print(float(data.Voltage.at[i]))
         
 #%%
 frames = []
 # Querying for desired component
-desiredComponents = ["ContraDC","IRPH"]
+desiredComponents = ["MZI"]
 for ii in range(len(desiredComponents)):  
     df = data.loc[data['ComponentName'].str.contains(desiredComponents[ii],case=False)]
     frames.append(df)               
@@ -133,14 +129,14 @@ for device in devices:
     ports = device.getPorts()
     for port in ports:    
         label = device.deviceID
-        for ii in range(len(device.voltage[port])):
+        for ii in range(len(device.voltageExperimental[port])):
             calibrated_ch = siap.analysis.calibrate_envelope(device.wavl,device.pwr[0][0],device.pwr[port][ii])
-            if (math.isnan(device.voltage[port][ii]) == True):     
+            if (math.isnan(device.voltageExperimental[port][ii]) == True):     
                 label = "CH" + str(port)                
                 ax1.plot(device.wavl, calibrated_ch[0], label=label)
-            if (math.isnan(device.voltage[port][ii]) == False):     
+            if (math.isnan(device.voltageExperimental[port][ii]) == False):     
                 active = True
-                label = "CH" + str(port) + " V=" + str(device.voltage[port][ii])
+                label = "CH" + str(port) + " V=" + str(device.voltageExperimental[port][ii])
                 ax2.plot(device.wavl, calibrated_ch[0], label=label)
        
     
