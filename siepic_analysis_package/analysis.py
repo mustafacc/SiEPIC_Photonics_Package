@@ -196,13 +196,13 @@ class measurement(object):
             ax2.set_ylim(pwrRange[0], pwrRange[1])
 
         for channel in channels:
-            for ii in range(len(self.voltage[channel])):
-                if (math.isnan(self.voltage[channel][ii]) == True):     
+            for ii in range(len(self.voltageExperimental[channel])):
+                if (math.isnan(self.voltageExperimental[channel][ii]) == True):     
                     label = "CH" + str(channel)
                     ax1.plot(self.wavl, self.pwr[channel][ii], label=label)
-                if (math.isnan(self.voltage[channel][ii]) == False):     
+                if (math.isnan(self.voltageExperimental[channel][ii]) == False):     
                     active = True
-                    label = "CH" + str(channel) + " V=" + str(self.voltage[channel][ii])
+                    label = "CH" + str(channel) + " V=" + str(self.voltageExperimental[channel][ii])
                     ax2.plot(self.wavl, self.pwr[channel][ii], label=label)
                     
         ax1.legend()
