@@ -649,7 +649,7 @@ def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
     power_transpose = np.transpose(power)
     
     # find index of wavelength of interest
-    index = np.where( wavelength_data==wavelength )[0][0]
+    index = find_nearest(wavelength_data, wavelength)
     
     # find insertion loss vs wavelength
     insertion_loss = []
