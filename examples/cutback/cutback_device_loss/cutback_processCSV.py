@@ -17,9 +17,10 @@ import numpy as np
 
 
 fname_data = "data" # filename containing the desired data
-device_prefix = "taperloss_50um_2um_"
-device_suffix = "suffix"
+device_prefix = "strip2rib_"
+device_suffix = "_1"
 port = 1 # port in the measurement set containing the data
+wavl = 1310.0
 
 def getDeviceParameter(deviceID, devicePrefix, deviceSuffix = ''):
     """Find the variable parameter of a device based on the ID
@@ -56,7 +57,7 @@ for device in devices:
     input_data_response.append( [np.array(device.wavl), np.array(device.pwr[port])] )
 
 # apply SiEPIC_PP cutback extraction function
-[insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = siap.analysis.cutback( input_data_response, numDevices, 1310.0 )
+[insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw] = siap.analysis.cutback( input_data_response, numDevices, wavl )
 
 
 #%%
@@ -80,7 +81,7 @@ plt.legend(loc=0)
 plt.ylabel('Insertion loss (dB)', color = 'black')
 plt.xlabel('Wavelength (nm)', color = 'black')
 plt.setp(fig1, 'linewidth', 1.0)
-plt.setp(fig2, 'linewidth', 1.0)
+plt.setp(fig2, 'linewidth', 3.0)
 plt.title("Insertion losses using the cut-back method")
 plt.savefig('cutback'+'.pdf')
 matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
