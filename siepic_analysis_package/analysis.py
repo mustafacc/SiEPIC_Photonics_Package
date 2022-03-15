@@ -193,26 +193,37 @@ class measurement(object):
             ax2.set_ylim(pwrRange[0], pwrRange[1])
 
         for channel in channels:
-            for ii in range(len(self.voltageExperimental[channel])):
-                if (math.isnan(self.voltageExperimental[channel][ii]) == True):     
-                    label = "CH" + str(channel)
-                    ax1.plot(self.wavl, self.pwr[channel][ii], label=label)
-                if (math.isnan(self.voltageExperimental[channel][ii]) == False):     
-                    active = True
-                    label = "CH" + str(channel) + " V=" + str(self.voltageExperimental[channel][ii])
-                    ax2.plot(self.wavl, self.pwr[channel][ii], label=label)
+            if self.voltageExperimental != None:
+                for ii in range(len(self.voltageExperimental[channel])):
+                    if (math.isnan(self.voltageExperimental[channel][ii]) == True):     
+                        label = "CH" + str(channel)
+                        ax1.plot(self.wavl, self.pwr[channel][ii], label=label)
+                    if (math.isnan(self.voltageExperimental[channel][ii]) == False):     
+                        active = True
+                        label = "CH" + str(channel) + " V=" + str(self.voltageExperimental[channel][ii])
+                        ax2.plot(self.wavl, self.pwr[channel][ii], label=label)
+            else:
+                label = "CH" + str(channel)
+                ax1.plot(self.wavl, self.pwr[channel], label=label)
                     
         ax1.legend()
         ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 
         if savepdf:
-            fig1.savefig(self.deviceID + "_Die" + self.dieID + '.pdf')
-            fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.pdf')
-            
+            if self.dieID != None:
+                fig1.savefig(self.deviceID + "_Die" + self.dieID + '.pdf')
+                fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.pdf')
+            else:
+                fig1.savefig(self.deviceID + '.pdf')
+                fig2.savefig(self.deviceID + '_Sweep.pdf') 
         if savepng:
-            fig1.savefig(self.deviceID + "_Die" + self.dieID + '.png')
-            fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.png')
+            if self.dieID != None:
+                fig1.savefig(self.deviceID + "_Die" + self.dieID + '.png')
+                fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.png')
+            else:
+                fig1.savefig(self.deviceID + '.png')
+                fig2.savefig(self.deviceID + '_Sweep.png') 
 
         if (active == False):
             plt.close(fig2)
