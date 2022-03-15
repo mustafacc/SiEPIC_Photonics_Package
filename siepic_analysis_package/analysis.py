@@ -10,9 +10,6 @@ Module: Data processing and analysis functionalities of the analysis package
 import numpy as np
 import math
 
-#  TODO ( dark current if easy to achieve)
-#  TODO ( use baseline correction for periodic responses)
-#  Maybe use find peaks to determine if its periodic 
 class measurement(object):
     """
     An object to represent a measurement.
@@ -132,7 +129,7 @@ class measurement(object):
         self.currentExperimental = currentExperimental # uA
         self.IV_current = IV_current # uA
         self.IV_voltage = IV_voltage # V
-        self.darkCurrent = darkCurrent # A #TODO (CONFIRM THE UNITS)
+        self.darkCurrent = darkCurrent # A 
 
     def plot(self, channels=[0], wavlRange=None, pwrRange=None, savepdf=False,
              savepng=True):
@@ -275,7 +272,7 @@ class measurement(object):
             
         return ports
 
-    def plot_IVcurve(self, savepdf=False, savepng=True):
+    def plot_IVcurve(self, savepdf=False, savepng=False):
         """
         Plots the IV curve of the device if available
 
@@ -295,13 +292,13 @@ class measurement(object):
         fig = plt.figure(figsize=(8, 6))
         ax = fig.add_subplot(111)
         ax.set_xlabel('Voltage (V)')
-        ax.set_ylabel('Current ($\mu$A)')
-        ax.set_title("Device: " + self.deviceID + "\n IV Curve")
+        ax.set_ylabel('Current (A)')
+        ax.set_title("Device: " + self.deviceID + "_Die" + self.dieID + "\n IV Curve")
         ax.grid('on')
         
         for ii in range(len(self.IV_current)):
             label = "Meaurement # %s" % ii
-            ax.plot( self.IV_voltage[ii], self.IV_current[ii], label = label)
+            ax.plot( self.IV_voltage[ii], self.IV_current[ii]*1.0e-6, label = label)
             
         ax.legend()
         if savepdf:
@@ -310,7 +307,7 @@ class measurement(object):
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" +'.png')
         return fig, ax
     
-    def plot_darkCurrent(self, savepdf=False, savepng=True):
+    def plot_darkCurrent(self, savepdf=False, savepng=False):
         """
         Scatter plots the dark current versus voltage if available
 
@@ -371,18 +368,12 @@ def measurementEHVA(desiredDevice):
     
     
     componentName = desiredDevice.ComponentName.at[0]
+    componentID = desiredDevice.ComponentId.at[0]
+    deviceID = componentName + '_ID_' + str(componentID)
     timestamp = desiredDevice.ResultCreated.at[0]     
     dieID = str(desiredDevice.DieId.at[0])
     coordsGDS = desiredDevice.OpticalPortPosition.at[0]
-    coordsGDS = coordsGDS.replace(","," ")
-    
-#    if (domainType == 'wavelength'):
-#        wavlString = desiredDevice.ResultDomain.at[0]
-#        wavl = np.fromstring(wavlString, dtype=float, sep=',')
-#        wavlStart = wavl[0]
-#        wavlStop = wavl[-1]
-#        wavlStep = wavl[1] - wavl[0]
-        
+    coordsGDS = coordsGDS.replace(","," ")  
 
     pwr = [[]]
     voltageExperimental = [[]]
@@ -456,7 +447,7 @@ def measurementEHVA(desiredDevice):
                 darkCurrent[1].append(float(desiredDevice.ResultDomain.at[ii]))
                 
         
-    device = measurement(deviceID=componentName, user=None, start=None,
+    device = measurement(deviceID=deviceID, user=None, start=None,
                          finish=timestamp, coordsGDS=coordsGDS,
                          coordsMotor=None, date=None, laser=None,
                          detector=None, sweepSpd=None,
@@ -828,6 +819,7 @@ def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
     Returns:
         fsr_wavl (list): List of wavelengths at which the FSR is extracted from. Units are the same as wavl unit.
         fsr (list): List of the calculated free spectral ranges of the spectrum. Units are the same as wavl unit.
+        troughs (list): List of all indices in which a trough is located at
     
     refer to https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
         for details about prominence and distance parameters.
@@ -861,7 +853,7 @@ def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
         plt.title("Extracted free spectral ranges")
         plt.xlabel("X")
         plt.ylabel("Free Spectral Range")
-    return fsr_wavl, fsr
+    return fsr_wavl, fsr, troughs
 
 
 def getGroupIndex(fsr_wavl, fsr, delta_length, verbose = False):
