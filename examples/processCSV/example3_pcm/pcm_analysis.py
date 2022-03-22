@@ -17,37 +17,94 @@ import matplotlib, os
 import numpy as np
 
 
-fname_data = "data" # filename containing the desired data
+fname_data = "data_wgloss" # filename containing the desired data
 
-device_sets = [
+
+devices_1550_TE = [
     {
     "device_prefix": "PCM_SpiralWG",
     "device_suffix": "TE",
     "port": 1,
-    "wavl": 1550
+    "wavl": 1550,
+    "pol": "TE"
     },
     {
     "device_prefix": "PCM_StraightWGloss",
     "device_suffix": "TE",
     "port": 1,
-    "wavl": 1550
+    "wavl": 1550,
+    "pol": "TE"
     },
     {
     "device_prefix": "PCM_SWGAssistloss",
     "device_suffix": "TE",
     "port": 1,
-    "wavl": 1550
+    "wavl": 1550,
+    "pol": "TE"
     },
     {
     "device_prefix": "PCM_SWGloss",
     "device_suffix": "TE",
     "port": 1,
-    "wavl": 1550
+    "wavl": 1550,
+    "pol": "TE"
     }
 ]
 
+devices_1550_TM = [
+    {
+    "device_prefix": "PCM_SpiralWG",
+    "device_suffix": "TM",
+    "port": 1,
+    "wavl": 1550,
+    "pol": "TM"
+    },
+    {
+    "device_prefix": "PCM_StraightWGloss",
+    "device_suffix": "TM",
+    "port": 2,
+    "wavl": 1550,
+    "pol": "TM"
+    }
+]
+
+devices_1310_TE = [
+    {
+    "device_prefix": "PCM_SpiralWG",
+    "device_suffix": "TE",
+    "port": 1,
+    "wavl": 1310,
+    "pol": "TE"
+    },
+    {
+    "device_prefix": "PCM_StraightLongWGloss",
+    "device_suffix": "TE",
+    "port": 1,
+    "wavl": 1310,
+    "pol": "TE"
+    }
+]
+
+devices_1310_TM = [
+    {
+    "device_prefix": "PCM_SpiralWG",
+    "device_suffix": "TM",
+    "port": 2,
+    "wavl": 1310,
+    "pol": "TM"
+    },
+    {
+    "device_prefix": "PCM_StraightLongWGloss",
+    "device_suffix": "TM",
+    "port": 2,
+    "wavl": 1310,
+    "pol": "TM"
+    }
+]
+
+device_sets = [devices_1550_TE, devices_1550_TM, devices_1310_TE, devices_1310_TM]
 #%% crawl available data to choose file
-def getWaveguideLoss(device_prefix, device_suffix, port, wavl, plot = True):
+def getWaveguideLoss(device_prefix, device_suffix, port, wavl, pol, plot = True):
     """Calculate waveguide loss given a set of waveguide cutback measurements 
 
     Args:
@@ -74,17 +131,30 @@ def getWaveguideLoss(device_prefix, device_suffix, port, wavl, plot = True):
 
     lengths = []
     devices = []
-    for root, dirs, files in os.walk('data'):
-        if os.path.basename(root).startswith(device_prefix):
-            for file in files:
-                if file.endswith(".csv"):
-                    device = siap.analysis.processCSV(root+r'\\'+file)
-                    devices.append(device)
-                    lengths.append(getDeviceParameter(device.deviceID, device_prefix, device_suffix))
 
+    # loopty loop to go through data structure
+    # data structure: (all data folder) -> 
+    # (polarization and wavelength folder) ->
+    # (measurements folders) -> (csv file in the measurement folder)
+    
+    # iterate through folders in directory to find (all data folder, fname_data)
+    for root, dirs, files in os.walk(fname_data):
+        # identify correct subfolder with intended polarization and wavelength
+        for dir in dirs:
+            if dir == pol + '_' + str(wavl):
+                # iterate through the folder to find the data
+                for root, dirs, files in os.walk(fname_data+r'\\'+dir):
+                    if os.path.basename(root).startswith(device_prefix):
+                        for file in files:
+                            if file.endswith(".csv"):
+                                device = siap.analysis.processCSV(root+r'\\'+file)
+                                devices.append(device)
+                                lengths.append(getDeviceParameter(device.deviceID, device_prefix, device_suffix))
+
+    print(devices)
     #%% create a subdirectory to place plots in
     # Directory 
-    directory = "results_wgloss"
+    directory = "results_wgloss_"+pol+'_'+str(wavl)
     # Parent Directory path 
     parent_dir = os.getcwd()
     # Path 
@@ -140,10 +210,13 @@ def getWaveguideLoss(device_prefix, device_suffix, port, wavl, plot = True):
     return insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw
 # %% Generate waveguide loss plots
 
-for set in device_sets:
- getWaveguideLoss(
-     set["device_prefix"], 
-     set["device_suffix"], 
-     set["port"],
-     set["wavl"], plot = True)
+for devices in device_sets:
+    for set in devices:
+        getWaveguideLoss(
+            set["device_prefix"], 
+            set["device_suffix"], 
+            set["port"],
+            set["wavl"],
+            set["pol"], plot = True)
+
 # %%
