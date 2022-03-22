@@ -15,8 +15,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-device_prefix = "Length"
-device_suffix = "u"
+device_prefix = "PCM_DC_Length"
+device_suffix = "u_1"
 port_cross = 0 # port containing the cross-port data to process
 port_bar = 1 # port containing the bar-port data to process
 
@@ -40,7 +40,7 @@ def getDeviceParameter(deviceID, devicePrefix, deviceSuffix = ''):
 
 # crawl available data to choose data files
 devices = []
-DL = 42.857143e-6 # delta-length in the MZI used for these test structures
+DL = 42.84143e-6 # delta-length in the MZI used for these test structures
 prominence = 1
 for root, dirs, files in os.walk('data'):
     if os.path.basename(root).startswith(device_prefix):
@@ -67,7 +67,7 @@ for root, dirs, files in os.walk('data'):
                     device.couplingCoeff_cross.append(0.5 - 0.5 * np.sqrt( 1/10**(er/10)))
                 for er in device.er_bar:
                     # 4 and 18 are lengths where the 3 dB crossing occurs
-                    if device.length > 3 and device.length < 14: 
+                    if device.length > 7 and device.length < 14: 
                         device.couplingCoeff_bar.append(0.5 + 0.5 * np.sqrt( 1/10**(er/10)))
                     else:
                         device.couplingCoeff_bar.append(0.5 - 0.5 * np.sqrt( 1/10**(er/10)))
@@ -121,7 +121,7 @@ plt.title("Extracted power splitting ratios (using unbalanced MZI),\ndevice = MZ
 plt.savefig('splittingRatio_'+device.deviceID+'.pdf')
 #%% plot coupling coefficient at a specific wavelength as a function of variable parameter
 
-wavl_target = 1270
+wavl_target = 1550
 wavl_idx = siap.analysis.find_nearest(device.er_bar_wavl, wavl_target)
 couplingLength = []
 couplingCoeff = []
