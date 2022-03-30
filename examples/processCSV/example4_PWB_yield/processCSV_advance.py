@@ -1,169 +1,237 @@
-# -*- coding: utf-8 -*-
 """
 SiEPIC Analysis Package
 
 Author:     Mustafa Hammood
             Mustafa@siepic.com
 
-Example: Advanced pplication of CSVanalysis to process an entire measurement set.
-    In this example, a data set of GC measurements is processed
-        1- Each data set is plotted
-        2- All measurements are combined in one plot
-        Peak transmission vs GDS coordinates are plotted
+Example:    Application of SiEPIC_AP cutback and processCSV function
+            to extract the porpagation losses from three different length waveguides.
+            for various types of waveguides in a process control monitor (PCM) design
 """
-#%%
+# %%
 import sys
 sys.path.append(r'C:\Users\musta\Documents\GitHub\SiEPIC_Photonics_Package')
 import siepic_analysis_package as siap
-
-import os, matplotlib
-from scipy.interpolate import interp2d
+import matplotlib.pyplot as plt
+import matplotlib, os
 import numpy as np
-from datetime import datetime
-import matplotlib.pyplot as plt
-
-dir_measurement = os.getcwd()+"\\data"
-
-dir_results = "measurement_summary"
-cwd = os.getcwd()
-path = os.path.join(cwd, dir_results)
-
-now = datetime.now()
-current_time = now.strftime("%H_%M_%S")
-path += '_'+current_time
-os.mkdir(path)
-os.chdir(path)
-
-wavl_min = 1260
-wavl_max = 1340
-port = 1
-
-devices = []
-devices_ref = []
-#%% 1- plot each device individually 
-for subdir, dirs, files in os.walk(dir_measurement):
-    for file in files:
-        if file.endswith('.csv'):
-            device = siap.analysis.processCSV(subdir+'\\'+file)
-            #device.plot(channels=[port],
-            #            wavlRange=[wavl_min, wavl_max], savepdf=False, savepng=False)
-
-            if device.deviceID.startswith('ref_exLg0') or device.deviceID.startswith('ref_exLg1470'):
-                devices_ref.append(device)
-            else:
-                devices.append(device)
-
-#%% 2- overlay the plots of all devices
-
-plt.figure()
-
-threshold = -50
-fails = 0
-fails_ref = 0
-
-# filter out failed devices
-devices_modified = []
-for device in devices:
-    if max(device.pwr[port]) < threshold:
-        fails = fails+1
-    else:
-        devices_modified.append(device)
-    fig = plt.plot(device.wavl, device.pwr[port], linewidth=.5)
-    
-
-plt.legend(loc=0)
-plt.ylabel('Power (dBm)', color = 'black')
-plt.xlabel('Wavelength (nm)', color = 'black')
-plt.xlim(wavl_min, wavl_max)
-plt.title("Overlay of all measurements (PWBs)")
-plt.savefig('overlay'+'.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
-
-plt.figure()
-
-devices_ref_modified = []
-for device in devices_ref:
-    if max(device.pwr[port]) < threshold:
-        fails_ref = fails_ref+1
-    else:
-        devices_ref_modified.append(device)
-    fig = plt.plot(device.wavl, device.pwr[port], linewidth=.5)
-    
-
-plt.legend(loc=0)
-plt.ylabel('Power (dBm)', color = 'black')
-plt.xlabel('Wavelength (nm)', color = 'black')
-plt.xlim(wavl_min, wavl_max)
-plt.title("Overlay of all measurements (Reference)")
-plt.savefig('overlay_ref'+'.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
-
-# %% 3 - plot peak transmission vs GDS coordinates
-x_arr = []
-y_arr = []
-p_arr = []
-for device in devices_ref:
-    x_arr.append(device.getGDS()[0])
-    y_arr.append(device.getGDS()[1])
-    p_arr.append(np.max(device.pwr[port]))
-
-plt.figure()
-plt.scatter(x_arr, y_arr, c = p_arr)
-#plt.legend(loc=0)
-plt.ylabel('Y (microns)')
-plt.xlabel('X (microns)')
-plt.colorbar()
-plt.title("Peak transmission vs device coordinates")
-plt.savefig('t_vs_gds'+'.pdf')
-matplotlib.rcParams.update({'font.size': 10, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
-
-# %%
-
-wavl = 1310
-idx = 625
 
 
-plt.figure()
-for device in devices_modified:
-    # find closest calibration shunt
-    closest = 1E10
-    for ref in devices_ref_modified:
-        x_space = np.abs(device.getGDS()[0] - ref.getGDS()[0])
-        y_space = np.abs(device.getGDS()[1] - ref.getGDS()[1])
-        distance = x_space**2 + y_space**2
-        if distance < closest:
-            closest = distance
-            ref_closest = ref
-    
-    # calibrate against the response
-    device.pwr_calib = np.array(device.pwr[port]) - np.array(ref_closest.pwr[port])
-
-    fig = plt.plot(device.wavl, -device.pwr_calib/4, linewidth=.5)
-
-plt.legend(loc=0)
-plt.ylabel('Insertion loss (dB/per PWB)', color = 'black')
-plt.xlabel('Wavelength (nm)', color = 'black')
-plt.xlim(wavl_min, wavl_max)
-plt.ylim(-5,15)
-plt.title("Calibrated insertion loss of a PWB")
-plt.savefig('overlay_IL'+'.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
-
-IL_tot = 0
-loss = []
-for device in devices_modified:
-    IL_tot = IL_tot + device.pwr_calib[idx]/4
-    loss.append(device.pwr_calib[idx]/4)
-IL_tot = IL_tot/np.size(devices_modified)
+fname_data = "data_wgloss"  # filename containing the desired data
 
 
-# %%
-import matplotlib.pyplot as plt
-fig = plt.figure()
-ax = fig.add_axes([0,0,1,1])
-langs = ['C', 'C++', 'Java', 'Python', 'PHP']
-students = [23,17,35,29,12]
-ax.bar(langs,students)
-plt.show()
+devices_1550_TE = [
+    {
+        "device_prefix": "PCM_SpiralWG",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1550,
+        "pol": "TE"
+    },
+    {
+        "device_prefix": "PCM_StraightWGloss",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1550,
+        "pol": "TE"
+    },
+    {
+        "device_prefix": "PCM_SWGAssistloss",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1550,
+        "pol": "TE"
+    },
+    {
+        "device_prefix": "PCM_SWGloss",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1550,
+        "pol": "TE"
+    }
+]
+
+devices_1550_TM = [
+    {
+        "device_prefix": "PCM_SpiralWG",
+        "device_suffix": "TM",
+        "port": 1,
+        "wavl": 1550,
+        "pol": "TM"
+    },
+    {
+        "device_prefix": "PCM_StraightWGloss",
+        "device_suffix": "TM",
+        "port": 2,
+        "wavl": 1550,
+        "pol": "TM"
+    }
+]
+
+devices_1310_TE = [
+    {
+        "device_prefix": "PCM_SpiralWG",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1310,
+        "pol": "TE"
+    },
+    {
+        "device_prefix": "PCM_StraightLongWGloss",
+        "device_suffix": "TE",
+        "port": 1,
+        "wavl": 1310,
+        "pol": "TE"
+    }
+]
+
+devices_1310_TM = [
+    {
+        "device_prefix": "PCM_SpiralWG",
+        "device_suffix": "TM",
+        "port": 2,
+        "wavl": 1310,
+        "pol": "TM"
+    },
+    {
+        "device_prefix": "PCM_StraightLongWGloss",
+        "device_suffix": "TM",
+        "port": 2,
+        "wavl": 1310,
+        "pol": "TM"
+    }
+]
+
+device_sets = [devices_1550_TE, devices_1550_TM, devices_1310_TE, devices_1310_TM]
+# %% crawl available data to choose file
+
+
+def getWaveguideLoss(device_prefix, device_suffix, port, wavl, pol, plot=True):
+    """Calculate waveguide loss given a set of waveguide cutback measurements
+
+    Args:
+        device_prefix (string): prefix of the measurement set name label
+        device_suffix ([type]): suffix of the measurement set name label
+        port (int): port which contains the measurement data in the measurement
+        wavl (float): wavelength (nm) of the measurement of interest
+        plot (bool, optional): Flag to generate and save plots of given set. Defaults to True.
+    """
+    def getDeviceParameter(deviceID, devicePrefix, deviceSuffix=''):
+        """Find the variable parameter of a device based on the ID
+
+        Args:
+            deviceID (string): ID of the device.
+            devicePrefix (string): Prefix string in the device that's before
+                the variable parameter
+            deviceSuffix (string): Any additional fields in the suffix of a
+                device that need to be stripped, optional.
+
+        Returns:
+            parameter (float): variable parameter of the device (unit based on whats in the ID)
+        """
+        parameter = float(deviceID.removeprefix(devicePrefix).removesuffix(deviceSuffix))
+        return parameter
+
+    lengths = []
+    devices = []
+
+    # loopty loop to go through data structure
+    # data structure: (all data folder) ->
+    # (polarization and wavelength folder) ->
+    # (measurements folders) -> (csv file in the measurement folder)
+    # iterate through folders in directory to find (all data folder, fname_data)
+    for root, dirs, files in os.walk(fname_data):
+        # identify correct subfolder with intended polarization and wavelength
+        for dir in dirs:
+            if dir == pol + '_' + str(wavl):
+                # iterate through the folder to find the data
+                for root, dirs, files in os.walk(fname_data+r'\\'+dir):
+                    if os.path.basename(root).startswith(device_prefix):
+                        for file in files:
+                            if file.endswith(".csv"):
+                                device = siap.analysis.processCSV(root+r'\\'+file)
+                                devices.append(device)
+                                lengths.append(getDeviceParameter(
+                                    device.deviceID, device_prefix,
+                                    device_suffix))
+
+    print(devices)
+    # create a subdirectory to place plots in
+    # Directory
+    directory = "results_wgloss_"+pol+'_'+str(wavl)
+    # Parent Directory path
+    parent_dir = os.getcwd()
+    # Path
+    path = os.path.join(parent_dir, directory)
+    # Create the directory
+    try:
+        os.mkdir(path)
+        os.chdir(path)
+    except FileExistsError:
+        os.chdir(path)
+        pass
+
+    # in this example, file name units are in um (microns)
+
+    # divide by 10000 to see result in dB/cm
+    lengths_cm = [i/10000 for i in lengths]
+
+    input_data_response = []
+
+    for device in devices:
+        input_data_response.append([np.array(device.wavl), np.array(device.pwr[port])])
+
+    # apply SiEPIC_PP cutback extraction function
+    [insertion_loss_wavelength, insertion_loss_fit,
+     insertion_loss_raw] = siap.analysis.cutback(input_data_response,
+                                                 lengths_cm, wavl)
+
+    if plot:
+        # plot all cutback structures responses
+        plt.figure()
+        for device in devices:
+            label = 'L = ' + str(getDeviceParameter(device.deviceID,
+                                                    device_prefix,
+                                                    device_suffix)) + ' microns'
+            plt.plot(device.wavl, device.pwr[port], label=label)
+            plt.legend(loc=0)
+        plt.ylabel('Power (dBm)', color='black')
+        plt.xlabel('Wavelength (nm)', color='black')
+        plt.title("Raw measurement of cutback structures for \n" +
+                  device_prefix + "_" + device_suffix)
+        plt.savefig('Loss_raw_'+device_prefix + "_" + device_suffix+'.pdf')
+        matplotlib.rcParams.update({'font.size': 11, 'font.family':
+                                    'Times New Roman', 'font.weight': 'bold'})
+
+        # Insertion loss vs wavelength plot
+        plt.figure()
+        fig1 = plt.plot(device.wavl, -insertion_loss_raw,
+                        label='Insertion loss (raw)', color='blue')
+        fig2 = plt.plot(device.wavl, -insertion_loss_fit,
+                        label='Insertion loss (fit)', color='red')
+        plt.legend(loc=0)
+        plt.ylabel('Propagation Loss (dB/cm)', color='black')
+        plt.xlabel('Wavelength (nm)', color='black')
+        plt.setp(fig1, 'linewidth', .50)
+        plt.setp(fig2, 'linewidth', 4.0)
+        plt.title("Insertion losses using the cut-back method for \n" +
+                  device_prefix + "_" + device_suffix)
+        plt.savefig('Loss_'+device_prefix + "_" + device_suffix+'.pdf')
+        matplotlib.rcParams.update({'font.size': 11, 'font.family':
+                                    'Times New Roman', 'font.weight': 'bold'})
+
+    os.chdir(parent_dir)
+    return insertion_loss_wavelength, insertion_loss_fit, insertion_loss_raw
+# %% Generate waveguide loss plots
+
+
+for devices in device_sets:
+    for set in devices:
+        getWaveguideLoss(
+            set["device_prefix"],
+            set["device_suffix"],
+            set["port"],
+            set["wavl"],
+            set["pol"], plot=True)
 
 # %%
