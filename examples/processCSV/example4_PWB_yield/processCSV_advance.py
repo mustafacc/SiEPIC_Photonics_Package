@@ -133,9 +133,11 @@ for chip in chips:
                 ref_closest = ref
         # calibrate against the response
         if chip == 'chip2_air':
-            device.pwr_calib = (np.array(device.pwr[port]) - np.array(ref_closest.pwr[port]))/4
+            device.pwr_calib = (np.array(device.pwr[port]) -
+                                np.array(ref_closest.pwr[port]))/4
         else:
-            device.pwr_calib = (np.array(device.pwr[port]) - np.array(ref_closest.pwr[port]))/2
+            device.pwr_calib = (np.array(device.pwr[port]) -
+                                np.array(ref_closest.pwr[port]))/2
 
         fig = plt.plot(device.wavl, -device.pwr_calib, linewidth=.2)
 
@@ -179,6 +181,6 @@ plt.ylabel('Insertion loss (dB/per PWB)', color='black')
 plt.xlabel('Wavelength (nm)', color='black')
 plt.title("Calibrated insertion loss of a PWB")
 plt.savefig('overlay_IL.pdf')
-#matplotlib.rcParams.update({'font.size': 11, 'font.family': 'Times New Roman',
-#                            'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 11, 'font.family': 'Times New Roman',
+                            'font.weight': 'bold'})
 # %%
