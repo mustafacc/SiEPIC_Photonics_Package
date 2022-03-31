@@ -18,6 +18,8 @@ class measurement(object):
     ----------
     deviceID : str
         Device identifier, measurement label name.
+    deviceDescription : str
+        Additional Info regarding device
     user : str
         User ID conducting the measurement.
     start : str
@@ -83,6 +85,31 @@ class measurement(object):
         List of dark current results associated with the device and the 
         associated voltage applied to measure it at
         Format [[Dark Current],[Voltage]]
+    pol_loss : list
+        List of polarization dependent loss associated with the device
+    s_parameters : list
+        List of S parameters, format allow for up to 4x4 matrix. Each S-param.
+        is an array that matches up to the frequency array. Additionally each 
+        S param. can have multiple occurances of it for each applied voltage
+        Frequency, Biases, and Calibration are also present.
+        Format : [[Frequency],[Biases],
+                 [[[[S11_v1,..,S11_vN]],...,[[S14_v1,..,S14_vN]]],
+                 ...,[[[S41_v1,..,S41_vN]],...,[[S44_v1,..,S44_vN]]]]]
+        i.e, sparameters[0] = Frequency
+             sparameters[1] = List of bias voltages 
+             sparameters[2] = Complete S Parameter matrix, with sweep result
+             sparameters[2][0] = S11,...,S14 with sweep results
+             sparameters[2][0][0] = List of S11 results for all available biases
+    external_calibration : list
+        If there exists an external calibration provided by EHVA, it can be stored
+        here. This allows a script to save this info and apply it to other devices
+        See PhotodetectorExample.py for implementation 
+        Format : [calibration_wavl, calibration_dBm]
+    responsivity : list
+        If there exists responsivity data provided by EHVA, it is stored here.
+        Wavl is consistent across measuremnts, bias and power meter range lists
+        provided to distinguish different current and power values from the sweeps
+        Format : [[wavl],[Bias],[MeterRange],[[current_1],..,[current_N]],[[power_1],..,[power_N]]]
 
 
     Methods
@@ -97,16 +124,20 @@ class measurement(object):
         Returns the number of ports with data present
     plot_IVcurve()
         Plots the IV curve of the device if available
-    plot_darkCurrent
+    plot_darkCurrent()
         Scatter plots the dark current versus voltage if available
+    plot_polLoss()
+        Plots the polarization dependent loss if available
     """
 
-    def __init__(self, deviceID, user, start, finish, coordsGDS, coordsMotor,
+    def __init__(self, deviceID, deviceDescription, user, start, finish, coordsGDS, coordsMotor,
                  date, laser, detector, sweepSpd, sweepPwr, wavlStep,
                  wavlStart, wavlStop, stitch, initRange, wavl, pwr, dieID, 
                  voltageExperimental, currentExperimental, IV_current,
-                 IV_voltage, darkCurrent):
+                 IV_voltage, darkCurrent, pol_loss, s_parameters,
+                 external_calibration,responsivity):
         self.deviceID = deviceID
+        self.deviceDescription = deviceDescription
         self.user = user
         self.start = start
         self.finish = finish
@@ -130,6 +161,10 @@ class measurement(object):
         self.IV_current = IV_current # uA
         self.IV_voltage = IV_voltage # V
         self.darkCurrent = darkCurrent # A 
+        self.pol_loss = pol_loss
+        self.s_parameters = s_parameters
+        self.external_calibration = external_calibration
+        self.responsivity = responsivity
 
     def plot(self, channels=[0], wavlRange=None, pwrRange=None, savepdf=False,
              savepng=True):
@@ -303,13 +338,13 @@ class measurement(object):
         fig = plt.figure(figsize=(8, 6))
         ax = fig.add_subplot(111)
         ax.set_xlabel('Voltage (V)')
-        ax.set_ylabel('Current (A)')
+        ax.set_ylabel('Current (mA)')
         ax.set_title("Device: " + self.deviceID + "_Die" + self.dieID + "\n IV Curve")
         ax.grid('on')
         
         for ii in range(len(self.IV_current)):
             label = "Meaurement # %s" % ii
-            ax.plot( self.IV_voltage[ii], self.IV_current[ii]*1.0e-6, label = label)
+            ax.plot( self.IV_voltage[ii], self.IV_current[ii]*1.0e-3, label = label)
             
         ax.legend()
         if savepdf:
@@ -338,17 +373,81 @@ class measurement(object):
         fig = plt.figure(figsize=(8, 6))
         ax = fig.add_subplot(111)
         ax.set_xlabel('Voltage (V)')
-        ax.set_ylabel('Dark Current (A)')
-        ax.set_title("Device: " + self.deviceID + "\n Dark Current")
+        ax.set_ylabel('Dark Current ($\mu$A)')
+        ax.set_title("Device: " + self.deviceID + '_Die' + self.dieID + "\n Dark Current")
         ax.grid('on')
         
-        for ii in range(len(self.darkCurrent[0])):
-            ax.scatter( self.darkCurrent[1][ii], self.darkCurrent[0][ii])
+        # Converting to uA
+        darkCurrent = [i / 1.0e-6 for i in self.darkCurrent[0]]
+        # Finding indices where new measurment is occuring
+        indices = [0]
+        check = -999
+        for ii in range(len(darkCurrent)):
+            if self.darkCurrent[1][ii] <= check:
+                indices.append(ii)
+                
+            check = self.darkCurrent[1][ii]
             
+        for ii in range(len(indices)): 
+            start = indices[ii]
+            if ii == len(indices)-1:
+                stop = -1
+                ax.scatter( self.darkCurrent[1][start:stop], darkCurrent[start:stop],label = 'Measurement#' + str(ii))
+            else:
+                stop = indices[ii+1]
+                ax.scatter( self.darkCurrent[1][start:stop], darkCurrent[start:stop],label = 'Measurement#' + str(ii))
+        
+        ax.legend()    
         if savepdf:
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" + '.pdf')
         if savepng:
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" +'.png')
+        return fig, ax
+    def plot_polLoss(self, savepdf = False, savepng = False):
+        """
+        
+
+        Parameters
+        ----------
+        savepdf : TYPE, optional
+            DESCRIPTION. The default is False.
+        savepng : TYPE, optional
+            DESCRIPTION. The default is False.
+
+        Returns
+        -------
+        fig : matlab Figure object
+            Figure object of the generated plot.
+        ax : matlab Axes object
+            Axes object of the generated plot.
+
+        """
+        
+        import matplotlib.pyplot as plt
+        import matplotlib as mpl
+        mpl.style.use('ggplot')  # set plotting style
+
+        fig = plt.figure(figsize=(8, 6))
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('Wavelength (nm)')
+        ax.set_ylabel('Pol. Loss (dBm)')
+        ax.set_title("Device: " + self.deviceID + "_Die"+ self.dieID + "\n Polarization Dependent Loss")
+        ax.grid('on')
+        
+        try:
+            for ii in range(len(self.pol_loss[0])):
+                label = "Measurement #" + str(ii)
+                ax.plot(self.pol_loss[0][ii], self.pol_loss[1][ii],label=label)
+            ax.legend()
+        except Exception:
+            print("No polarization loss data available")
+        
+            
+        if savepdf:
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_polLoss" + '.pdf')
+        if savepng:
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_polLoss" +'.png')
+    
         return fig, ax
 
 def measurementEHVA(desiredDevice):
@@ -377,8 +476,8 @@ def measurementEHVA(desiredDevice):
     coordsGDS = None
     pwr = None
     
-    
     componentName = desiredDevice.ComponentName.at[0]
+    deviceDescription = desiredDevice.ComponentDescription.at[0]
     componentID = desiredDevice.ComponentId.at[0]
     deviceID = componentName + '_ID_' + str(componentID)
     timestamp = desiredDevice.ResultCreated.at[0]     
@@ -392,7 +491,11 @@ def measurementEHVA(desiredDevice):
     IV_current = []
     IV_voltage = []
     darkCurrent = [[],[]]
-    for ii in range(len(desiredDevice)):  
+    pol_loss = [[],[]]
+    s_parameters = [[],[],[[[],[],[],[]],[[],[],[],[]],[[],[],[],[]],[[],[],[],[]]]]
+    external_calibration = [[],[]]
+    responsivity = [[],[],[],[],[]]
+    for ii in range(len(desiredDevice)): 
         resultType = desiredDevice.ResultMetricName.at[ii]
         domainType = desiredDevice.DomainMetricName.at[ii] 
         if (resultType == 'optical power'):  
@@ -443,22 +546,63 @@ def measurementEHVA(desiredDevice):
                 
         elif (resultType == 'current'):
             resultName = desiredDevice.ResultName.at[ii]
-            if (resultName == 'Current'):
-                #TODO(ultize the domain metric name to see if current is voltage or wavelength dependent)
-                #currentString = desiredDevice.ResultValue.at[ii]
-                #currentData = np.fromstring(currentString, dtype=float, sep=',')*0.001
-                #voltageString = desiredDevice.ResultDomain.at[ii]
-                #voltageData = np.fromstring(voltageString, dtype=float, sep=',')
-                #IV_current.append(currentData)
-                #IV_voltage.append(voltageData)
-                print("Not handling this case yet")
-            elif (resultName == 'Dark current'):
-                print("testing worked")
+            resultDescription = desiredDevice.ResultDescription.at[ii]
+            if (resultName == 'Dark current'):
                 darkCurrent[0].append(float(desiredDevice.ResultValue.at[ii]))
                 darkCurrent[1].append(float(desiredDevice.ResultDomain.at[ii]))
-                
-        
-    device = measurement(deviceID=deviceID, user=None, start=None,
+            elif (resultDescription == 'Measured output current (A), multiplied by the polarity of the photodiode'): #TODO(need to deal with EHVA and their ambigious naming)
+                wavlString = desiredDevice.ResultDomain.at[ii]
+                res_wavl = np.fromstring(wavlString, dtype=float, sep=',')    
+                bias = desiredDevice.EXPbias2.at[ii]
+                meterRange = desiredDevice.EXPmeterRange.at[ii]
+                currentString = desiredDevice.ResultValue.at[ii]
+                current = np.fromstring(currentString, dtype=float, sep=',')
+                pwrString = desiredDevice.EXPpwr.at[ii]
+                pwr = np.fromstring(pwrString, dtype=float, sep=',')
+                responsivity[0] = res_wavl
+                responsivity[1].append(bias)
+                responsivity[2].append(meterRange)
+                responsivity[3].append(current)
+                responsivity[4].append(pwr)
+                 
+        elif (resultType == 'optical return loss'):
+            resultName = desiredDevice.ResultName.at[ii]
+            if (resultName == 'PolarizationDependentLoss'): 
+                wavlString = desiredDevice.ResultDomain.at[ii]
+                pol_wavl = np.fromstring(wavlString, dtype=float, sep=',')
+                polString = desiredDevice.ResultValue.at[ii]
+                loss = np.fromstring(polString, dtype=float, sep=',')
+                loss = loss.astype(float)
+                pol_loss[0].append(pol_wavl) 
+                pol_loss[1].append(loss) 
+
+            else:               
+                print("NOT HANDLING THE FOLLOWING CASE:")
+                print(resultName)
+        elif (resultType == 'power'):
+            resultName = desiredDevice.ResultName.at[ii]
+            if (resultName == 'S21 raw on-chip photodetector and external modulator'):
+                freqString = desiredDevice.ResultDomain.at[ii]
+                freq = np.fromstring(freqString, dtype=float, sep=',')
+                pwerString = desiredDevice.ResultValue.at[ii]
+                S21 = np.fromstring(pwerString, dtype=float, sep=',')
+                biasVolt = desiredDevice.EXPbias.at[ii]
+                s_parameters[0] = freq
+                s_parameters[1].append(biasVolt)
+                s_parameters[2][1][0].append(S21)
+            elif (resultName == 'S21 of calibrated photodetector and external modulator'):
+                wavlString = desiredDevice.ResultDomain.at[ii]
+                cal_wavl = np.fromstring(wavlString, dtype=float, sep=',')
+                calString = desiredDevice.ResultValue.at[ii]
+                cal = np.fromstring(calString, dtype=float, sep=',')
+                external_calibration[0] = cal_wavl
+                external_calibration[1] = cal
+            else:
+                print("Unhandled power type: " + resultName )
+                    
+
+    device = measurement(deviceID=deviceID, deviceDescription=deviceDescription,
+                         user=None, start=None,
                          finish=timestamp, coordsGDS=coordsGDS,
                          coordsMotor=None, date=None, laser=None,
                          detector=None, sweepSpd=None,
@@ -468,7 +612,10 @@ def measurementEHVA(desiredDevice):
                          voltageExperimental=voltageExperimental, 
                          currentExperimental=currentExperimental,
                          IV_current=IV_current, IV_voltage=IV_voltage,
-                         darkCurrent=darkCurrent)
+                         darkCurrent=darkCurrent, pol_loss = pol_loss,
+                         s_parameters=s_parameters, 
+                         external_calibration=external_calibration,
+                         responsivity=responsivity)
     
     return device
 
@@ -558,7 +705,8 @@ def processCSV(f_name):
                     pwr = row.split(' ')
                     pwr = [[float(i) for i in pwr[1:]]]
 
-    device = measurement(deviceID=deviceID, user=user, start=start,
+    device = measurement(deviceID=deviceID, deviceDescription= None,
+                         user=user, start=start,
                          finish=finish, coordsGDS=coordsGDS,
                          coordsMotor=coordsMotor, date=date, laser=laser,
                          detector=detector, sweepSpd=sweepSpd,
@@ -566,7 +714,9 @@ def processCSV(f_name):
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=stitch,
                          initRange=initRange, wavl=wavl, pwr=pwr, dieID=None, 
                          voltageExperimental=None, currentExperimental=None,
-                         IV_current=None, IV_voltage=None,darkCurrent=None)
+                         IV_current=None, IV_voltage=None,darkCurrent=None,
+                         pol_loss=None, s_parameters = None,
+                         external_calibration=None, responsivity=None)
     return device
 
 
@@ -638,7 +788,6 @@ def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
     """
     # fit the responses to a polynomial
     wavelength_data = np.array(input_data_response[0][0])
-    
     power = []
     pfit = []
     power_fit = []
