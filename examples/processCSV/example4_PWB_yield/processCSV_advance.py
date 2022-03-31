@@ -167,15 +167,18 @@ for chip in chips:
 
 # %% plot all average losses
 
-plt.figure()
+fig = plt.figure()
+ax = plt.subplot(111)
 
-for idx, chip in chips:
-    fig = plt.plot(device.wavl, -device.pwr_calib, linewidth=.2)
-plt.legend(loc=0)
+for idx, chip in enumerate(chips):
+    ax.plot(loss_all_wavl[idx], loss_all[idx], label=chip)
+
+ax.legend(loc=2)
+
 plt.ylabel('Insertion loss (dB/per PWB)', color='black')
 plt.xlabel('Wavelength (nm)', color='black')
 plt.title("Calibrated insertion loss of a PWB")
-plt.savefig('overlay_IL_.pdf')
-matplotlib.rcParams.update({'font.size': 14, 'font.family': 'Times New Roman',
-                            'font.weight': 'bold'})
+plt.savefig('overlay_IL.pdf')
+#matplotlib.rcParams.update({'font.size': 11, 'font.family': 'Times New Roman',
+#                            'font.weight': 'bold'})
 # %%
