@@ -58,7 +58,7 @@ DL = 155.564e-6
 
 for device in devices:
     device.er_wavl, device.er = siap.analysis.getExtinctionRatio(device.wavl, device.pwrCalib, prominence = 6)
-    device.fsr_wavl, device.fsr = siap.analysis.getFSR(device.wavl, device.pwrCalib, prominence = 6)
+    device.fsr_wavl, device.fsr, _ = siap.analysis.getFSR(device.wavl, device.pwrCalib, prominence = 6)
     device.ng = siap.analysis.getGroupIndex([i*1e-9 for i in device.fsr_wavl], [i*1e-9 for i in device.fsr], delta_length = DL)
     device.couplingCoeff = []
     for er in device.er:
