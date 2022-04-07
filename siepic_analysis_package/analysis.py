@@ -10,6 +10,7 @@ Module: Data processing and analysis functionalities of the analysis package
 import numpy as np
 import math
 
+
 class measurement(object):
     """
     An object to represent a measurement.
@@ -136,7 +137,11 @@ class measurement(object):
                  voltageExperimental, currentExperimental, IV_current,
                  IV_voltage, darkCurrent, pol_loss, s_parameters,
                  external_calibration,responsivity):
-        self.deviceID = deviceID
+
+        if deviceID is None:
+            self.deviceID = 'Device'
+        else:
+            self.deviceID = deviceID
         self.deviceDescription = deviceDescription
         self.user = user
         self.start = start
@@ -217,7 +222,6 @@ class measurement(object):
         if wavlRange is None:
             ax1.set_xlim(min(self.wavl), max(self.wavl))
             ax2.set_xlim(min(self.wavl), max(self.wavl))
-            
             
         else:
             ax1.set_xlim(wavlRange[0], wavlRange[1])
@@ -450,6 +454,7 @@ class measurement(object):
     
         return fig, ax
 
+
 def measurementEHVA(desiredDevice):
     """
     Creates a measurement object out of the pandas dataframe containing only 1 component ID
@@ -620,7 +625,6 @@ def measurementEHVA(desiredDevice):
     return device
 
 
-
 def processCSV(f_name):
     """
     Process a MapleLeaf Photonics Fotonica CSV measurement file into a measurement object.
@@ -705,6 +709,19 @@ def processCSV(f_name):
                     pwr = row.split(' ')
                     pwr = [[float(i) for i in pwr[1:]]]
 
+    # if the .csv is not from an automated measurement (if exported from figure)
+    if 'deviceID' in locals():
+        deviceID = deviceID
+    else:
+        deviceID = None
+        start = None
+        finish = None
+        coordsGDS = None
+        coordsMotor = None
+        date = None
+        
+        
+        
     device = measurement(deviceID=deviceID, deviceDescription= None,
                          user=user, start=start,
                          finish=finish, coordsGDS=coordsGDS,
