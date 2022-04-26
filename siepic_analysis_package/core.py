@@ -88,37 +88,42 @@ def parse_response(filename, port):
     data = [wavelength, power]
     return data
 
-def cutback(input_data_response, input_data_count, wavelength):
-    
-    #cutback( input_data_response, input_data_count, wavelength): extract insertion losses of a structure using cutback method
-    # input list format: input_data_response (list) [wavelength (nm), power (dBm)]
-    #                   input_data_count (array) [array of unit count]
-    #                   wavelength of insertion loss measurement
-    # output list format: [insertion loss (fit) at wavelength (dB/unit), insertion loss (dB) vs wavelength (nm)]
-    # fit the responses to a polynomial
-    fitOrder = 8
-    wavelength_data = input_data_response[0][0]
-    
-    power = []
-    pfit = []
-    power_fit = []
-    for i in range(len(input_data_count)):
-        power.append( input_data_response[i][1] )
-        pfit.append( numpy.polyfit(wavelength_data-numpy.mean(wavelength_data), power[i], fitOrder) )
-        power_fit.append( numpy.polyval(pfit[i], wavelength_data-numpy.mean(wavelength_data)) )
-    
-    power_fit_transpose = numpy.transpose(power_fit)
-    power_transpose = numpy.transpose(power)
-    
-    # find index of wavelength of interest
-    index = numpy.where( wavelength_data==wavelength )[0][0]
-    
-    # find insertion loss vs wavelength
-    insertion_loss = []
-    insertion_loss_raw = []
-    for i in range(len(wavelength_data)):
-        insertion_loss.append( numpy.polyfit(input_data_count, power_fit_transpose[i], 1))
-        insertion_loss_raw.append( numpy.polyfit(input_data_count, power_transpose[i], 1))
-    
-    
-    return [ insertion_loss[index][0], numpy.transpose(insertion_loss)[0], numpy.transpose(insertion_loss_raw)[0] ]
+
+def smooth(x, y, window=51, order=3, verbose=False):
+    """
+    Smooth a trace. Apply a Savitzky-Golay filter to an array.
+
+    Parameters
+    ----------
+    x : list
+        X domain of the dataset.
+    y : list
+        y domain of the dataset.
+    window : int, optional
+        The length of the filter window (i.e., the number of coefficients).
+        If mode is ‘interp’, window_length must be less than or equal to the
+        size of x. The default is 51.
+    order : int, optional
+        The order of the polynomial used to fit the samples.
+        polyorder must be less than window_length. The default is 3.
+    verbose : bool, optional
+        Optionally plot the result. The default is False.
+
+    Returns
+    -------
+    yhat : ndarray
+        The filtered data.
+
+    """
+    from scipy.signal import savitzky_golay
+    yhat = savitzky_golay(y, window, order)  # window size 51, polynomial order 3
+    if verbose:
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.plot(x, y, linewidth=0.5, label='Input data')
+        plt.scatter(x, yhat, color='red', label='Filtered')
+        plt.legend(loc=0)
+        plt.title("Filtered data with Savitzky-Golay filter")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+    return yhat
