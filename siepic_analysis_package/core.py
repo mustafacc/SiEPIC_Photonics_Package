@@ -115,13 +115,13 @@ def smooth(x, y, window=51, order=3, verbose=False):
         The filtered data.
 
     """
-    from scipy.signal import savitzky_golay
-    yhat = savitzky_golay(y, window, order)  # window size 51, polynomial order 3
+    from scipy.signal import savgol_filter
+    yhat = savgol_filter(y, window, order)  # window size 51, polynomial order 3
     if verbose:
         import matplotlib.pyplot as plt
         plt.figure()
         plt.plot(x, y, linewidth=0.5, label='Input data')
-        plt.scatter(x, yhat, color='red', label='Filtered')
+        plt.plot(x, yhat, color='red', linewidth=1.5, label='Filtered')
         plt.legend(loc=0)
         plt.title("Filtered data with Savitzky-Golay filter")
         plt.xlabel("X")
