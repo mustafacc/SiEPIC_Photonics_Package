@@ -133,10 +133,10 @@ class measurement(object):
 
     def __init__(self, deviceID, deviceDescription, user, start, finish, coordsGDS, coordsMotor,
                  date, laser, detector, sweepSpd, sweepPwr, wavlStep,
-                 wavlStart, wavlStop, stitch, initRange, wavl, pwr, dieID, 
+                 wavlStart, wavlStop, stitch, initRange, wavl, pwr, dieID,
                  voltageExperimental, currentExperimental, IV_current,
                  IV_voltage, darkCurrent, pol_loss, s_parameters,
-                 external_calibration,responsivity):
+                 external_calibration, responsivity):
 
         if deviceID is None:
             self.deviceID = 'Device'
@@ -161,11 +161,11 @@ class measurement(object):
         self.wavl = wavl  # nm
         self.pwr = pwr  # dBm
         self.dieID = dieID
-        self.voltageExperimental = voltageExperimental # volts
-        self.currentExperimental = currentExperimental # uA
-        self.IV_current = IV_current # uA
-        self.IV_voltage = IV_voltage # V
-        self.darkCurrent = darkCurrent # A 
+        self.voltageExperimental = voltageExperimental  # volts
+        self.currentExperimental = currentExperimental  # uA
+        self.IV_current = IV_current  # uA
+        self.IV_voltage = IV_voltage  # V
+        self.darkCurrent = darkCurrent  # A
         self.pol_loss = pol_loss
         self.s_parameters = s_parameters
         self.external_calibration = external_calibration
@@ -210,7 +210,7 @@ class measurement(object):
         ax1.set_ylabel('Power (dBm)')
         ax1.set_title("Device: " + self.deviceID)
         ax1.grid('on')
-        
+
         active = False
         fig2 = plt.figure(figsize=(8, 6))
         ax2 = fig2.add_subplot(111)
@@ -222,11 +222,11 @@ class measurement(object):
         if wavlRange is None:
             ax1.set_xlim(min(self.wavl), max(self.wavl))
             ax2.set_xlim(min(self.wavl), max(self.wavl))
-            
+
         else:
             ax1.set_xlim(wavlRange[0], wavlRange[1])
             ax2.set_xlim(wavlRange[0], wavlRange[1])
-            
+
         if pwrRange is not None:
             ax1.set_ylim(pwrRange[0], pwrRange[1])
             ax2.set_ylim(pwrRange[0], pwrRange[1])
@@ -234,20 +234,20 @@ class measurement(object):
         for channel in channels:
             if self.voltageExperimental != None:
                 for ii in range(len(self.voltageExperimental[channel])):
-                    if (math.isnan(self.voltageExperimental[channel][ii]) == True):     
+                    if (math.isnan(self.voltageExperimental[channel][ii]) == True):
                         label = "CH" + str(channel)
                         ax1.plot(self.wavl, self.pwr[channel][ii], label=label)
-                    if (math.isnan(self.voltageExperimental[channel][ii]) == False):     
+                    if (math.isnan(self.voltageExperimental[channel][ii]) == False):
                         active = True
-                        label = "CH" + str(channel) + " V=" + str(self.voltageExperimental[channel][ii])
+                        label = "CH" + str(channel) + " V=" + \
+                            str(self.voltageExperimental[channel][ii])
                         ax2.plot(self.wavl, self.pwr[channel][ii], label=label)
             else:
                 label = "CH" + str(channel)
                 ax1.plot(self.wavl, self.pwr[channel], label=label)
-                    
+
         ax1.legend()
         ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
 
         if savepdf:
             if self.dieID != None:
@@ -255,18 +255,18 @@ class measurement(object):
                 fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.pdf')
             else:
                 fig1.savefig(self.deviceID + '.pdf')
-                fig2.savefig(self.deviceID + '_Sweep.pdf') 
+                fig2.savefig(self.deviceID + '_Sweep.pdf')
         if savepng:
             if self.dieID != None:
                 fig1.savefig(self.deviceID + "_Die" + self.dieID + '.png')
                 fig2.savefig(self.deviceID + "_Die" + self.dieID + '_Sweep.png')
             else:
                 fig1.savefig(self.deviceID + '.png')
-                fig2.savefig(self.deviceID + '_Sweep.png') 
+                fig2.savefig(self.deviceID + '_Sweep.png')
 
         if (active == False):
             plt.close(fig2)
-        
+
         return fig1, fig2, ax1, ax2
 
     def getDuration(self):
@@ -305,7 +305,7 @@ class measurement(object):
         self.x = float(self.coordsGDS.split()[0])
         self.y = float(self.coordsGDS.split()[1])
         return self.x, self.y
-    
+
     def getPorts(self):
         """
         Returns list of ports with data present
@@ -315,11 +315,11 @@ class measurement(object):
         Ports : list
             list of ports with data present
 
-        """    
+        """
         ports = []
         for ii in range(len(self.pwr)):
-            ports.append(ii)  
-            
+            ports.append(ii)
+
         return ports
 
     def plot_IVcurve(self, savepdf=False, savepng=False):
@@ -334,7 +334,7 @@ class measurement(object):
             Axes object of the generated plot.
 
         """
-        
+
         import matplotlib.pyplot as plt
         import matplotlib as mpl
         mpl.style.use('ggplot')  # set plotting style
@@ -345,18 +345,18 @@ class measurement(object):
         ax.set_ylabel('Current (mA)')
         ax.set_title("Device: " + self.deviceID + "_Die" + self.dieID + "\n IV Curve")
         ax.grid('on')
-        
+
         for ii in range(len(self.IV_current)):
             label = "Meaurement # %s" % ii
-            ax.plot( self.IV_voltage[ii], self.IV_current[ii]*1.0e-3, label = label)
-            
+            ax.plot(self.IV_voltage[ii], self.IV_current[ii]*1.0e-3, label=label)
+
         ax.legend()
         if savepdf:
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" + '.pdf')
         if savepng:
-            fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" +'.png')
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_IVcurve" + '.png')
         return fig, ax
-    
+
     def plot_darkCurrent(self, savepdf=False, savepng=False):
         """
         Scatter plots the dark current versus voltage if available
@@ -369,7 +369,7 @@ class measurement(object):
             Axes object of the generated plot.
 
         """
-        
+
         import matplotlib.pyplot as plt
         import matplotlib as mpl
         mpl.style.use('ggplot')  # set plotting style
@@ -380,7 +380,7 @@ class measurement(object):
         ax.set_ylabel('Dark Current ($\mu$A)')
         ax.set_title("Device: " + self.deviceID + '_Die' + self.dieID + "\n Dark Current")
         ax.grid('on')
-        
+
         # Converting to uA
         darkCurrent = [i / 1.0e-6 for i in self.darkCurrent[0]]
         # Finding indices where new measurment is occuring
@@ -389,27 +389,30 @@ class measurement(object):
         for ii in range(len(darkCurrent)):
             if self.darkCurrent[1][ii] <= check:
                 indices.append(ii)
-                
+
             check = self.darkCurrent[1][ii]
-            
-        for ii in range(len(indices)): 
+
+        for ii in range(len(indices)):
             start = indices[ii]
             if ii == len(indices)-1:
                 stop = -1
-                ax.scatter( self.darkCurrent[1][start:stop], darkCurrent[start:stop],label = 'Measurement#' + str(ii))
+                ax.scatter(self.darkCurrent[1][start:stop],
+                           darkCurrent[start:stop], label='Measurement#' + str(ii))
             else:
                 stop = indices[ii+1]
-                ax.scatter( self.darkCurrent[1][start:stop], darkCurrent[start:stop],label = 'Measurement#' + str(ii))
-        
-        ax.legend()    
+                ax.scatter(self.darkCurrent[1][start:stop],
+                           darkCurrent[start:stop], label='Measurement#' + str(ii))
+
+        ax.legend()
         if savepdf:
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" + '.pdf')
         if savepng:
-            fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" +'.png')
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_DarkCurrent" + '.png')
         return fig, ax
-    def plot_polLoss(self, savepdf = False, savepng = False):
+
+    def plot_polLoss(self, savepdf=False, savepng=False):
         """
-        
+
 
         Parameters
         ----------
@@ -426,7 +429,7 @@ class measurement(object):
             Axes object of the generated plot.
 
         """
-        
+
         import matplotlib.pyplot as plt
         import matplotlib as mpl
         mpl.style.use('ggplot')  # set plotting style
@@ -435,23 +438,23 @@ class measurement(object):
         ax = fig.add_subplot(111)
         ax.set_xlabel('Wavelength (nm)')
         ax.set_ylabel('Pol. Loss (dBm)')
-        ax.set_title("Device: " + self.deviceID + "_Die"+ self.dieID + "\n Polarization Dependent Loss")
+        ax.set_title("Device: " + self.deviceID + "_Die" +
+                     self.dieID + "\n Polarization Dependent Loss")
         ax.grid('on')
-        
+
         try:
             for ii in range(len(self.pol_loss[0])):
                 label = "Measurement #" + str(ii)
-                ax.plot(self.pol_loss[0][ii], self.pol_loss[1][ii],label=label)
+                ax.plot(self.pol_loss[0][ii], self.pol_loss[1][ii], label=label)
             ax.legend()
         except Exception:
             print("No polarization loss data available")
-        
-            
+
         if savepdf:
             fig.savefig(self.deviceID + "_Die" + self.dieID + "_polLoss" + '.pdf')
         if savepng:
-            fig.savefig(self.deviceID + "_Die" + self.dieID + "_polLoss" +'.png')
-    
+            fig.savefig(self.deviceID + "_Die" + self.dieID + "_polLoss" + '.png')
+
         return fig, ax
 
 
@@ -470,7 +473,7 @@ def measurementEHVA(desiredDevice):
         DESCRIPTION.
 
     """
-    
+
     # Pre-initializing everything to None in case there is no data for it?
     componentName = None
     timestamp = None
@@ -480,30 +483,31 @@ def measurementEHVA(desiredDevice):
     wavl = None
     coordsGDS = None
     pwr = None
-    
+
     componentName = desiredDevice.ComponentName.at[0]
     deviceDescription = desiredDevice.ComponentDescription.at[0]
     componentID = desiredDevice.ComponentId.at[0]
     deviceID = componentName + '_ID_' + str(componentID)
-    timestamp = desiredDevice.ResultCreated.at[0]     
+    timestamp = desiredDevice.ResultCreated.at[0]
     dieID = str(desiredDevice.DieId.at[0])
     coordsGDS = desiredDevice.OpticalPortPosition.at[0]
-    coordsGDS = coordsGDS.replace(","," ")  
+    coordsGDS = coordsGDS.replace(",", " ")
 
     pwr = [[]]
     voltageExperimental = [[]]
     currentExperimental = [[]]
     IV_current = []
     IV_voltage = []
-    darkCurrent = [[],[]]
-    pol_loss = [[],[]]
-    s_parameters = [[],[],[[[],[],[],[]],[[],[],[],[]],[[],[],[],[]],[[],[],[],[]]]]
-    external_calibration = [[],[]]
-    responsivity = [[],[],[],[],[]]
-    for ii in range(len(desiredDevice)): 
+    darkCurrent = [[], []]
+    pol_loss = [[], []]
+    s_parameters = [[], [], [[[], [], [], []], [
+        [], [], [], []], [[], [], [], []], [[], [], [], []]]]
+    external_calibration = [[], []]
+    responsivity = [[], [], [], [], []]
+    for ii in range(len(desiredDevice)):
         resultType = desiredDevice.ResultMetricName.at[ii]
-        domainType = desiredDevice.DomainMetricName.at[ii] 
-        if (resultType == 'optical power'):  
+        domainType = desiredDevice.DomainMetricName.at[ii]
+        if (resultType == 'optical power'):
             wavlString = desiredDevice.ResultDomain.at[ii]
             wavl = np.fromstring(wavlString, dtype=float, sep=',')
             wavlStart = wavl[0]
@@ -516,29 +520,29 @@ def measurementEHVA(desiredDevice):
             channel[channel > 0] = np.nan
             if (resultName == 'opticalPowerFirstOPM'):
                 pwr[0].append(channel)
-                voltageExperimental[0].append(round(desiredDevice.EXPvoltage.at[ii],3))
-                currentExperimental[0].append(round(desiredDevice.EXPcurrent.at[ii],3))
+                voltageExperimental[0].append(round(desiredDevice.EXPvoltage.at[ii], 3))
+                currentExperimental[0].append(round(desiredDevice.EXPcurrent.at[ii], 3))
             elif (resultName == 'opticalPowerSecondOPM'):
                 if (len(pwr) == 1):
                     pwr.append([channel])
-                    voltageExperimental.append([round(desiredDevice.EXPvoltage.at[ii],3)])
-                    currentExperimental.append([round(desiredDevice.EXPcurrent.at[ii],3)])
-                else:                       
+                    voltageExperimental.append([round(desiredDevice.EXPvoltage.at[ii], 3)])
+                    currentExperimental.append([round(desiredDevice.EXPcurrent.at[ii], 3)])
+                else:
                     pwr[1].append(channel)
-                    voltageExperimental[1].append(round(desiredDevice.EXPvoltage.at[ii],3))
-                    currentExperimental[1].append(round(desiredDevice.EXPcurrent.at[ii],3))
-            elif (resultName == 'opticalPowerThirdOPM'): 
+                    voltageExperimental[1].append(round(desiredDevice.EXPvoltage.at[ii], 3))
+                    currentExperimental[1].append(round(desiredDevice.EXPcurrent.at[ii], 3))
+            elif (resultName == 'opticalPowerThirdOPM'):
                 if (len(pwr) == 2):
                     pwr.append([channel])
-                    voltageExperimental.append([round(desiredDevice.EXPvoltage.at[ii],3)])
-                    currentExperimental.append([round(desiredDevice.EXPcurrent.at[ii],3)])
-                else:    
+                    voltageExperimental.append([round(desiredDevice.EXPvoltage.at[ii], 3)])
+                    currentExperimental.append([round(desiredDevice.EXPcurrent.at[ii], 3)])
+                else:
                     pwr[2].append(channel)
-                    voltageExperimental[2].append(round(desiredDevice.EXPvoltage.at[ii],3))
-                    currentExperimental[2].append(round(desiredDevice.EXPcurrent.at[ii],3))
+                    voltageExperimental[2].append(round(desiredDevice.EXPvoltage.at[ii], 3))
+                    currentExperimental[2].append(round(desiredDevice.EXPcurrent.at[ii], 3))
             else:
                 print("Unkown optical power result name")
-                
+
         elif (resultType == 'uCurrent') and (domainType == 'voltage'):
             resultName = desiredDevice.ResultName.at[ii]
             if (resultName == 'Current'):
@@ -548,16 +552,17 @@ def measurementEHVA(desiredDevice):
                 voltageData = np.fromstring(voltageString, dtype=float, sep=',')
                 IV_current.append(currentData)
                 IV_voltage.append(voltageData)
-                
+
         elif (resultType == 'current'):
             resultName = desiredDevice.ResultName.at[ii]
             resultDescription = desiredDevice.ResultDescription.at[ii]
             if (resultName == 'Dark current'):
                 darkCurrent[0].append(float(desiredDevice.ResultValue.at[ii]))
                 darkCurrent[1].append(float(desiredDevice.ResultDomain.at[ii]))
-            elif (resultDescription == 'Measured output current (A), multiplied by the polarity of the photodiode'): #TODO(need to deal with EHVA and their ambigious naming)
+            # TODO(need to deal with EHVA and their ambigious naming)
+            elif (resultDescription == 'Measured output current (A), multiplied by the polarity of the photodiode'):
                 wavlString = desiredDevice.ResultDomain.at[ii]
-                res_wavl = np.fromstring(wavlString, dtype=float, sep=',')    
+                res_wavl = np.fromstring(wavlString, dtype=float, sep=',')
                 bias = desiredDevice.EXPbias2.at[ii]
                 meterRange = desiredDevice.EXPmeterRange.at[ii]
                 currentString = desiredDevice.ResultValue.at[ii]
@@ -569,19 +574,19 @@ def measurementEHVA(desiredDevice):
                 responsivity[2].append(meterRange)
                 responsivity[3].append(current)
                 responsivity[4].append(pwr)
-                 
+
         elif (resultType == 'optical return loss'):
             resultName = desiredDevice.ResultName.at[ii]
-            if (resultName == 'PolarizationDependentLoss'): 
+            if (resultName == 'PolarizationDependentLoss'):
                 wavlString = desiredDevice.ResultDomain.at[ii]
                 pol_wavl = np.fromstring(wavlString, dtype=float, sep=',')
                 polString = desiredDevice.ResultValue.at[ii]
                 loss = np.fromstring(polString, dtype=float, sep=',')
                 loss = loss.astype(float)
-                pol_loss[0].append(pol_wavl) 
-                pol_loss[1].append(loss) 
+                pol_loss[0].append(pol_wavl)
+                pol_loss[1].append(loss)
 
-            else:               
+            else:
                 print("NOT HANDLING THE FOLLOWING CASE:")
                 print(resultName)
         elif (resultType == 'power'):
@@ -603,8 +608,7 @@ def measurementEHVA(desiredDevice):
                 external_calibration[0] = cal_wavl
                 external_calibration[1] = cal
             else:
-                print("Unhandled power type: " + resultName )
-                    
+                print("Unhandled power type: " + resultName)
 
     device = measurement(deviceID=deviceID, deviceDescription=deviceDescription,
                          user=None, start=None,
@@ -614,14 +618,14 @@ def measurementEHVA(desiredDevice):
                          sweepPwr=None, wavlStep=wavlStep,
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=None,
                          initRange=None, wavl=wavl, pwr=pwr, dieID=dieID,
-                         voltageExperimental=voltageExperimental, 
+                         voltageExperimental=voltageExperimental,
                          currentExperimental=currentExperimental,
                          IV_current=IV_current, IV_voltage=IV_voltage,
-                         darkCurrent=darkCurrent, pol_loss = pol_loss,
-                         s_parameters=s_parameters, 
+                         darkCurrent=darkCurrent, pol_loss=pol_loss,
+                         s_parameters=s_parameters,
                          external_calibration=external_calibration,
                          responsivity=responsivity)
-    
+
     return device
 
 
@@ -719,20 +723,18 @@ def processCSV(f_name):
         coordsGDS = None
         coordsMotor = None
         date = None
-        
-        
-        
-    device = measurement(deviceID=deviceID, deviceDescription= None,
+
+    device = measurement(deviceID=deviceID, deviceDescription=None,
                          user=user, start=start,
                          finish=finish, coordsGDS=coordsGDS,
                          coordsMotor=coordsMotor, date=date, laser=laser,
                          detector=detector, sweepSpd=sweepSpd,
                          sweepPwr=sweepPwr, wavlStep=wavlStep,
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=stitch,
-                         initRange=initRange, wavl=wavl, pwr=pwr, dieID=None, 
+                         initRange=initRange, wavl=wavl, pwr=pwr, dieID=None,
                          voltageExperimental=None, currentExperimental=None,
-                         IV_current=None, IV_voltage=None,darkCurrent=None,
-                         pol_loss=None, s_parameters = None,
+                         IV_current=None, IV_voltage=None, darkCurrent=None,
+                         pol_loss=None, s_parameters=None,
                          external_calibration=None, responsivity=None)
     return device
 
@@ -752,7 +754,7 @@ def find_nearest(array, value):
     return idx
 
 
-def bandwidth ( wavl, data , threshold = 3):
+def bandwidth(wavl, data, threshold=3):
     """Calculates the bandwidth of an input result
 
     Args:
@@ -764,34 +766,34 @@ def bandwidth ( wavl, data , threshold = 3):
         list: Calculated bandwidth and wavelength [bandwidth, central_wavelength]
     """
 
-    # input list format: 
+    # input list format:
     #                    bandwidth threshold, default 3 dB
     # output list format: [bandwidth of threshold, central wavelength]
 
     wavelength = wavl
     response = data
-    
-    center_index = find_nearest( response, max(response))
-    isInBand = response>max(response) - threshold
+
+    center_index = find_nearest(response, max(response))
+    isInBand = response > max(response) - threshold
 
     leftBound = center_index
 
     while isInBand[leftBound] == 1:
         leftBound = leftBound-1
 
-    rightBound=center_index
+    rightBound = center_index
 
     while isInBand[rightBound] == 1:
         rightBound = rightBound+1
 
     bandwidth = wavelength[rightBound] - wavelength[leftBound]
-    
+
     central_wavelength = (wavelength[rightBound] + wavelength[leftBound])/2
-    
+
     return [bandwidth, central_wavelength]
 
 
-def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
+def cutback(input_data_response, input_data_count, wavelength, fitOrder=8):
     """Extract insertion losses of a structure using cutback method.
 
     Args:
@@ -809,28 +811,27 @@ def cutback(input_data_response, input_data_count, wavelength, fitOrder = 8):
     pfit = []
     power_fit = []
     for i in range(len(input_data_count)):
-        power.append( input_data_response[i][1] )
-        pfit.append( np.polyfit(wavelength_data-np.mean(wavelength_data), power[i], fitOrder) )
-        power_fit.append( np.polyval(pfit[i], wavelength_data-np.mean(wavelength_data)) )
-    
+        power.append(input_data_response[i][1])
+        pfit.append(np.polyfit(wavelength_data-np.mean(wavelength_data), power[i], fitOrder))
+        power_fit.append(np.polyval(pfit[i], wavelength_data-np.mean(wavelength_data)))
+
     power_fit_transpose = np.transpose(power_fit)
     power_transpose = np.transpose(power)
-    
+
     # find index of wavelength of interest
     index = find_nearest(wavelength_data, wavelength)
-    
+
     # find insertion loss vs wavelength
     insertion_loss = []
     insertion_loss_raw = []
     for i in range(len(wavelength_data)):
-        insertion_loss.append( np.polyfit(input_data_count, power_fit_transpose[i], 1))
-        insertion_loss_raw.append( np.polyfit(input_data_count, power_transpose[i], 1))
-    
-    
-    return [ insertion_loss[index][0], np.transpose(insertion_loss)[0], np.transpose(insertion_loss_raw)[0] ]
+        insertion_loss.append(np.polyfit(input_data_count, power_fit_transpose[i], 1))
+        insertion_loss_raw.append(np.polyfit(input_data_count, power_transpose[i], 1))
+
+    return [insertion_loss[index][0], np.transpose(insertion_loss)[0], np.transpose(insertion_loss_raw)[0]]
 
 
-def calibrate(input_response, reference_response, fitOrder = 8):
+def calibrate(input_response, reference_response, fitOrder=8):
     """Response correction function to calibrate an input response with respect
         to a reference response
 
@@ -846,16 +847,16 @@ def calibrate(input_response, reference_response, fitOrder = 8):
     """
     wavelength = reference_response[0]
     power = reference_response[1]
-    
+
     pfit = np.polyfit(wavelength-np.mean(wavelength), power, fitOrder)
     power_calib_fit = np.polyval(pfit, wavelength-np.mean(wavelength))
-    
+
     power_corrected = input_response[1] - power_calib_fit
-    
+
     return [power_corrected, power_calib_fit]
 
 
-def baseline_correction(input_response, fitOrder = 4):
+def baseline_correction(input_response, fitOrder=4):
     """baseline_correction function (useful to normalize and calibrate periodic responses)
 
     Args:
@@ -868,17 +869,17 @@ def baseline_correction(input_response, fitOrder = 4):
     """
     wavelength = input_response[0]
     power = input_response[1]
-    
+
     pfit = np.polyfit(wavelength-np.mean(wavelength), power, fitOrder)
     power_baseline = np.polyval(pfit, wavelength-np.mean(wavelength))
-    
+
     power_corrected = power - power_baseline
-    power_corrected = power_corrected + max(power_baseline) -max(power)
-    
+    power_corrected = power_corrected + max(power_baseline) - max(power)
+
     return [power_corrected, power_baseline]
 
 
-def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrder = 4, verbose = False):
+def calibrate_envelope(wavl, data_envelope, data, tol=3.0, N_seg=25, fitOrder=4, verbose=False):
     """Calibrate an input response by using the envelope of another response.
         Ideal for Bragg gratings and contra-directional couplers
         Can be useful mainy for responses that contain dips.
@@ -902,15 +903,15 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
     if verbose:
         import matplotlib.pyplot as plt
         plt.figure()
-        plt.plot(wavl, data, label = 'Input data')
-        plt.plot(wavl, data_envelope, label = "Calibration reference")
+        plt.plot(wavl, data, label='Input data')
+        plt.plot(wavl, data_envelope, label="Calibration reference")
         plt.legend(loc=0)
         plt.title("Original input data set")
         plt.xlabel("X")
         plt.ylabel("Y")
-    
+
     # step 1, sample the data_envelope data into N_seg segments
-    idxSteps = int(np.floor(np.size(data_envelope)/N_seg)) # index steps between each segment
+    idxSteps = int(np.floor(np.size(data_envelope)/N_seg))  # index steps between each segment
     x = []
     y = []
     for i in range(N_seg):
@@ -920,16 +921,16 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
 
     if verbose:
         plt.figure()
-        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
-        plt.scatter(x, y, color='red', label = 'Sampling points')
+        plt.plot(wavl, data_envelope, linewidth=0.1, label='Calibration reference')
+        plt.scatter(x, y, color='red', label='Sampling points')
         plt.legend(loc=0)
         plt.title("Sampling of reference data set")
         plt.xlabel("X")
         plt.ylabel("Y")
-    
-    x_envelope = [] # wavelength data points to include in envelope fitting
-    y_envelope = [] # transmission (or power?) data points to envelope fitting
-    tracker = y[0] # initial threshold tracker value 
+
+    x_envelope = []  # wavelength data points to include in envelope fitting
+    y_envelope = []  # transmission (or power?) data points to envelope fitting
+    tracker = y[0]  # initial threshold tracker value
 
     for idx, val in enumerate(y):
         if np.abs(val-tracker) < tol:
@@ -946,8 +947,8 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
 
     if verbose:
         plt.figure()
-        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
-        plt.scatter(x_envelope, y_envelope, color='red', label = 'Envelope points')
+        plt.plot(wavl, data_envelope, linewidth=0.1, label='Calibration reference')
+        plt.scatter(x_envelope, y_envelope, color='red', label='Envelope points')
         plt.legend(loc=0)
         plt.title("Generated envelope points to used for polynomial fitting")
         plt.xlabel("X")
@@ -955,12 +956,12 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
 
     envelope = np.poly1d(np.polyfit(x_envelope, y_envelope, fitOrder))
     ref = envelope(wavl)
-    
+
     if verbose:
         plt.figure()
-        plt.plot(wavl, data_envelope, linewidth = 0.1, label = 'Calibration reference')
-        plt.scatter(x_envelope, y_envelope, color='red', label = 'Envelope points')
-        plt.plot(wavl, ref, '--', color = 'black', linewidth = 2, label = 'Envelope')
+        plt.plot(wavl, data_envelope, linewidth=0.1, label='Calibration reference')
+        plt.scatter(x_envelope, y_envelope, color='red', label='Envelope points')
+        plt.plot(wavl, ref, '--', color='black', linewidth=2, label='Envelope')
         plt.legend(loc=0)
         plt.title("Final generated polynomial for fitting")
         plt.xlabel("X")
@@ -971,8 +972,8 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
 
     if verbose:
         plt.figure()
-        plt.plot(wavl, calibrated, linewidth = 1, label = 'Calibrated input response')
-        plt.plot(wavl, calibrated_ref, linewidth = 1, label = 'Calibrated envelope response')
+        plt.plot(wavl, calibrated, linewidth=1, label='Calibrated input response')
+        plt.plot(wavl, calibrated_ref, linewidth=1, label='Calibrated envelope response')
         plt.legend(loc=0)
         plt.title("Final calibration")
         plt.xlabel("X")
@@ -980,7 +981,7 @@ def calibrate_envelope( wavl, data_envelope, data, tol = 3.0, N_seg = 25, fitOrd
     return calibrated, ref, x_envelope, y_envelope
 
 
-def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
+def getFSR(wavl, data, prominence=3, distance=50, verbose=False):
     """Get the free spectral range of an input spectrum.
 
     Args:
@@ -997,16 +998,16 @@ def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
         fsr_wavl (list): List of wavelengths at which the FSR is extracted from. Units are the same as wavl unit.
         fsr (list): List of the calculated free spectral ranges of the spectrum. Units are the same as wavl unit.
         troughs (list): List of all indices in which a trough is located at
-    
+
     refer to https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
         for details about prominence and distance parameters.
     """
     from scipy.signal import find_peaks
-    #convert input data to np array, easier for processing
+    # convert input data to np array, easier for processing
     wavl = np.array(wavl)
     data = np.array(data)
 
-    troughs, _ = find_peaks(-data, prominence = prominence, distance = distance)
+    troughs, _ = find_peaks(-data, prominence=prominence, distance=distance)
     fsr = []
     fsr_wavl = []
     for idx, i in enumerate(troughs):
@@ -1020,7 +1021,7 @@ def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
         import matplotlib.pyplot as plt
         plt.figure()
         plt.scatter(np.array(wavl)[troughs], data[troughs], color='blue')
-        plt.plot(wavl, data, color = 'black')
+        plt.plot(wavl, data, color='black')
         plt.title("Detected troughs in the spectrum")
         plt.xlabel("X")
         plt.ylabel("Y")
@@ -1033,7 +1034,7 @@ def getFSR(wavl, data, prominence = 3, distance = 50, verbose = False):
     return fsr_wavl, fsr, troughs
 
 
-def getGroupIndex(fsr_wavl, fsr, delta_length, verbose = False):
+def getGroupIndex(fsr_wavl, fsr, delta_length, verbose=False):
     """Calculate the group index from a set of free spectral range data
         extracted from an unbalanced Mach-Zehnder interferometer .
 
@@ -1089,7 +1090,7 @@ def getGroupIndex(fsr_wavl, fsr, delta_length, verbose = False):
     return ng
 
 
-def getExtinctionRatio(wavl, data, prominence  = 3.0, distance = 50, verbose = False):
+def getExtinctionRatio(wavl, data, prominence=3.0, distance=50, verbose=False):
     """Get the extinction ratio (ER) of a dataset across the spectrum.
 
     Args:
@@ -1110,12 +1111,12 @@ def getExtinctionRatio(wavl, data, prominence  = 3.0, distance = 50, verbose = F
     """
     from scipy.signal import find_peaks
 
-    #convert input data to np array, easier for processing
+    # convert input data to np array, easier for processing
     wavl = np.array(wavl)
     data = np.array(data)
-    
-    peaks, _ = find_peaks(data, prominence = prominence, distance = distance)
-    troughs, _ = find_peaks(-data, prominence = prominence, distance = distance)
+
+    peaks, _ = find_peaks(data, prominence=prominence, distance=distance)
+    troughs, _ = find_peaks(-data, prominence=prominence, distance=distance)
 
     er_wavl = []
     er = []
@@ -1126,21 +1127,22 @@ def getExtinctionRatio(wavl, data, prominence  = 3.0, distance = 50, verbose = F
             er.append(temp)
             er_wavl.append(wavl[val])
         except IndexError:
-            if verbose: print("Reached end of troughs array")
-
+            if verbose:
+                print("Reached end of troughs array")
 
     if verbose:
         import matplotlib.pyplot as plt
         plt.figure()
         plt.scatter(np.array(wavl)[peaks], data[peaks], color='red')
         plt.scatter(np.array(wavl)[troughs], data[troughs], color='blue')
-        plt.plot(wavl, data, color = 'black')
+        plt.plot(wavl, data, color='black')
         print("Number of peaks = "+str(np.size(peaks)))
         print("Number of troughs = "+str(np.size(troughs)))
 
         plt.figure()
-        plt.scatter(er_wavl, er, color = 'black')
-        plt.ylabel('Extinction Ratio (dB)', color = 'black')
-        plt.xlabel('Wavelength (nm)', color = 'black')
+        plt.scatter(er_wavl, er, color='black')
+        plt.ylabel('Extinction Ratio (dB)', color='black')
+        plt.xlabel('Wavelength (nm)', color='black')
 
+    return er_wavl, er
     return er_wavl, er
