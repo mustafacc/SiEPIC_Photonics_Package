@@ -879,7 +879,8 @@ def baseline_correction(input_response, fitOrder=4):
     return [power_corrected, power_baseline]
 
 
-def calibrate_envelope(wavl, data_envelope, data, tol=3.0, N_seg=25, fitOrder=4, verbose=False):
+def calibrate_envelope(wavl, data_envelope, data, tol=3.0, N_seg=25, fitOrder=4,
+                       direction = 'left', verbose=False):
     """Calibrate an input response by using the envelope of another response.
         Ideal for Bragg gratings and contra-directional couplers
         Can be useful mainy for responses that contain dips.
@@ -930,9 +931,24 @@ def calibrate_envelope(wavl, data_envelope, data, tol=3.0, N_seg=25, fitOrder=4,
 
     x_envelope = []  # wavelength data points to include in envelope fitting
     y_envelope = []  # transmission (or power?) data points to envelope fitting
-    tracker = y[0]  # initial threshold tracker value
 
-    for idx, val in enumerate(y):
+    if direction == 'left':
+        tracker = y[0]  # initial threshold tracker value
+        for idx, val in enumerate(y):
+            if np.abs(val-tracker) < tol:
+                x_envelope.append(x[idx])
+                y_envelope.append(val)
+                tracker = val
+            else:
+                oracle = np.poly1d(np.polyfit(x_envelope, y_envelope, 2))
+                x_oracle = x
+                y_oracle = oracle(x_oracle)
+
+                if np.abs(val-y_oracle[idx]) < tol:
+                    tracker = val
+    else:
+        tracker = y[-1]
+    for idx, val in reversed(list(enumerate(y))):
         if np.abs(val-tracker) < tol:
             x_envelope.append(x[idx])
             y_envelope.append(val)
