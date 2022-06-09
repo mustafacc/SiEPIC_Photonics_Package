@@ -757,18 +757,19 @@ def processCSV(f_name):
         coordsMotor = None
         date = None
 
-    device = measurement(deviceID=deviceID, deviceDescription=None,
+    device = measurement(deviceID=deviceID, deviceDescription= None,
                          user=user, start=start,
                          finish=finish, coordsGDS=coordsGDS,
                          coordsMotor=coordsMotor, date=date, laser=laser,
                          detector=detector, sweepSpd=sweepSpd,
                          sweepPwr=sweepPwr, wavlStep=wavlStep,
                          wavlStart=wavlStart, wavlStop=wavlStop, stitch=stitch,
-                         initRange=initRange, wavl=wavl, pwr=pwr, dieID=None,
+                         initRange=initRange, wavl=wavl, pwr=pwr, dieID=None, 
                          voltageExperimental=None, currentExperimental=None,
-                         IV_current=None, IV_voltage=None, darkCurrent=None,
-                         pol_loss=None, s_parameters=None,
-                         external_calibration=None, responsivity=None)
+                         IV_current=None, IV_voltage=None, darkCurrent=None, 
+                         pol_loss=None, s_parameters = None,
+                         external_calibration=None, responsivity=None,
+                         IV_Bright=None, IV_Dark=None, IV_refPower =None)
     return device
 
 
