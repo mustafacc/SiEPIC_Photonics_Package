@@ -18,7 +18,7 @@ import matplotlib
 file_name_in = 'contraDC'
 file_extension = '.mat'
 PORT = 0
-input_response= siap.core.parse_response(file_name_in+file_extension,PORT)
+input_response = siap.core.parse_response(file_name_in+file_extension,PORT)
 
 # reference calibration response
 file_name_ref = 'contraDC'

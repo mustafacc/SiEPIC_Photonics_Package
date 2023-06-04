@@ -914,7 +914,7 @@ def baseline_correction(input_response, fitOrder=4):
 
 
 def calibrate_envelope(wavl, data_envelope, data, tol=3.0, N_seg=25, fitOrder=4,
-                       direction = 'left', verbose=False):
+                       direction='left', verbose=False):
     """Calibrate an input response by using the envelope of another response.
         Ideal for Bragg gratings and contra-directional couplers
         Can be useful mainy for responses that contain dips.
@@ -1140,6 +1140,28 @@ def getGroupIndex(fsr_wavl, fsr, delta_length, verbose=False):
     return ng
 
 
+def truncate_data(wavl, data, wavl_min, wavl_max):
+    """
+    Truncates the wavl and data measurements to the specified wavl domain.
+
+    Args:
+        wavl (array-like): Array or list of wavl measurements.
+        data (array-like): Array or list of corresponding data measurements.
+        wavl_min (float): Minimum wavl value for truncation.
+        wavl_max (float): Maximum wavl value for truncation.
+
+    Returns:
+        tuple: Tuple containing the truncated wavl and data measurements.
+    """
+    wavl = np.array(wavl)
+    data = np.array(data)
+
+    indices = np.where((wavl >= wavl_min) & (wavl <= wavl_max))
+    wavl_truncated = wavl[indices]
+    data_truncated = data[indices]
+
+    return wavl_truncated, data_truncated
+
 def getExtinctionRatio(wavl, data, prominence=3.0, distance=50, verbose=False):
     """Get the extinction ratio (ER) of a dataset across the spectrum.
 
@@ -1194,5 +1216,4 @@ def getExtinctionRatio(wavl, data, prominence=3.0, distance=50, verbose=False):
         plt.ylabel('Extinction Ratio (dB)', color='black')
         plt.xlabel('Wavelength (nm)', color='black')
 
-    return er_wavl, er
     return er_wavl, er
