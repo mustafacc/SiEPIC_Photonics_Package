@@ -89,7 +89,7 @@ def parse_response(filename, port):
     return data
 
 
-def smooth(x, y, window=51, order=3, verbose=False):
+def smooth(x, y, window=51, order=5, verbose=False):
     """
     Smooth a trace. Apply a Savitzky-Golay filter to an array.
 

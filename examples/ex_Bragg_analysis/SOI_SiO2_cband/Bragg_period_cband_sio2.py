@@ -109,7 +109,7 @@ period_sim_sio2 = [313, 315, 317, 319, 321, 323, 325]
 wavl_sim_sio2 = [1517, 1522, 1527, 1532, 1538, 1543, 1548.9]
 
 plt.figure()
-plt.scatter(period, WL, color='r', marker='x', label='Experiment')
+plt.scatter(period, WL, color='r', marker='x', label='Expe  riment')
 plt.scatter(period_sim_sio2, wavl_sim_sio2, color='b', marker='o', label='Simulation')
 plt.legend()
 plt.ylabel('Bragg Wavelength [nm]', color = 'black')
