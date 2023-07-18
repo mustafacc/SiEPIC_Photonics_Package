@@ -104,9 +104,14 @@ matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 
 plt.show()
 
 # %% overlay simulation data
+#simulation results (220 nm SOI, air)
+period_sim_air = [273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283]
+wavl_sim_air = [1295.48, 1297.79, 1300.2, 1302.52, 1304.94, 1307.26, 1309.57, 1311.88, 1314.08, 1316.4, 1318.82]
+
 #simulation results (220 nm SOI, SiO2 clad)
 period_sim_sio2 = [273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283]
-wavl_sim_sio2 = [1295.48, 1297.79, 1300.2, 1302.52, 1304.94, 1307.26, 1309.57, 1311.88, 1314.08, 1316.4, 1318.82]
+wavl_sim_sio2 = [1318.45, 1321.05, 1323.65, 1326.26, 1328.86, 1331.46, 1334.06, 1336.54, 1339.14, 1341.7, 1344.21]
+
 
 plt.figure()
 plt.scatter(period, WL, color='r', marker='x', label='Experiment')
@@ -119,4 +124,4 @@ plt.savefig('analysis_WL'+'.pdf')
 matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 'font.weight': 'bold'})
 
 
-# %%
+D# %%
