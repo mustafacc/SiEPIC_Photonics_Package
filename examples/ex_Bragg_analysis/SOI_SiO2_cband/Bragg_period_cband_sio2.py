@@ -104,12 +104,16 @@ matplotlib.rcParams.update({'font.size': 11, 'font.family' : 'Times New Roman', 
 plt.show()
 
 # %% overlay simulation data
+#simulation results (220 nm SOI, air clad)
+period_sim_air = [313, 315, 317, 319, 321, 323, 324, 325, 326]
+wavl_sim_air = [1517, 1522, 1527, 1532, 1538, 1543, 1544.74, 1548.9, 1549.85]
+
 #simulation results (220 nm SOI, SiO2 clad)
-period_sim_sio2 = [313, 315, 317, 319, 321, 323, 325]
-wavl_sim_sio2 = [1517, 1522, 1527, 1532, 1538, 1543, 1548.9]
+period_sim_sio2 = [313, 315, 317, 319, 321, 323]
+wavl_sim_sio2 = [1536.64, 1542.24, 1547.85, 1553.45, 1559.06, 1564.56]
 
 plt.figure()
-plt.scatter(period, WL, color='r', marker='x', label='Expe  riment')
+plt.scatter(period, WL, color='r', marker='x', label='Experiment')
 plt.scatter(period_sim_sio2, wavl_sim_sio2, color='b', marker='o', label='Simulation')
 plt.legend()
 plt.ylabel('Bragg Wavelength [nm]', color = 'black')
